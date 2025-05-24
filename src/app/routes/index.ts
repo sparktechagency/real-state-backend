@@ -4,6 +4,8 @@ import { AuthRoutes } from "../modules/auth/auth.routes";
 import { apartmentRouter } from "../modules/appartment/appartment.routes";
 import { FloorePlanRoutes } from "../modules/floorePlan/floorePlan.routes";
 import { PackageRoutes } from "../modules/package/package.routes";
+import { FaqRoutes } from "../modules/faq/faq.route";
+import { AboutRoutes } from "../modules/about/about.route";
 const router = express.Router();
 
 const apiRoutes = [
@@ -12,6 +14,8 @@ const apiRoutes = [
   { path: "/apartment", route: apartmentRouter },
   { path: "/floor", route: FloorePlanRoutes },
   { path: "/package", route: PackageRoutes },
+  { path: "/faq", route: FaqRoutes },
+  { path: "/about", route: AboutRoutes },
 ];
 
 apiRoutes.forEach((route) => router.use(route.path, route.route));

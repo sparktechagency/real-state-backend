@@ -1,9 +1,9 @@
 import express from "express";
 import auth from "../../middlewares/auth";
 import { USER_ROLES } from "../../../enums/user";
-import { FaqController } from "./faq.controller";
+import { AboutController } from "./about.controller";
 import validateRequest from "../../middlewares/validateRequest";
-import { FaqValidation } from "./faq.validation";
+import { FaqValidation } from "./about.validation";
 const router = express.Router();
 
 router
@@ -11,19 +11,22 @@ router
   .post(
     validateRequest(FaqValidation.createFaqZodSchema),
     auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY),
-    FaqController.createFaq
+    AboutController.createFaq
   )
-  .get(auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY), FaqController.getFaqs);
+  .get(
+    auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY),
+    AboutController.getFaqs
+  );
 
 router
   .route("/:id")
   .delete(
     auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY),
-    FaqController.deleteFaq
+    AboutController.deleteFaq
   )
   .patch(
     auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY),
-    FaqController.updateFaq
+    AboutController.updateFaq
   );
 
-export const FaqRoutes = router;
+export const AboutRoutes = router;
