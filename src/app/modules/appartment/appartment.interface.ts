@@ -3,13 +3,24 @@ type IContact = {
   email: string;
   location: string;
 };
+type IFeatures = {
+  category: string;
+  generalAmenites: string;
+  connectivity: string;
+  ecoFriendly: string;
+  parking: string;
+  receational: string;
+  accessiblity: string;
+  nearbyFacilities: string;
+};
 
 export type IApartment = {
-  image: string[];
+  apartmentImage: string[];
   apartmentName: string;
   commission: number;
-  paymentPlan: string;
+  paymentPlanImage: string;
   price: number;
-  qualitySpecification: string[];
+  qualitySpecificationImage: string[];
   contact: IContact;
+  features: IFeatures;
 };
