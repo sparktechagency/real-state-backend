@@ -24,7 +24,7 @@ const ApartmentSchema = new Schema<IApartment>({
   commission: { type: Number, required: true },
   paymentPlanImage: { type: String, required: true },
   price: { type: Number, required: true },
-  qualitySpecificationImage: [{ type: String, required: true }],
+  qualitySpecificationPDF: [{ type: String, required: true }],
   contact: { type: contactSchema, required: true },
   features: { type: featuresSchema, required: true },
   latitude: { type: Number, required: true },

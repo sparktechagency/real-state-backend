@@ -13,14 +13,14 @@ type IFeatures = {
   accessiblity: string;
   nearbyFacilities: string;
 };
-
+  
 export type IApartment = {
   apartmentImage: string[];
   apartmentName: string;
   commission: number;
   paymentPlanImage: string;
   price: number;
-  qualitySpecificationImage: string[];
+  qualitySpecificationPDF: string[];
   contact: IContact;
   features: IFeatures;
   latitude: Number;

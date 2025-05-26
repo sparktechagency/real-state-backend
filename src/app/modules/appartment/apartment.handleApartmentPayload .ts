@@ -13,16 +13,16 @@ export const handleApartmentPayload = (
     const payload = req.body;
 
     const apartmentImage = getMultipleFilesPath(req.files, "apartmentImage");
-    const qualitySpecificationImage = getMultipleFilesPath(
+    const qualitySpecificationPDF = getMultipleFilesPath(
       req.files,
-      "qualitySpecificationImage"
+      "qualitySpecificationPDF"
     );
     const paymentPlanImage = getSingleFilePath(req.files, "paymentPlanImage");
 
     req.body = {
       ...payload,
       apartmentImage,
-      qualitySpecificationImage,
+      qualitySpecificationPDF,
       paymentPlanImage,
     };
 

@@ -3,7 +3,7 @@ type IFolderName =
   | "media"
   | "doc"
   | "paymentPlanImage"
-  | "qualitySpecificationImage"
+  | "qualitySpecificationPDF"
   | "apartmentImage"
   | "floorPlanImage";
 
