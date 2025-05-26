@@ -42,7 +42,7 @@ router.post(
 );
 
 router.post(
-  "/reset-password/hello",
+  "/reset-password",
   // validateRequest(AuthValidation.createResetPasswordZodSchema),
   AuthController.resetPassword
 );

@@ -6,6 +6,7 @@ import { FloorePlanRoutes } from "../modules/floorePlan/floorePlan.routes";
 import { PackageRoutes } from "../modules/package/package.routes";
 import { FaqRoutes } from "../modules/faq/faq.route";
 import { AboutRoutes } from "../modules/about/about.route";
+import { PrivacyPolicyRoutes } from "../modules/privacypolicy/privacypolicy.route";
 const router = express.Router();
 
 const apiRoutes = [
@@ -16,6 +17,7 @@ const apiRoutes = [
   { path: "/package", route: PackageRoutes },
   { path: "/faq", route: FaqRoutes },
   { path: "/about", route: AboutRoutes },
+  { path: "/privacy-policy", route: PrivacyPolicyRoutes },
 ];
 
 apiRoutes.forEach((route) => router.use(route.path, route.route));

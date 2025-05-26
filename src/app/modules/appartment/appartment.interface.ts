@@ -23,4 +23,6 @@ export type IApartment = {
   qualitySpecificationImage: string[];
   contact: IContact;
   features: IFeatures;
+  latitude: Number;
+  longitude: Number;
 };

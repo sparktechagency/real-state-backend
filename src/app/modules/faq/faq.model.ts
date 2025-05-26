@@ -3,7 +3,11 @@ import { IFaq, FaqModel } from "./faq.interface";
 
 const faqSchema = new Schema<IFaq, FaqModel>(
   {
-    text: {
+    question: {
+      type: String,
+      required: true,
+    },
+    ans: {
       type: String,
       required: true,
     },

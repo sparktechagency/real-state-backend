@@ -19,7 +19,8 @@ const getAllFloorePlan = catchAsync(async (req, res) => {
     success: true,
     statusCode: StatusCodes.OK,
     message: "Floore Plan retrieved successfully",
-    data: result,
+    pagination: result.meta,
+    data: result.data,
   });
 });
 

@@ -1,6 +1,7 @@
 import { Model } from 'mongoose';
 
 export type IFaq = {
-  text: string;
+  question: string;
+  ans: string;
 };
 export type FaqModel = Model<IFaq>;

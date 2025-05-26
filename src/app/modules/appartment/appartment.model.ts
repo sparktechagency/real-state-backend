@@ -27,6 +27,8 @@ const ApartmentSchema = new Schema<IApartment>({
   qualitySpecificationImage: [{ type: String, required: true }],
   contact: { type: contactSchema, required: true },
   features: { type: featuresSchema, required: true },
+  latitude: { type: Number, required: true },
+  longitude: { type: Number, required: true },
 });
 
 export const Apartment = model<IApartment>("Apartment", ApartmentSchema);

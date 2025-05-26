@@ -2,7 +2,8 @@ import { z } from "zod";
 
 const createFaqZodSchema = z.object({
   body: z.object({
-    text: z.string({ required_error: "text is required" }),
+    question: z.string({ required_error: "question is required" }),
+    ans: z.string({ required_error: "ans is required" }),
   }),
 });
 

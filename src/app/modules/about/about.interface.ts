@@ -1,6 +1,6 @@
 import { Model } from 'mongoose';
 
-export type IFaq = {
+export type IAbout = {
   text: string;
 };
-export type FaqModel = Model<IFaq>;
+export type AboutModel = Model<IAbout>;

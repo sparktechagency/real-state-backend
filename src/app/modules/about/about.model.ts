@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
-import { IFaq, FaqModel } from "./about.interface";
+import { AboutModel, IAbout } from "./about.interface";
 
-const aboutSchema = new Schema<IFaq, FaqModel>(
+const aboutSchema = new Schema<IAbout, AboutModel>(
   {
     text: {
       type: String,
@@ -10,4 +10,4 @@ const aboutSchema = new Schema<IFaq, FaqModel>(
   },
   { timestamps: true }
 );
-export const About = model<IFaq, FaqModel>("About", aboutSchema);
+export const About = model<IAbout, AboutModel>("About", aboutSchema);

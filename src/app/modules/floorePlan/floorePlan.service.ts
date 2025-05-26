@@ -14,8 +14,8 @@ const createFloorPlan = async (payload: IFloorPlan): Promise<IFloorPlan> => {
 
 const getAllFlans = async (query: Record<string, any>) => {
   const queryBuilder = new QueryBuilder(FloorPlan.find(), query)
-    .search(["floorPlan"])
     .filter()
+    .search(["floorPlan"])
     .sort()
     .paginate()
     .fields()
@@ -29,6 +29,7 @@ const getAllFlans = async (query: Record<string, any>) => {
     data: result,
   };
 };
+
 const getSingleFloorPlan = async (id: string): Promise<IFloorPlan | null> => {
   const result = await FloorPlan.findById(id).populate("apartmentId");
   if (!result) {
