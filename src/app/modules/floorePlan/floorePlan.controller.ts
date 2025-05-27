@@ -17,10 +17,12 @@ const getAllFloorePlan = catchAsync(async (req, res) => {
   const result = await FloorPlanService.getAllFlans(req.query);
   sendResponse(res, {
     success: true,
+    message: "Apartments with Floor Plans fetched successfully",
     statusCode: StatusCodes.OK,
-    message: "Floore Plan retrieved successfully",
-    pagination: result.meta,
-    data: result.data,
+    pagination: result.pagination,
+    data: {
+      apartments: result.apartments,
+    },
   });
 });
 

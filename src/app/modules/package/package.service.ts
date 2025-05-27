@@ -31,6 +31,15 @@ const createPackageToDB = async (
   return result;
 };
 
+const getAllPackage = async () => {
+  const result = await Package.find();
+  if (!result) {
+    [];
+  }
+  return result;
+};
+
 export const PackageService = {
   createPackageToDB,
+  getAllPackage,
 };

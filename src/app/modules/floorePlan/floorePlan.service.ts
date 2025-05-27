@@ -2,7 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import ApiError from "../../../errors/ApiErrors";
 import { IFloorPlan } from "./floorePlan.interface";
 import { FloorPlan } from "./floorePlan.model";
-import QueryBuilder from "../../builder/QueryBuilder";
+import { Apartment } from "../appartment/appartment.model";
 
 const createFloorPlan = async (payload: IFloorPlan): Promise<IFloorPlan> => {
   const result = await FloorPlan.create(payload);
@@ -13,20 +13,65 @@ const createFloorPlan = async (payload: IFloorPlan): Promise<IFloorPlan> => {
 };
 
 const getAllFlans = async (query: Record<string, any>) => {
-  const queryBuilder = new QueryBuilder(FloorPlan.find(), query)
-    .filter()
-    .search(["floorPlan"])
-    .sort()
-    .paginate()
-    .fields()
-    .populate(["apartmentId"], { apartmentId: "" });
+  const {
+    priceMin,
+    priceMax,
+    propertyType,
+    location,
+    salesCompany,
+    completionDate,
+    apartmentName,
+    page = 1,
+    limit = 10,
+  } = query;
 
-  const result = await queryBuilder.modelQuery;
-  const paginationInfo = await queryBuilder.getPaginationInfo();
+  const matchFloorPlan: any = {};
+  if (priceMin || priceMax) {
+    matchFloorPlan.price = {};
+    if (priceMin) matchFloorPlan.price.$gte = Number(priceMin);
+    if (priceMax) matchFloorPlan.price.$lte = Number(priceMax);
+  }
+
+  const matchingFloorPlans = await FloorPlan.find(matchFloorPlan).lean();
+
+  const apartmentIdSet = new Set(
+    matchingFloorPlans.map((f) => f.apartmentId.toString())
+  );
+
+  const apartmentFilter: any = {};
+  if (propertyType) apartmentFilter.propertyType = propertyType;
+  if (location) apartmentFilter.location = location;
+  if (salesCompany) apartmentFilter.salesCompany = salesCompany;
+  if (completionDate) apartmentFilter.CompletionDate = Number(completionDate);
+  if (apartmentName)
+    apartmentFilter.apartmentName = { $regex: apartmentName, $options: "i" };
+  if (apartmentIdSet.size > 0) {
+    apartmentFilter._id = { $in: Array.from(apartmentIdSet) };
+  } else {
+    return {
+      pagination: { total: 0, page, limit, totalPage: 0 },
+      apartments: [],
+    };
+  }
+
+  const total = await Apartment.countDocuments(apartmentFilter);
+  const totalPage = Math.ceil(total / Number(limit));
+  const apartments = await Apartment.find(apartmentFilter)
+    .skip((page - 1) * limit)
+    .limit(Number(limit))
+    .lean();
+
+  const apartmentMap = new Map();
+  for (const apartment of apartments) {
+    const floorPlans = matchingFloorPlans.filter(
+      (f) => f.apartmentId.toString() === apartment._id.toString()
+    );
+    apartmentMap.set(apartment._id.toString(), { ...apartment, floorPlans });
+  }
 
   return {
-    meta: paginationInfo,
-    data: result,
+    pagination: { total, page: Number(page), limit: Number(limit), totalPage },
+    apartments: Array.from(apartmentMap.values()),
   };
 };
 
@@ -37,6 +82,8 @@ const getSingleFloorPlan = async (id: string): Promise<IFloorPlan | null> => {
   }
   return result;
 };
+
+// * Export function
 export const FloorPlanService = {
   createFloorPlan,
   getAllFlans,
