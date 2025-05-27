@@ -25,7 +25,7 @@ const fileUploadHandler = () => {
       let uploadDir;
       switch (file.fieldname) {
         case "image":
-          uploadDir = path.join(baseUploadDir, "images");
+          uploadDir = path.join(baseUploadDir, "image");
           break;
         case "paymentPlanImage":
           uploadDir = path.join(baseUploadDir, "paymentPlanImage");
@@ -101,7 +101,7 @@ const fileUploadHandler = () => {
   };
 
   const upload = multer({ storage: storage, fileFilter: filterFilter }).fields([
-    { name: "image", maxCount: 3 },
+    { name: "image", maxCount: 1 },
     { name: "paymentPlanImage", maxCount: 1 },
     { name: "qualitySpecificationPDF", maxCount: 5 },
     { name: "apartmentImage", maxCount: 5 },

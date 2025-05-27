@@ -58,7 +58,7 @@ router.post("/resend-otp", AuthController.resendVerificationEmail);
 
 router.delete(
   "/delete-account",
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY),
   AuthController.deleteUser
 );
 

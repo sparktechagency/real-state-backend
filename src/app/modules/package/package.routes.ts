@@ -17,4 +17,10 @@ router.get(
   PackageController.getPackage
 );
 
+router.patch(
+  "/:id",
+  auth(USER_ROLES.SUPER_ADMIN),
+  PackageController.editPackage
+);
+
 export const PackageRoutes = router;
