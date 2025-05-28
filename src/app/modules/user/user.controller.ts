@@ -20,6 +20,7 @@ const createUser = catchAsync(
   }
 );
 
+// 
 // register admin
 const createAdmin = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
