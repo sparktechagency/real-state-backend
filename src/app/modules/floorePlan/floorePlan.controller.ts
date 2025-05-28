@@ -37,8 +37,23 @@ const getSingleFloor = catchAsync(async (req, res) => {
   });
 });
 
+const getLocationPropertyTypeSalesCompanyCompletionYear = catchAsync(
+  async (req, res) => {
+    const result =
+      await FloorPlanService.getLocationPropertyTypeSalesCompanyCompletionYearFromDB();
+
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: "Apartment fields fetched successfully",
+      data: result,
+    });
+  }
+);
+
 export const FloorePlanController = {
   createFloorePlan,
   getAllFloorePlan,
   getSingleFloor,
+  getLocationPropertyTypeSalesCompanyCompletionYear,
 };

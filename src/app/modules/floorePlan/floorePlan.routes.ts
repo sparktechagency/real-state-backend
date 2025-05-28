@@ -31,6 +31,12 @@ router.post(
 );
 
 router.get(
+  "/filter",
+  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
+  FloorePlanController.getLocationPropertyTypeSalesCompanyCompletionYear
+);
+
+router.get(
   "/",
   auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
   FloorePlanController.getAllFloorePlan

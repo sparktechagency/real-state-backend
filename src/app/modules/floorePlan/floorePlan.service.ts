@@ -83,9 +83,30 @@ const getSingleFloorPlan = async (id: string): Promise<IFloorPlan | null> => {
   return result;
 };
 
+// * get all location / property type / sales company/ completion year
+const getLocationPropertyTypeSalesCompanyCompletionYearFromDB = async () => {
+  const apartments = await Apartment.find(
+    {},
+    "apartmentName location propertyType price"
+  );
+
+  const apartmentNames = apartments.map((a) => a.apartmentName);
+  const locations = apartments.map((a) => a.location);
+  const propertyTypes = apartments.map((a) => a.propertyType);
+  const prices = apartments.map((a) => a.price);
+
+  return {
+    apartmentNames,
+    locations,
+    propertyTypes,
+    prices,
+  };
+};
+
 // * Export function
 export const FloorPlanService = {
   createFloorPlan,
   getAllFlans,
   getSingleFloorPlan,
+  getLocationPropertyTypeSalesCompanyCompletionYearFromDB,
 };
