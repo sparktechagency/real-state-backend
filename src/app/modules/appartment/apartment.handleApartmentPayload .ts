@@ -11,7 +11,6 @@ export const handleApartmentPayload = (
 ) => {
   try {
     const payload = req.body;
-
     const apartmentImage = getMultipleFilesPath(req.files, "apartmentImage");
     const qualitySpecificationPDF = getMultipleFilesPath(
       req.files,
