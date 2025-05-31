@@ -30,7 +30,18 @@ const getSingleOne = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: 201,
     success: true,
-    message: "Successfully retrived",
+    message: "Successfully retrieved",
+    data: result,
+  });
+});
+
+const deleteApartment = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await apartmentService.deleteApartmentFromDB(id);
+  sendResponse(res, {
+    statusCode: 201,
+    success: true,
+    message: "Successfully retrieved",
     data: result,
   });
 });
@@ -39,4 +50,5 @@ export const apartmentController = {
   createApartment,
   getAllApartment,
   getSingleOne,
+  deleteApartment,
 };

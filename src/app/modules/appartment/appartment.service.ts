@@ -48,8 +48,20 @@ const getSingleApartment = async (id: string) => {
   return result;
 };
 
+const deleteApartmentFromDB = async (id: string) => {
+  const result = await Apartment.findByIdAndDelete(id);
+  if (!result) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      "Successfully delete apartment data"
+    );
+  }
+  return result;
+};
+
 export const apartmentService = {
   createApartmentIntoDB,
   getAllApartmentFromDB,
   getSingleApartment,
+  deleteApartmentFromDB,
 };
