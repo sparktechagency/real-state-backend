@@ -10,6 +10,7 @@ export type IPackage = {
   paymentLink?: string;
   status: "Active" | "Delete";
   stripeProductId?: string;
+  priceId?: string;
 };
 
 export type PackageModel = Model<IPackage, Record<string, unknown>>;

@@ -60,9 +60,11 @@ const handleStripeWebhook = async (req: Request, res: Response) => {
                 logger.warn(colors.bgGreen.bold(`Unhandled event type: ${eventType}`));
         }
     } catch (error) {
-        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR,`Error handling event: ${error}`,);
+      throw new ApiError(
+        StatusCodes.INTERNAL_SERVER_ERROR,
+        `Error handling event: ${error}`
+      );
     }
-
     res.sendStatus(200);
 };
 

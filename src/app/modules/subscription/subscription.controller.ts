@@ -17,7 +17,9 @@ const subscriptions = catchAsync( async(req: Request, res: Response)=>{
 });
 
 const subscriptionDetails = catchAsync( async(req: Request, res: Response)=>{
-    const result = await SubscriptionService.subscriptionDetailsFromDB(req.user);
+    const result = await SubscriptionService.subscriptionDetailsFromDB(
+      req.user!
+    );
 
     sendResponse(res, {
         statusCode: StatusCodes.OK,

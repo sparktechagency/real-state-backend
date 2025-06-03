@@ -38,6 +38,10 @@ const packageSchema = new Schema<IPackage, PackageModel>(
       type: String,
       required: false,
     },
+    priceId: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,

@@ -12,6 +12,7 @@ const createPackageToDB = async (
     title: payload.title,
     duration: payload.duration,
     price: payload.price,
+    priceId: payload.priceId,
   };
 
   const data = await createSubscriptionProduct(productPayload);
@@ -27,6 +28,7 @@ const createPackageToDB = async (
     ...payload,
     paymentLink: data.paymentLink,
     stripeProductId: data.productId,
+    priceId: data?.priceId,
   };
 
   const result = await Package.create(packageData);
@@ -40,7 +42,7 @@ const createPackageToDB = async (
 const getAllPackage = async () => {
   const result = await Package.find();
   if (!result) {
-    [];
+    return [];
   }
   return result;
 };

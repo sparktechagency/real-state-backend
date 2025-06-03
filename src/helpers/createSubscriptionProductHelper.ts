@@ -34,8 +34,11 @@ export const createSubscriptionProduct = async (
   const price = await stripe.prices.create({
     product: product.id,
     unit_amount: Number(payload.price) * 100, // in cents
-    currency: "usd", // or your chosen currency
-    recurring: { interval, interval_count: intervalCount },
+    currency: "usd",
+    recurring: {
+      interval,
+      interval_count: intervalCount,
+    },
   });
 
   if (!price) {
@@ -70,5 +73,9 @@ export const createSubscriptionProduct = async (
     );
   }
 
-  return { productId: product.id, paymentLink: paymentLink.url };
+  return {
+    productId: product.id,
+    paymentLink: paymentLink.url,
+    priceId: price?.id,
+  };
 };

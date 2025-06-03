@@ -2,8 +2,8 @@ import { StatusCodes } from 'http-status-codes';
 import Stripe from 'stripe';
 import ApiError from '../errors/ApiErrors';
 import stripe from '../config/stripe';
-const User:any = "";
-const Subscription:any = "";
+import { Subscription } from "../app/modules/subscription/subscription.model";
+import { User } from "../app/modules/user/user.model";
 
 export const handleSubscriptionDeleted = async (data: Stripe.Subscription) => {
 
@@ -26,7 +26,7 @@ export const handleSubscriptionDeleted = async (data: Stripe.Subscription) => {
         );
     
         // Find the user associated with the subscription
-        const existingUser = await User.findById(userSubscription?.userId);
+        const existingUser = await User.findById(userSubscription?.user);
     
         if (existingUser) {
             await User.findByIdAndUpdate(
