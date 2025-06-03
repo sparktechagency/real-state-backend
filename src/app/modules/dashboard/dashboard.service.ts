@@ -59,7 +59,7 @@ const totalAgencyByMonth = async () => {
 
 // Total Subscriber
 const totalSubscriber = async () => {
-  const result = await Subscription.find().populate("User");
+  const result = await Subscription.find().populate("user").populate("package");
   if (!result) {
     return 0;
   }
@@ -68,7 +68,9 @@ const totalSubscriber = async () => {
 
 // get single subscriber
 const getSingleSubscriber = async (id: string) => {
-  const result = await Subscription.findById(id).populate("User");
+  const result = await Subscription.findById(id)
+    .populate("user")
+    .populate("package");
   if (!result) {
     return 0;
   }

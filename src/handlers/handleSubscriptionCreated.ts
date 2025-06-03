@@ -46,12 +46,20 @@ export const handleSubscriptionCreated = async (data: Stripe.Subscription) => {
 
         // Create a new subscription record
         const newSubscription = new Subscription({
-          userId: existingUser._id,
+          user: existingUser._id,
           customerId: customer?.id,
-          packageId: pricingPlan._id,
-          status: "active",
-          amountPaid,
+          package: pricingPlan._id,
+          price: amountPaid,
           trxId,
+          subscriptionId: subscription.id,
+          currentPeriodStart: new Date(
+            subscription.current_period_start * 1000
+          ).toISOString(),
+          currentPeriodEnd: new Date(
+            subscription.current_period_end * 1000
+          ).toISOString(),
+          remaining: pricingPlan.duration === "1 year" ? 365 : 30,
+          status: "active",
         });
 
         await newSubscription.save();
