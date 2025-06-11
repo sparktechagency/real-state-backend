@@ -1,7 +1,7 @@
 type IContact = {
   phone: string;
   email: string;
-  location: string;
+  companyName: string;
 };
 type IFeatures = {
   category: string;
@@ -18,7 +18,7 @@ export type IApartment = {
   apartmentImage: string[];
   apartmentName: string;
   commission: number;
-  paymentPlanImage: string;
+  paymentPlanPDF: string;
   price: number;
   qualitySpecificationPDF: string[];
   contact: IContact;

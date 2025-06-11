@@ -2,10 +2,10 @@ type IFolderName =
   | "image"
   | "media"
   | "doc"
-  | "paymentPlanImage"
+  | "paymentPlanPDF"
   | "qualitySpecificationPDF"
   | "apartmentImage"
-  | "floorPlanImage";
+  | "floorPlanPDF";
 
 //single file
 export const getSingleFilePath = (files: any, folderName: IFolderName) => {

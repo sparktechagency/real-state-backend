@@ -16,13 +16,13 @@ export const handleApartmentPayload = (
       req.files,
       "qualitySpecificationPDF"
     );
-    const paymentPlanImage = getSingleFilePath(req.files, "paymentPlanImage");
+    const paymentPlanPDF = getSingleFilePath(req.files, "paymentPlanPDF");
 
     req.body = {
       ...payload,
       apartmentImage,
       qualitySpecificationPDF,
-      paymentPlanImage,
+      paymentPlanPDF,
     };
 
     next();

@@ -36,8 +36,11 @@ const fileUploadHandler = () => {
         case "apartmentImage":
           uploadDir = path.join(baseUploadDir, "apartmentImage");
           break;
-        case "floorPlanImage":
-          uploadDir = path.join(baseUploadDir, "floorPlanImage");
+        case "paymentPlanPDF":
+          uploadDir = path.join(baseUploadDir, "paymentPlanPDF");
+          break;
+        case "floorPlanPDF":
+          uploadDir = path.join(baseUploadDir, "floorPlanPDF");
           break;
         default:
           throw new ApiError(StatusCodes.BAD_REQUEST, "File is not supported");
@@ -66,9 +69,7 @@ const fileUploadHandler = () => {
     if (
       file.fieldname === "image" ||
       file.fieldname === "paymentPlanImage" ||
-      // file.fieldname === "qualitySpecificationPDF" ||
-      file.fieldname === "apartmentImage" ||
-      file.fieldname === "floorPlanImage"
+      file.fieldname === "apartmentImage"
     ) {
       if (
         file.mimetype === "image/jpeg" ||
@@ -84,7 +85,11 @@ const fileUploadHandler = () => {
           )
         );
       }
-    } else if (file.fieldname === "qualitySpecificationPDF") {
+    } else if (
+      file.fieldname === "qualitySpecificationPDF" ||
+      file.fieldname === "floorPlanPDF" ||
+      file.fieldname === "paymentPlanPDF"
+    ) {
       if (file.mimetype === "application/pdf") {
         cb(null, true);
       } else {
@@ -102,10 +107,10 @@ const fileUploadHandler = () => {
 
   const upload = multer({ storage: storage, fileFilter: filterFilter }).fields([
     { name: "image", maxCount: 1 },
-    { name: "paymentPlanImage", maxCount: 1 },
+    { name: "paymentPlanPDF", maxCount: 1 },
     { name: "qualitySpecificationPDF", maxCount: 5 },
     { name: "apartmentImage", maxCount: 5 },
-    { name: "floorPlanImage", maxCount: 1 },
+    { name: "floorPlanPDF", maxCount: 1 },
   ]);
   return upload;
 };

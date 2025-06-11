@@ -4,7 +4,7 @@ import { IApartment } from "./appartment.interface";
 const contactSchema = new Schema({
   phone: { type: String, required: true },
   email: { type: String, required: true },
-  location: { type: String, required: true },
+  companyName: { type: String, required: true },
 });
 
 const featuresSchema = new Schema({
@@ -23,7 +23,7 @@ const ApartmentSchema = new Schema<IApartment>(
     apartmentImage: [{ type: String, required: true }],
     apartmentName: { type: String, required: true },
     commission: { type: Number, required: true },
-    paymentPlanImage: { type: String, required: true },
+    paymentPlanPDF: { type: String, required: true },
     price: { type: Number, required: true },
     qualitySpecificationPDF: [{ type: String, required: true }],
     contact: { type: contactSchema, required: true },

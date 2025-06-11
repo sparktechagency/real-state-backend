@@ -25,6 +25,8 @@ const getAllFlans = async (query: Record<string, any>) => {
     limit = 10,
   } = query;
 
+
+ 
   const matchFloorPlan: any = {};
   if (priceMin || priceMax) {
     matchFloorPlan.price = {};
@@ -32,19 +34,20 @@ const getAllFlans = async (query: Record<string, any>) => {
     if (priceMax) matchFloorPlan.price.$lte = Number(priceMax);
   }
 
+
   const matchingFloorPlans = await FloorPlan.find(matchFloorPlan).lean();
 
   const apartmentIdSet = new Set(
-    matchingFloorPlans.map((f) => f.apartmentId.toString())
+    matchingFloorPlans.map((f) => f.apartmentId?.toString())
   );
-
   const apartmentFilter: any = {};
   if (propertyType) apartmentFilter.propertyType = propertyType;
   if (location) apartmentFilter.location = location;
   if (salesCompany) apartmentFilter.salesCompany = salesCompany;
-  if (completionDate) apartmentFilter.CompletionDate = Number(completionDate);
+  if (completionDate) apartmentFilter.completionDate = Number(completionDate); // ✅ Fixed field name
   if (apartmentName)
     apartmentFilter.apartmentName = { $regex: apartmentName, $options: "i" };
+
   if (apartmentIdSet.size > 0) {
     apartmentFilter._id = { $in: Array.from(apartmentIdSet) };
   } else {
@@ -54,26 +57,36 @@ const getAllFlans = async (query: Record<string, any>) => {
     };
   }
 
+
   const total = await Apartment.countDocuments(apartmentFilter);
   const totalPage = Math.ceil(total / Number(limit));
   const apartments = await Apartment.find(apartmentFilter)
-    .skip((page - 1) * limit)
+    .skip((Number(page) - 1) * Number(limit))
     .limit(Number(limit))
     .lean();
 
   const apartmentMap = new Map();
   for (const apartment of apartments) {
     const floorPlans = matchingFloorPlans.filter(
-      (f) => f.apartmentId.toString() === apartment._id.toString()
+      (f) => f.apartmentId?.toString() === apartment._id.toString()
     );
-    apartmentMap.set(apartment._id.toString(), { ...apartment, floorPlans });
+    apartmentMap.set(apartment._id.toString(), {
+      ...apartment,
+      floorPlans,
+    });
   }
 
   return {
-    pagination: { total, page: Number(page), limit: Number(limit), totalPage },
+    pagination: {
+      total,
+      page: Number(page),
+      limit: Number(limit),
+      totalPage,
+    },
     apartments: Array.from(apartmentMap.values()),
   };
 };
+;
 
 const getSingleFloorPlan = async (id: string): Promise<IFloorPlan | null> => {
   const result = await FloorPlan.findById(id).populate("apartmentId");

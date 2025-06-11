@@ -20,8 +20,12 @@ const floorPlanSchema = new Schema<IFloorPlan>(
       type: Number,
       required: true,
     },
-    floorPlanImage: {
+    floorPlanPDF: {
       type: String,
+      required: true,
+    },
+    seeView: {
+      type: Boolean,
       required: true,
     },
   },

@@ -5,5 +5,6 @@ export type IFloorPlan = {
   floorPlan: string;
   price: number;
   badSize: number;
-  floorPlanImage: string;
+  floorPlanPDF: string;
+  seeView: boolean;
 };

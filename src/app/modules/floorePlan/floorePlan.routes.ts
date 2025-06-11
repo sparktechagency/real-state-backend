@@ -12,14 +12,14 @@ router.post(
   fileUploadHandler(),
   (req, res, next) => {
     try {
-      const floorPlanImage = getSingleFilePath(req.files, "floorPlanImage");
-      if (!floorPlanImage) {
+      const floorPlanPDF = getSingleFilePath(req.files, "floorPlanPDF");
+      if (!floorPlanPDF) {
         return res
           .status(400)
           .json({ success: false, message: "Floor plan image is required." });
       }
 
-      req.body.floorPlanImage = floorPlanImage;
+      req.body.floorPlanPDF = floorPlanPDF;
       next();
     } catch (error) {
       res
