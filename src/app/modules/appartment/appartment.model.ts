@@ -72,15 +72,8 @@ const ApartmentSchema = new Schema<IApartment>(
       ],
     },
     CompletionDate: {
-      type: Number,
+      type: Date,
       required: true,
-      validate: {
-        validator: function (value: number) {
-          const currentYear = new Date().getFullYear();
-          return value >= currentYear;
-        },
-        message: "Completion date must be current year or future year",
-      },
     },
   },
   {

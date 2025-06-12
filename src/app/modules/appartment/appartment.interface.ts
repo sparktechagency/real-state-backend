@@ -52,5 +52,5 @@ export type IApartment = {
     | "TuscanyGroup"
     | "RHPriveEstates"
     | "DreamExclusive";
-  CompletionDate: number;
+  CompletionDate: Date;
 };
