@@ -70,6 +70,14 @@ const userSchema = new Schema<IUser, UserModal>(
       },
       select: 0,
     },
+    isSubscribe: {
+      type: Boolean,
+      default: false,
+    },
+    hasAccess: {
+      type: Boolean,
+      default: false,
+    },
     accountInformation: {
       status: {
         type: Boolean,

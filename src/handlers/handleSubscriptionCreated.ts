@@ -1,6 +1,4 @@
-import { StatusCodes } from "http-status-codes";
 import Stripe from "stripe";
-import ApiError from "../errors/ApiErrors";
 import stripe from "../config/stripe";
 import { User } from "../app/modules/user/user.model";
 import { Package } from "../app/modules/package/package.model";
@@ -24,13 +22,13 @@ export const handleSubscriptionCreated = async (data: Stripe.Subscription) => {
 
   const trxId = invoice?.payment_intent;
   const amountPaid = invoice?.total / 100;
-
   if (customer?.email) {
     const existingUser = await User.findOne({ email: customer?.email });
 
     if (existingUser) {
       // Find the pricing plan by priceId
-      const pricingPlan = await Package.findOne({ priceId });
+      // const pricingPlan = await Package.findOne({ priceId });
+      const pricingPlan = await Package.findOne();
 
       if (pricingPlan) {
         // Find the current active subscription
@@ -68,7 +66,7 @@ export const handleSubscriptionCreated = async (data: Stripe.Subscription) => {
         await User.findByIdAndUpdate(
           existingUser._id,
           {
-            isSubscribed: true,
+            isSubscribe: true,
             hasAccess: true,
           },
           { new: true }

@@ -24,6 +24,7 @@ export type IUser = {
   profile: string;
   verified: boolean;
   address?: string;
+  isSubscribe?: boolean;
   authentication?: IAuthenticationProps;
   accountInformation?: IStripeAccountInfo;
 };
