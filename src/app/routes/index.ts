@@ -9,6 +9,7 @@ import { AboutRoutes } from "../modules/about/about.route";
 import { PrivacyPolicyRoutes } from "../modules/privacypolicy/privacypolicy.route";
 import { DashboardRoutes } from "../modules/dashboard/dashboard.routes";
 import { customerSupportRouter } from "../modules/CustomerSupport/CustomerSupport.routes";
+import { PhaseRouter } from "../modules/phase/phase.routes";
 const router = express.Router();
 
 const apiRoutes = [
@@ -22,6 +23,7 @@ const apiRoutes = [
   { path: "/privacy-policy", route: PrivacyPolicyRoutes },
   { path: "/dashboard", route: DashboardRoutes },
   { path: "/customer-support", route: customerSupportRouter },
+  { path: "/phase", route: PhaseRouter }
 ];
 
 apiRoutes.forEach((route) => router.use(route.path, route.route));

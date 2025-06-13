@@ -24,10 +24,6 @@ const floorPlanSchema = new Schema<IFloorPlan>(
       type: String,
       required: true,
     },
-    seeView: {
-      type: Boolean,
-      required: true,
-    },
   },
   { timestamps: true }
 );

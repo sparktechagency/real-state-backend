@@ -6,5 +6,4 @@ export type IFloorPlan = {
   price: number;
   badSize: number;
   floorPlanPDF: string;
-  seeView: boolean;
 };
