@@ -13,7 +13,6 @@ const createCustomerSupportIntoDB = async (
       "Failed to created Support information"
     );
   }
-
   return customerSupport;
 };
 
