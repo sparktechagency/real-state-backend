@@ -1,4 +1,4 @@
-import { JwtPayload } from "jsonwebtoken";
+import { Jwt, JwtPayload } from "jsonwebtoken";
 import { Package } from "../package/package.model";
 import { ISubscription } from "./subscription.interface";
 import { Subscription } from "./subscription.model";
@@ -129,8 +129,21 @@ const subscriptionsFromDB = async (
   return data;
 };
 
+const mySubscriptionDetailsFromDB = async (user: JwtPayload) => {
+  const subscription = await Subscription.findOne({ user: user.id })
+    .populate("package", "title credit")
+    .lean();
+  if (!subscription) {
+    return { subscription: {} };
+  }
+  return { subscription };
+
+}
+
+
 export const SubscriptionService = {
   subscriptionDetailsFromDB,
   subscriptionsFromDB,
   companySubscriptionDetailsFromDB,
+  mySubscriptionDetailsFromDB
 };

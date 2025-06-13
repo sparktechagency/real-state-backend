@@ -5,7 +5,7 @@ import sendResponse from "../../../shared/sendResponse";
 import { StatusCodes } from "http-status-codes";
 
 
-const subscriptions = catchAsync( async(req: Request, res: Response)=>{
+const subscriptions = catchAsync(async (req: Request, res: Response) => {
     const result = await SubscriptionService.subscriptionsFromDB(req.query);
 
     sendResponse(res, {
@@ -16,9 +16,9 @@ const subscriptions = catchAsync( async(req: Request, res: Response)=>{
     })
 });
 
-const subscriptionDetails = catchAsync( async(req: Request, res: Response)=>{
+const subscriptionDetails = catchAsync(async (req: Request, res: Response) => {
     const result = await SubscriptionService.subscriptionDetailsFromDB(
-      req.user!
+        req.user!
     );
 
     sendResponse(res, {
@@ -29,7 +29,7 @@ const subscriptionDetails = catchAsync( async(req: Request, res: Response)=>{
     })
 });
 
-const companySubscriptionDetails= catchAsync( async(req: Request, res: Response)=>{
+const companySubscriptionDetails = catchAsync(async (req: Request, res: Response) => {
     const result = await SubscriptionService.companySubscriptionDetailsFromDB(req.params.id);
 
     sendResponse(res, {
@@ -41,8 +41,21 @@ const companySubscriptionDetails= catchAsync( async(req: Request, res: Response)
 });
 
 
+
+const mySubscriptionDetails = catchAsync(async (req: Request, res: Response) => {
+    const result = await SubscriptionService.mySubscriptionDetailsFromDB(req.user!);
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "My Subscription Details Retrieved Successfully",
+        data: result.subscription
+    })
+})
+
+
 export const SubscriptionController = {
     subscriptions,
     subscriptionDetails,
-    companySubscriptionDetails
+    companySubscriptionDetails,
+    mySubscriptionDetails
 }

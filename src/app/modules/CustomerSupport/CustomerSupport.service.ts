@@ -18,12 +18,10 @@ const createCustomerSupportIntoDB = async (
 };
 
 const getSupportInformation = async () => {
-  const result = await CustomerSupportModel.find();
-  if (!result) {
-    return [];
-  }
-  return result;
+  const result = await CustomerSupportModel.findOne();
+  return result || {};
 };
+
 
 export const customerSupportService = {
   createCustomerSupportIntoDB,

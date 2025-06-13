@@ -10,6 +10,7 @@ import { PrivacyPolicyRoutes } from "../modules/privacypolicy/privacypolicy.rout
 import { DashboardRoutes } from "../modules/dashboard/dashboard.routes";
 import { customerSupportRouter } from "../modules/CustomerSupport/CustomerSupport.routes";
 import { PhaseRouter } from "../modules/phase/phase.routes";
+import { SubscriptionRoutes } from "../modules/subscription/subscription.routes";
 const router = express.Router();
 
 const apiRoutes = [
@@ -23,7 +24,8 @@ const apiRoutes = [
   { path: "/privacy-policy", route: PrivacyPolicyRoutes },
   { path: "/dashboard", route: DashboardRoutes },
   { path: "/customer-support", route: customerSupportRouter },
-  { path: "/phase", route: PhaseRouter }
+  { path: "/phase", route: PhaseRouter },
+  { path: "/subscription", route: SubscriptionRoutes }
 ];
 
 apiRoutes.forEach((route) => router.use(route.path, route.route));

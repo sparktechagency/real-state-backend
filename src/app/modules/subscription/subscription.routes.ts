@@ -10,6 +10,8 @@ router.get(
   SubscriptionController.subscriptions
 );
 
+router.get("/details", auth(USER_ROLES.AGENCY), SubscriptionController.mySubscriptionDetails);
+
 router.get(
   "/details",
   auth(USER_ROLES.AGENCY),
