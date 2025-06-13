@@ -3,6 +3,7 @@ import ApiError from "../../../errors/ApiErrors";
 import { IFloorPlan } from "./floorePlan.interface";
 import { FloorPlan } from "./floorePlan.model";
 import { Apartment } from "../appartment/appartment.model";
+import { Phase } from "../phase/phase.model";
 
 const createFloorPlan = async (payload: IFloorPlan): Promise<IFloorPlan> => {
   const result = await FloorPlan.create(payload);
@@ -26,7 +27,7 @@ const getAllFlans = async (query: Record<string, any>) => {
   } = query;
 
 
- 
+
   const matchFloorPlan: any = {};
   if (priceMin || priceMax) {
     matchFloorPlan.price = {};
@@ -44,7 +45,7 @@ const getAllFlans = async (query: Record<string, any>) => {
   if (propertyType) apartmentFilter.propertyType = propertyType;
   if (location) apartmentFilter.location = location;
   if (salesCompany) apartmentFilter.salesCompany = salesCompany;
-  if (completionDate) apartmentFilter.completionDate = Number(completionDate); // ✅ Fixed field name
+  if (completionDate) apartmentFilter.completionDate = Number(completionDate);
   if (apartmentName)
     apartmentFilter.apartmentName = { $regex: apartmentName, $options: "i" };
 
@@ -70,9 +71,11 @@ const getAllFlans = async (query: Record<string, any>) => {
     const floorPlans = matchingFloorPlans.filter(
       (f) => f.apartmentId?.toString() === apartment._id.toString()
     );
+    const phases = await Phase.find({ apartment: apartment._id }).lean();
     apartmentMap.set(apartment._id.toString(), {
       ...apartment,
       floorPlans,
+      phases
     });
   }
 
@@ -86,7 +89,7 @@ const getAllFlans = async (query: Record<string, any>) => {
     apartments: Array.from(apartmentMap.values()),
   };
 };
-;
+
 
 const getSingleFloorPlan = async (id: string): Promise<IFloorPlan | null> => {
   const result = await FloorPlan.findById(id).populate("apartmentId");
