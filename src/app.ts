@@ -7,6 +7,7 @@ import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import session from "express-session";
 import passport from "./config/passport";
 import handleStripeWebhook from "./helpers/handleStripeWebhook";
+import { ddosProtection } from "./app/middlewares/ddosProtection";
 const app = express();
 app.post(
   "/api/stripe/webhook",
@@ -22,6 +23,7 @@ app.use(Morgan.errorHandler);
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(ddosProtection)
 
 //file retrieve
 app.use(express.static("uploads"));
