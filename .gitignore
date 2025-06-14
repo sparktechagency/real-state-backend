@@ -3,3 +3,4 @@ uploads
 /winston
 .env
 dist
+load-tester.js
