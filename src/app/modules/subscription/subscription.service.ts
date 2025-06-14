@@ -131,7 +131,7 @@ const subscriptionsFromDB = async (
 
 const mySubscriptionDetailsFromDB = async (user: JwtPayload) => {
   const subscription = await Subscription.findOne({ user: user.id })
-    .populate("package", "title credit")
+    .populate("package", "title credit duration")
     .lean();
   if (!subscription) {
     return { subscription: {} };
