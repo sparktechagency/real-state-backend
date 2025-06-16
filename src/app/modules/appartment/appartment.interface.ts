@@ -3,16 +3,16 @@ type IContact = {
   email: string;
   companyName: string;
 };
-type IFeatures = {
-  category: string;
-  generalAmenites: string;
-  connectivity: string;
-  ecoFriendly: string;
-  parking: string;
-  receational: string;
-  accessiblity: string;
-  nearbyFacilities: string;
-};
+// type IFeatures = {
+//   category: string;
+//   generalAmenites: string;
+//   connectivity: string;
+//   ecoFriendly: string;
+//   parking: string;
+//   receational: string;
+//   accessiblity: string;
+//   nearbyFacilities: string;
+// };
 
 export type IApartment = {
   apartmentImage: string[];
@@ -22,7 +22,7 @@ export type IApartment = {
   price: number;
   qualitySpecificationPDF: string[];
   contact: IContact;
-  features: IFeatures;
+  features: string[];
   latitude: Number;
   longitude: Number;
   propertyType: "Apartment" | "Villa" | "Townhouse";

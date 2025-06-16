@@ -7,16 +7,16 @@ const contactSchema = new Schema({
   companyName: { type: String, required: true },
 });
 
-const featuresSchema = new Schema({
-  category: { type: String, required: true },
-  generalAmenites: { type: String, required: true },
-  connectivity: { type: String, required: true },
-  ecoFriendly: { type: String, required: true },
-  parking: { type: String, required: true },
-  receational: { type: String, required: true },
-  accessiblity: { type: String, required: true },
-  nearbyFacilities: { type: String, required: true },
-});
+// const featuresSchema = new Schema({
+//   category: { type: String, required: true },
+//   generalAmenites: { type: String, required: true },
+//   connectivity: { type: String, required: true },
+//   ecoFriendly: { type: String, required: true },
+//   parking: { type: String, required: true },
+//   receational: { type: String, required: true },
+//   accessiblity: { type: String, required: true },
+//   nearbyFacilities: { type: String, required: true },
+// });
 
 const ApartmentSchema = new Schema<IApartment>(
   {
@@ -27,7 +27,7 @@ const ApartmentSchema = new Schema<IApartment>(
     price: { type: Number, required: true },
     qualitySpecificationPDF: [{ type: String, required: true }],
     contact: { type: contactSchema, required: true },
-    features: { type: featuresSchema, required: true },
+    features: { type: [String], required: true },
     latitude: { type: Number, required: true },
     longitude: { type: Number, required: true },
     propertyType: {
