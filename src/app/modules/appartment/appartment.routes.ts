@@ -10,7 +10,7 @@ const router = Router();
 router.post(
   "/create",
   fileUploadHandler(),
-  parseEmbeddedJson(["contact", "features"]),
+  parseEmbeddedJson(["contact"]),
   handleApartmentPayload,
   apartmentController.createApartment
 );
