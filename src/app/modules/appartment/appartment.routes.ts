@@ -17,7 +17,13 @@ router.post(
 
 router.get("/", apartmentController.getAllApartment);
 router.get("/:id", apartmentController.getSingleOne);
+router.patch("/:id",
+  auth(USER_ROLES.SUPER_ADMIN),
+  fileUploadHandler(),
+  handleApartmentPayload,
+  parseEmbeddedJson(["contact"]),
 
+  apartmentController.updateApartmentDetails);
 router.delete(
   "/:id",
   auth(USER_ROLES.SUPER_ADMIN),

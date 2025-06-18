@@ -46,9 +46,26 @@ const deleteApartment = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updateApartmentDetails = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const payload = req.body;
+  const result = await apartmentService.updateApartmentDetailsFromDB(
+    id,
+    payload
+  );
+  sendResponse(res, {
+    statusCode: 201,
+    success: true,
+    message: "Successfully retrieved",
+    data: result,
+  });
+});
+
+
 export const apartmentController = {
   createApartment,
   getAllApartment,
   getSingleOne,
   deleteApartment,
+  updateApartmentDetails
 };

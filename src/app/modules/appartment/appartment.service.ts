@@ -14,6 +14,7 @@ const createApartmentIntoDB = async (payload: IApartment) => {
 
 const getAllApartmentFromDB = async (query: Record<string, any>) => {
   // Create the QueryBuilder instance with both the model query and the query parameters
+  console.log("query", query);
   const queryBuilder = new QueryBuilder(Apartment.find(), query)
     .filter()
     .sort()
@@ -59,9 +60,23 @@ const deleteApartmentFromDB = async (id: string) => {
   return result;
 };
 
+const updateApartmentDetailsFromDB = async (
+  id: string,
+  payload: IApartment
+) => {
+  const result = await Apartment.findByIdAndUpdate(id, payload, { new: true });
+  if (!result) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "Failed to update apartment");
+  }
+  return result;
+};
+
+
+
 export const apartmentService = {
   createApartmentIntoDB,
   getAllApartmentFromDB,
   getSingleApartment,
   deleteApartmentFromDB,
+  updateApartmentDetailsFromDB
 };

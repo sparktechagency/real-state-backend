@@ -109,7 +109,7 @@ const fileUploadHandler = () => {
     { name: "image", maxCount: 1 },
     { name: "paymentPlanPDF", maxCount: 1 },
     { name: "qualitySpecificationPDF", maxCount: 5 },
-    { name: "apartmentImage", maxCount: 5 },
+    { name: "apartmentImage", maxCount: 50 },
     { name: "floorPlanPDF", maxCount: 1 },
   ]);
   return upload;
