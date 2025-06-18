@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import catchAsync from "../../../shared/catchAsync";
 import sendResponse from "../../../shared/sendResponse";
 import { FloorPlanService } from "./floorePlan.service";
+import { Request, Response } from "express";
 
 const createFloorePlan = catchAsync(async (req, res) => {
   const result = await FloorPlanService.createFloorPlan(req.body);
@@ -51,9 +52,21 @@ const getLocationPropertyTypeSalesCompanyCompletionYear = catchAsync(
   }
 );
 
+const updateFloorePlan = catchAsync(async (req: Request, res: Response) => {
+  const result = await FloorPlanService.updateFloorPlanFromDB(req.params.id, req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: "Floore Plan updated successfully",
+    data: result,
+  })
+})
+
+
 export const FloorePlanController = {
   createFloorePlan,
   getAllFloorePlan,
   getSingleFloor,
   getLocationPropertyTypeSalesCompanyCompletionYear,
+  updateFloorePlan
 };

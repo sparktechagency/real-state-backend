@@ -7,17 +7,6 @@ const contactSchema = new Schema({
   companyName: { type: String, required: true },
 });
 
-// const featuresSchema = new Schema({
-//   category: { type: String, required: true },
-//   generalAmenites: { type: String, required: true },
-//   connectivity: { type: String, required: true },
-//   ecoFriendly: { type: String, required: true },
-//   parking: { type: String, required: true },
-//   receational: { type: String, required: true },
-//   accessiblity: { type: String, required: true },
-//   nearbyFacilities: { type: String, required: true },
-// });
-
 const ApartmentSchema = new Schema<IApartment>(
   {
     apartmentImage: [{ type: String, required: true }],

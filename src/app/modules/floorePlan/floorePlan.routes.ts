@@ -47,4 +47,7 @@ router.get(
   FloorePlanController.getSingleFloor
 );
 
+
+router.patch("/:id", auth(USER_ROLES.SUPER_ADMIN), FloorePlanController.updateFloorePlan);
+
 export const FloorePlanRoutes = router;

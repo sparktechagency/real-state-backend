@@ -119,10 +119,20 @@ const getLocationPropertyTypeSalesCompanyCompletionYearFromDB = async () => {
   };
 };
 
+
+const updateFloorPlanFromDB = async (id: string, payload: IFloorPlan) => {
+  const result = await FloorPlan.findByIdAndUpdate(id, payload, { new: true });
+  if (!result) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "Failed to update floor plan")
+  }
+  return result;
+}
+
 // * Export function
 export const FloorPlanService = {
   createFloorPlan,
   getAllFlans,
   getSingleFloorPlan,
   getLocationPropertyTypeSalesCompanyCompletionYearFromDB,
+  updateFloorPlanFromDB
 };
