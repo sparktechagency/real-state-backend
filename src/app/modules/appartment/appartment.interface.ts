@@ -44,4 +44,5 @@ export type IApartment = {
   | "RHPriveEstates"
   | "DreamExclusive";
   CompletionDate: Date;
+  pricePdf: string;
 };

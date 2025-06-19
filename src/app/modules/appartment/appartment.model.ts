@@ -64,6 +64,7 @@ const ApartmentSchema = new Schema<IApartment>(
       type: Date,
       required: true,
     },
+    pricePdf: { type: String, required: true },
   },
   {
     timestamps: true,

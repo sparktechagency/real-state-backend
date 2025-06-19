@@ -44,6 +44,16 @@ router.get(
 router.get("/apartment/:apartmentId", FloorePlanController.getFloorsByApartmentId);
 
 
-router.patch("/:id", auth(USER_ROLES.SUPER_ADMIN), FloorePlanController.updateFloorePlan);
+router.patch("/:id", auth(USER_ROLES.SUPER_ADMIN), fileUploadHandler(), (req, res, next) => {
+  try {
+    const floorPlanPDF = getSingleFilePath(req.files, "floorPlanPDF");
+    req.body.floorPlanPDF = floorPlanPDF;
+    next();
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to upload image" });
+  }
+}, FloorePlanController.updateFloorePlan);
 
 export const FloorePlanRoutes = router;

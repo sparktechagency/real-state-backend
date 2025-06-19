@@ -5,7 +5,8 @@ type IFolderName =
   | "paymentPlanPDF"
   | "qualitySpecificationPDF"
   | "apartmentImage"
-  | "floorPlanPDF";
+  | "floorPlanPDF"
+  | "pricePdf";
 
 //single file
 export const getSingleFilePath = (files: any, folderName: IFolderName) => {
