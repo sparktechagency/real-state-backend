@@ -91,14 +91,13 @@ const getAllFlans = async (query: Record<string, any>) => {
 };
 
 
-const getSingleFloorPlan = async (id: string): Promise<IFloorPlan | null> => {
-  const result = await FloorPlan.findById(id).populate("apartmentId");
-  if (!result) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, "Have no Floor Plan");
+const getFloorPlansByApartmentId = async (apartmentId: string): Promise<IFloorPlan[]> => {
+  const result = await FloorPlan.find({ apartmentId }).populate("apartmentId")
+  if (!result.length) {
+    throw new ApiError(StatusCodes.NOT_FOUND, "No floor plans found for this apartment");
   }
   return result;
 };
-
 // * get all location / property type / sales company/ completion year
 const getLocationPropertyTypeSalesCompanyCompletionYearFromDB = async () => {
   const apartments = await Apartment.find(
@@ -132,7 +131,7 @@ const updateFloorPlanFromDB = async (id: string, payload: IFloorPlan) => {
 export const FloorPlanService = {
   createFloorPlan,
   getAllFlans,
-  getSingleFloorPlan,
+  getFloorPlansByApartmentId,
   getLocationPropertyTypeSalesCompanyCompletionYearFromDB,
   updateFloorPlanFromDB
 };

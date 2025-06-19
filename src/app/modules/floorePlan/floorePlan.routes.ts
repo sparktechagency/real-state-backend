@@ -41,11 +41,7 @@ router.get(
   auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
   FloorePlanController.getAllFloorePlan
 );
-router.get(
-  "/:id",
-  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
-  FloorePlanController.getSingleFloor
-);
+router.get("/apartment/:apartmentId", FloorePlanController.getFloorsByApartmentId);
 
 
 router.patch("/:id", auth(USER_ROLES.SUPER_ADMIN), FloorePlanController.updateFloorePlan);

@@ -27,13 +27,13 @@ const getAllFloorePlan = catchAsync(async (req, res) => {
   });
 });
 
-const getSingleFloor = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  const result = await FloorPlanService.getSingleFloorPlan(id);
+const getFloorsByApartmentId = catchAsync(async (req, res) => {
+  const { apartmentId } = req.params;
+  const result = await FloorPlanService.getFloorPlansByApartmentId(apartmentId);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
-    message: "Floore Plan retrieved successfully",
+    message: "Floor plans retrieved successfully",
     data: result,
   });
 });
@@ -66,7 +66,7 @@ const updateFloorePlan = catchAsync(async (req: Request, res: Response) => {
 export const FloorePlanController = {
   createFloorePlan,
   getAllFloorePlan,
-  getSingleFloor,
+  getFloorsByApartmentId,
   getLocationPropertyTypeSalesCompanyCompletionYear,
   updateFloorePlan
 };
