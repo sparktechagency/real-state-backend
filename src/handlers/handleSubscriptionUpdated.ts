@@ -14,7 +14,6 @@ export const handleSubscriptionUpdated = async (data: Stripe.Subscription) => {
 
   // Extract price ID from subscription items
   const priceId = subscription.items.data[0]?.price?.id;
-  console.log("Price id", priceId);
 
   // Retrieve the invoice to get the transaction ID and amount paid
   const invoice = await stripe.invoices.retrieve(
@@ -87,13 +86,8 @@ export const handleSubscriptionUpdated = async (data: Stripe.Subscription) => {
     } else {
       console.log(`User with Email: ${customer.email} not found!`);
       return;
-      // throw new ApiError(StatusCodes.NOT_FOUND, `User with Email: ${customer.email} not found!`);
     }
   } else {
-    // throw new ApiError(
-    //   StatusCodes.BAD_REQUEST,
-    //   "No email found for the customer!"
-    // );
     console.log("No email found for the customer!");
     return;
   }

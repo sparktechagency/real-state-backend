@@ -11,24 +11,31 @@ export const handleApartmentPayload = (
 ) => {
   try {
     const payload = req.body;
-    const apartmentImage = getMultipleFilesPath(req.files, "apartmentImage");
-    const qualitySpecificationPDF = getMultipleFilesPath(
-      req.files,
-      "qualitySpecificationPDF"
-    );
+    console.log("req.body", req.body);
+
+    let preservedImages = JSON.stringify(req.body.existImage) || [];
+
+    const uploadedImages = getMultipleFilesPath(req.files, "apartmentImage") || [];
+    let finalImageArray: string[] = [];
+    const preservedArray = typeof preservedImages === "string" ? [preservedImages] : preservedImages;
+    // Merge preserved + new uploaded
+    finalImageArray = [...preservedArray, ...uploadedImages];
+
+    const qualitySpecificationPDF = getMultipleFilesPath(req.files, "qualitySpecificationPDF");
     const paymentPlanPDF = getSingleFilePath(req.files, "paymentPlanPDF");
     const pricePdf = getSingleFilePath(req.files, "pricePdf");
 
     req.body = {
       ...payload,
-      apartmentImage,
+      apartmentImage: finalImageArray,
       qualitySpecificationPDF,
       paymentPlanPDF,
-      pricePdf
+      pricePdf,
     };
 
     next();
   } catch (error) {
+    console.error("Apartment payload error:", error);
     res.status(500).json({ message: "Failed to process apartment payload" });
   }
 };
