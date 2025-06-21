@@ -11,16 +11,12 @@ export const handleApartmentPayload = (
 ) => {
   try {
     const payload = req.body;
-    console.log("req.body", req.body);
-
-    let preservedImages = JSON.stringify(req.body.existImage) || [];
-
+    let preservedImages = req.body.existImage !== undefined ? JSON.parse(req.body.existImage) : []
     const uploadedImages = getMultipleFilesPath(req.files, "apartmentImage") || [];
     let finalImageArray: string[] = [];
     const preservedArray = typeof preservedImages === "string" ? [preservedImages] : preservedImages;
     // Merge preserved + new uploaded
     finalImageArray = [...preservedArray, ...uploadedImages];
-
     const qualitySpecificationPDF = getMultipleFilesPath(req.files, "qualitySpecificationPDF");
     const paymentPlanPDF = getSingleFilePath(req.files, "paymentPlanPDF");
     const pricePdf = getSingleFilePath(req.files, "pricePdf");
