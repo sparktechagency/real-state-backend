@@ -12,7 +12,7 @@ const phaseSchema = new Schema<IPhase>({
         required: true
     },
     date: {
-        type: Date,
+        type: String,
         required: true
     }
 }, {
