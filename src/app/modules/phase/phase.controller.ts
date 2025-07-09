@@ -36,8 +36,21 @@ const updatePhase = catchAsync(async (req: Request, res: Response) => {
 })
 
 
+// delete phase by id
+const deletePhase = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params
+    const result = await PhaseService.deletePhaseFromDB(id)
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Successfully delete Phase",
+        data: result
+    })
+})
+
 export const PhaseController = {
     createPhase,
     getAllPhase,
-    updatePhase
+    updatePhase,
+    deletePhase
 }

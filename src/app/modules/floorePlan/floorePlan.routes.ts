@@ -56,4 +56,8 @@ router.patch("/:id", auth(USER_ROLES.SUPER_ADMIN), fileUploadHandler(), (req, re
   }
 }, FloorePlanController.updateFloorePlan);
 
+
+
+router.delete("/:id", auth(USER_ROLES.SUPER_ADMIN), FloorePlanController.deleteFloorePlan);
+
 export const FloorePlanRoutes = router;

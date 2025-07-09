@@ -29,8 +29,20 @@ const updatePhaseFromDB = async (id: string, payload: Partial<IPhase>) => {
     return result
 }
 
+
+
+// delete phase by id
+const deletePhaseFromDB = async (id: string) => {
+    const result = await Phase.findByIdAndDelete(id)
+    if (!result) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Failed to delete phase")
+    }
+    return result
+}
+
 export const PhaseService = {
     createPhaseIntoDB,
     getAllPhaseFromDB,
-    updatePhaseFromDB
+    updatePhaseFromDB,
+    deletePhaseFromDB
 }

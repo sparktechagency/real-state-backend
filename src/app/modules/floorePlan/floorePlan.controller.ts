@@ -64,11 +64,23 @@ const updateFloorePlan = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
+const deleteFloorePlan = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params 
+  const result = await FloorPlanService.deleteFloorPlanFromDB(id);
+  sendResponse(res, { 
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: "Floore Plan deleted successfully",
+    data: result,
+  });
+});
+
 
 export const FloorePlanController = {
   createFloorePlan,
   getAllFloorePlan,
   getFloorsByApartmentId,
   getLocationPropertyTypeSalesCompanyCompletionYear,
-  updateFloorePlan
+  updateFloorePlan,
+  deleteFloorePlan
 };

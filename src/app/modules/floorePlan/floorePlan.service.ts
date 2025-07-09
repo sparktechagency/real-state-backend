@@ -127,11 +127,22 @@ const updateFloorPlanFromDB = async (id: string, payload: IFloorPlan) => {
   return result;
 }
 
+
+const deleteFloorPlanFromDB = async (id: string) => {
+  const result = await FloorPlan.findByIdAndDelete(id);
+  if (!result) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "Failed to delete floor plan")
+  } 
+  return result;
+}
+
+
 // * Export function
 export const FloorPlanService = {
   createFloorPlan,
   getAllFlans,
   getFloorPlansByApartmentId,
   getLocationPropertyTypeSalesCompanyCompletionYearFromDB,
-  updateFloorPlanFromDB
+  updateFloorPlanFromDB,
+  deleteFloorPlanFromDB
 };
