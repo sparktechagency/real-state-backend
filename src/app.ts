@@ -22,8 +22,8 @@ app.use(Morgan.errorHandler);
 //body parser
 app.use(cors(
   {
-    // origin:"http://10.10.7.49:5173",
-    origin:"http://147.93.94.210:4173",
+    origin:"*",
+    // origin:"http://147.93.94.210:4173",
     methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
     credentials: true,
   }
