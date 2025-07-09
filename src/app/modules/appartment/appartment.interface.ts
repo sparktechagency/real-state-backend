@@ -4,13 +4,12 @@ type IContact = {
   companyName: string;
 };
 
-
 export type IApartment = {
   apartmentImage: string[];
   apartmentName: string;
   commission: number;
   paymentPlanPDF: string;
-  price: number;
+  relevantLink: [string];
   qualitySpecificationPDF: string[];
   contact: IContact;
   features: string[];
@@ -18,31 +17,31 @@ export type IApartment = {
   longitude: Number;
   propertyType: "Apartment" | "Villa" | "Townhouse";
   location:
-  | "Malaga"
-  | "Estepona"
-  | "Mijas"
-  | "Casares"
-  | "Manilva"
-  | "Sotogrande"
-  | "Marbella"
-  | "Benalmadena"
-  | "Fuengirola";
+    | "Malaga"
+    | "Estepona"
+    | "Mijas"
+    | "Casares"
+    | "Manilva"
+    | "Sotogrande"
+    | "Marbella"
+    | "Benalmadena"
+    | "Fuengirola";
   salesCompany:
-  | "Magnum"
-  | "Azul"
-  | "OneEden"
-  | "Aedas"
-  | "BromleyEstates"
-  | "MXM"
-  | "PrimeInvest"
-  | "ON3"
-  | "GILMAR"
-  | "RossoInmobilaria"
-  | "Nvoga"
-  | "TaylorWimpey"
-  | "TuscanyGroup"
-  | "RHPriveEstates"
-  | "DreamExclusive";
+    | "Magnum"
+    | "Azul"
+    | "OneEden"
+    | "Aedas"
+    | "BromleyEstates"
+    | "MXM"
+    | "PrimeInvest"
+    | "ON3"
+    | "GILMAR"
+    | "RossoInmobilaria"
+    | "Nvoga"
+    | "TaylorWimpey"
+    | "TuscanyGroup"
+    | "RHPriveEstates"
+    | "DreamExclusive";
   CompletionDate: Date;
   pricePdf: string;
 };
