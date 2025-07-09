@@ -13,7 +13,7 @@ const ApartmentSchema = new Schema<IApartment>(
     apartmentName: { type: String, required: true },
     commission: { type: Number, required: true },
     paymentPlanPDF: { type: String, required: true },
-    relevantLink: [{ type: String, required: true }],
+    price: { type: Number, required: true },
     qualitySpecificationPDF: [{ type: String, required: true }],
     contact: { type: contactSchema, required: true },
     features: { type: [String], required: true },
