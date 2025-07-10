@@ -15,11 +15,12 @@ const createPhase = catchAsync(async (req: Request, res: Response) => {
 
 
 const getAllPhase = catchAsync(async (req: Request, res: Response) => {
-    const result = await PhaseService.getAllPhaseFromDB()
+    const result = await PhaseService.getAllPhaseFromDB(req.query)
     sendResponse(res, {
         statusCode: 200,
         success: true,
         message: "Successfully retrieve Phase",
+        // @ts-ignore
         data: result
     })
 })

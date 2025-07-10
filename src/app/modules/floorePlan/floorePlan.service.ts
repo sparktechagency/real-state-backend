@@ -23,7 +23,7 @@ const getAllFlans = async (query: Record<string, any>) => {
     completionDate,
     apartmentName,
     page = 1,
-    limit = 10000,
+    limit = 10,
   } = query;
 
 
