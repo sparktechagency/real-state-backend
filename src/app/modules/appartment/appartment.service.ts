@@ -82,5 +82,5 @@ export const apartmentService = {
   getAllApartmentFromDB,
   getSingleApartment,
   deleteApartmentFromDB,
-  updateApartmentDetailsFromDB
+  updateApartmentDetailsFromDB,
 };

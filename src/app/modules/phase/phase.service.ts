@@ -4,6 +4,7 @@ import { IPhase } from "./phase.interface";
 import { Phase } from "./phase.model";
 import QueryBuilder from "../../builder/QueryBuilder";
 import { query } from "express";
+import { SendResponse } from "firebase-admin/lib/messaging/messaging-api";
 
 const createPhaseIntoDB = async (payload: IPhase) => {
   const result = await Phase.create(payload);
@@ -13,7 +14,9 @@ const createPhaseIntoDB = async (payload: IPhase) => {
   return result;
 };
 
-const getAllPhaseFromDB = async (query: Record<string, any>) => {
+const getAllPhaseFromDB = async (
+  query: Record<string, any>
+): Promise<SendResponse> => {
   const queryBuilder = new QueryBuilder(Phase.find(), query)
     .search(["name", "description"])
     .filter()
@@ -25,11 +28,11 @@ const getAllPhaseFromDB = async (query: Record<string, any>) => {
   const pagination = await queryBuilder.getPaginationInfo();
 
   return {
+    // @ts-ignore
     meta: pagination,
     data: result,
   };
 };
-
 
 const updatePhaseFromDB = async (id: string, payload: Partial<IPhase>) => {
   const result = await Phase.findByIdAndUpdate(id, payload, { new: true });

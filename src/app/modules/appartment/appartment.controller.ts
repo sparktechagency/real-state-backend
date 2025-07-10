@@ -19,7 +19,7 @@ const getAllApartment = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: 201,
     success: true,
-    message: "Successfully retrived",
+    message: "Successfully retrieve",
     pagination: result.meta,
     data: result.data,
   });

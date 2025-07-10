@@ -4,6 +4,7 @@ import { IFloorPlan } from "./floorePlan.interface";
 import { FloorPlan } from "./floorePlan.model";
 import { Apartment } from "../appartment/appartment.model";
 import { Phase } from "../phase/phase.model";
+import { IPhase } from "../phase/phase.interface";
 
 const createFloorPlan = async (payload: IFloorPlan): Promise<IFloorPlan> => {
   const result = await FloorPlan.create(payload);
@@ -12,6 +13,83 @@ const createFloorPlan = async (payload: IFloorPlan): Promise<IFloorPlan> => {
   }
   return result;
 };
+
+// const getAllFlans = async (query: Record<string, any>) => {
+//   const {
+//     priceMin,
+//     priceMax,
+//     propertyType,
+//     location,
+//     salesCompany,
+//     completionDate,
+//     apartmentName,
+//     page = 1,
+//     limit = 10,
+//   } = query;
+
+
+
+//   const matchFloorPlan: any = {};
+//   if (priceMin || priceMax) {
+//     matchFloorPlan.price = {};
+//     if (priceMin) matchFloorPlan.price.$gte = Number(priceMin);
+//     if (priceMax) matchFloorPlan.price.$lte = Number(priceMax);
+//   }
+
+
+//   const matchingFloorPlans = await FloorPlan.find(matchFloorPlan).lean();
+
+//   const apartmentIdSet = new Set(
+//     matchingFloorPlans.map((f) => f.apartmentId?.toString())
+//   );
+//   const apartmentFilter: any = {};
+//   if (propertyType) apartmentFilter.propertyType = propertyType;
+//   if (location) apartmentFilter.location = location;
+//   if (salesCompany) apartmentFilter.salesCompany = salesCompany;
+//   if (completionDate) apartmentFilter.completionDate = Number(completionDate);
+//   if (apartmentName)
+//     apartmentFilter.apartmentName = { $regex: apartmentName, $options: "i" };
+
+//   if (apartmentIdSet.size > 0) {
+//     apartmentFilter._id = { $in: Array.from(apartmentIdSet) };
+//   } else {
+//     return {
+//       pagination: { total: 0, page, limit, totalPage: 0 },
+//       apartments: [],
+//     };
+//   }
+
+
+//   const total = await Apartment.countDocuments(apartmentFilter);
+//   const totalPage = Math.ceil(total / Number(limit));
+//   const apartments = await Apartment.find(apartmentFilter)
+//     .skip((Number(page) - 1) * Number(limit))
+//     .limit(Number(limit))
+//     .lean();
+
+//   const apartmentMap = new Map();
+//   for (const apartment of apartments) {
+//     const floorPlans = matchingFloorPlans.filter(
+//       (f) => f.apartmentId?.toString() === apartment._id.toString()
+//     );
+//     const phases = await Phase.find({ apartment: apartment._id }).lean();
+//     apartmentMap.set(apartment._id.toString(), {
+//       ...apartment,
+//       floorPlans,
+//       phases
+//     });
+//   }
+
+//   return {
+//     pagination: {
+//       total,
+//       page: Number(page),
+//       limit: Number(limit),
+//       totalPage,
+//     },
+//     apartments: Array.from(apartmentMap.values()),
+//   };
+// };
 
 const getAllFlans = async (query: Record<string, any>) => {
   const {
@@ -26,8 +104,7 @@ const getAllFlans = async (query: Record<string, any>) => {
     limit = 10,
   } = query;
 
-
-
+  // --- FloorPlan Filter ---
   const matchFloorPlan: any = {};
   if (priceMin || priceMax) {
     matchFloorPlan.price = {};
@@ -35,20 +112,49 @@ const getAllFlans = async (query: Record<string, any>) => {
     if (priceMax) matchFloorPlan.price.$lte = Number(priceMax);
   }
 
-
   const matchingFloorPlans = await FloorPlan.find(matchFloorPlan).lean();
-
   const apartmentIdSet = new Set(
     matchingFloorPlans.map((f) => f.apartmentId?.toString())
   );
-  const apartmentFilter: any = {};
-  if (propertyType) apartmentFilter.propertyType = propertyType;
-  if (location) apartmentFilter.location = location;
-  if (salesCompany) apartmentFilter.salesCompany = salesCompany;
-  if (completionDate) apartmentFilter.completionDate = Number(completionDate);
-  if (apartmentName)
-    apartmentFilter.apartmentName = { $regex: apartmentName, $options: "i" };
 
+  // --- Apartment Filter ---
+  const apartmentFilter: any = {};
+
+  // 🟢 Helper to normalize comma-separated or array values
+  const normalizeFilter = (fieldValue: string | string[] | undefined): any => {
+    if (!fieldValue) return undefined;
+
+    if (Array.isArray(fieldValue)) {
+      return { $in: fieldValue };
+    }
+
+    if (typeof fieldValue === 'string' && fieldValue.includes(',')) {
+      return { $in: fieldValue.split(',').map((v) => v.trim()) };
+    }
+
+    return fieldValue;
+  };
+
+  const propertyTypeFilter = normalizeFilter(propertyType);
+  const locationFilter = normalizeFilter(location);
+  const salesCompanyFilter = normalizeFilter(salesCompany);
+
+  if (propertyTypeFilter) apartmentFilter.propertyType = propertyTypeFilter;
+  if (locationFilter) apartmentFilter.location = locationFilter;
+  if (salesCompanyFilter) apartmentFilter.salesCompany = salesCompanyFilter;
+
+  if (completionDate) {
+    apartmentFilter.completionDate = Number(completionDate);
+  }
+
+  if (apartmentName) {
+    apartmentFilter.apartmentName = {
+      $regex: apartmentName,
+      $options: 'i',
+    };
+  }
+
+  // Only filter by apartments that have matching floor plans
   if (apartmentIdSet.size > 0) {
     apartmentFilter._id = { $in: Array.from(apartmentIdSet) };
   } else {
@@ -58,7 +164,7 @@ const getAllFlans = async (query: Record<string, any>) => {
     };
   }
 
-
+  // --- Pagination ---
   const total = await Apartment.countDocuments(apartmentFilter);
   const totalPage = Math.ceil(total / Number(limit));
   const apartments = await Apartment.find(apartmentFilter)
@@ -66,16 +172,18 @@ const getAllFlans = async (query: Record<string, any>) => {
     .limit(Number(limit))
     .lean();
 
+  // --- Combine with floorPlans & phases ---
   const apartmentMap = new Map();
   for (const apartment of apartments) {
     const floorPlans = matchingFloorPlans.filter(
       (f) => f.apartmentId?.toString() === apartment._id.toString()
     );
     const phases = await Phase.find({ apartment: apartment._id }).lean();
+
     apartmentMap.set(apartment._id.toString(), {
       ...apartment,
       floorPlans,
-      phases
+      phases,
     });
   }
 
@@ -90,13 +198,20 @@ const getAllFlans = async (query: Record<string, any>) => {
   };
 };
 
+const getFloorPlansByApartmentId = async (apartmentId: string) => {
+  const floorPlans = await FloorPlan.find({ apartmentId });
+  const phases = await Phase.find({ apartment: apartmentId });
+  const apartment = await Apartment.findById(apartmentId).lean();
 
-const getFloorPlansByApartmentId = async (apartmentId: string): Promise<IFloorPlan[]> => {
-  const result = await FloorPlan.find({ apartmentId }).populate("apartmentId")
-  if (!result.length) {
-    throw new ApiError(StatusCodes.NOT_FOUND, "No floor plans found for this apartment");
+  if (!apartment) {
+    throw new ApiError(StatusCodes.NOT_FOUND, "Apartment not found");
   }
-  return result;
+
+  return {
+    ...apartment,
+    phases,
+    floorPlans,
+  };
 };
 // * get all location / property type / sales company/ completion year
 const getLocationPropertyTypeSalesCompanyCompletionYearFromDB = async () => {

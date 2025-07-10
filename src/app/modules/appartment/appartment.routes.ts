@@ -20,15 +20,17 @@ router.get("/", apartmentController.getAllApartment);
 // get single apartment
 router.get("/:id", apartmentController.getSingleOne);
 // update apartment
-router.patch("/:id",
+router.patch(
+  "/:id",
   auth(USER_ROLES.SUPER_ADMIN),
   fileUploadHandler(),
   handleApartmentPayload,
   parseEmbeddedJson(["contact"]),
 
-  apartmentController.updateApartmentDetails);
+  apartmentController.updateApartmentDetails
+);
 
-  // delete apartment
+// delete apartment
 router.delete(
   "/:id",
   auth(USER_ROLES.SUPER_ADMIN),
