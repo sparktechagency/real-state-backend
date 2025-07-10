@@ -5,6 +5,7 @@ import { FloorPlan } from "./floorePlan.model";
 import { Apartment } from "../appartment/appartment.model";
 import { Phase } from "../phase/phase.model";
 import { IPhase } from "../phase/phase.interface";
+import QueryBuilder from "../../builder/QueryBuilder";
 
 const createFloorPlan = async (payload: IFloorPlan): Promise<IFloorPlan> => {
   const result = await FloorPlan.create(payload);
@@ -198,21 +199,42 @@ const getAllFlans = async (query: Record<string, any>) => {
   };
 };
 
-const getFloorPlansByApartmentId = async (apartmentId: string) => {
-  const floorPlans = await FloorPlan.find({ apartmentId });
-  const phases = await Phase.find({ apartment: apartmentId });
+const getFloorPlansByApartmentId = async (
+  apartmentId: string,
+  query: Record<string, any>
+) => {
   const apartment = await Apartment.findById(apartmentId).lean();
-
   if (!apartment) {
     throw new ApiError(StatusCodes.NOT_FOUND, "Apartment not found");
   }
 
+  // --- FloorPlan Query ---
+  const floorPlanQueryBuilder = new QueryBuilder(
+    FloorPlan.find({ apartmentId }),
+    query
+  );
+  floorPlanQueryBuilder.sort().paginate().fields();
+  const floorPlans = await floorPlanQueryBuilder.modelQuery.lean();
+  const floorPlanPagination = await floorPlanQueryBuilder.getPaginationInfo();
+
+  // --- Phase Query ---
+  const phaseQueryBuilder = new QueryBuilder(
+    Phase.find({ apartment: apartmentId }),
+    query
+  );
+  phaseQueryBuilder.sort().paginate().fields();
+  const phases = await phaseQueryBuilder.modelQuery.lean();
+  const phasePagination = await phaseQueryBuilder.getPaginationInfo();
+
   return {
     ...apartment,
     phases,
+    phasePagination,
     floorPlans,
+    floorPlanPagination,
   };
 };
+
 // * get all location / property type / sales company/ completion year
 const getLocationPropertyTypeSalesCompanyCompletionYearFromDB = async () => {
   const apartments = await Apartment.find(

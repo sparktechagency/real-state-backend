@@ -29,7 +29,7 @@ const getAllFloorePlan = catchAsync(async (req, res) => {
 
 const getFloorsByApartmentId = catchAsync(async (req, res) => {
   const { apartmentId } = req.params;
-  const result = await FloorPlanService.getFloorPlansByApartmentId(apartmentId);
+  const result = await FloorPlanService.getFloorPlansByApartmentId(apartmentId, req.query);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
