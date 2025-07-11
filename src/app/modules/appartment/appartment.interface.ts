@@ -8,7 +8,7 @@ type IContact = {
 export type IApartment = {
   apartmentImage: string[];
   apartmentName: string;
-  commission: number;
+  commission: string;
   paymentPlanPDF: string;
   price: number;
   qualitySpecificationPDF: string[];
