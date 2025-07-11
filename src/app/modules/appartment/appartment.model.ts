@@ -37,6 +37,10 @@ const ApartmentSchema = new Schema<IApartment>(
         "Marbella",
         "Benalmadena",
         "Fuengirola",
+        "Malaga",
+        "La Alcaidesa",
+        "Rincon de la Victoria",
+        "Toree del Mar",
       ],
     },
     salesCompany: {

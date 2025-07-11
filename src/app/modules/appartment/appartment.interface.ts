@@ -26,7 +26,12 @@ export type IApartment = {
   | "Sotogrande"
   | "Marbella"
   | "Benalmadena"
-  | "Fuengirola";
+  | "Fuengirola"
+  | "Malaga"
+  | "La Alcaidesa"
+  | "Rincon de la Victoria"
+  | "Toree del Mar";
+
   salesCompany:
   | "Magnum"
   | "Azul"
