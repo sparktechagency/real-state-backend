@@ -17,8 +17,10 @@ router.post(
 
 // get all apartments
 router.get("/", apartmentController.getAllApartment);
+router.get("/location-property-type", apartmentController.getLocationPropertyType);
 // get single apartment
 router.get("/:id", apartmentController.getSingleOne);
+
 // update apartment
 router.patch(
   "/:id",
@@ -29,6 +31,8 @@ router.patch(
 
   apartmentController.updateApartmentDetails
 );
+
+
 
 // delete apartment
 router.delete(

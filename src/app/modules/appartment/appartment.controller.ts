@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import catchAsync from "../../../shared/catchAsync";
 import sendResponse from "../../../shared/sendResponse";
 import { apartmentService } from "./appartment.service";
+import { StatusCodes } from "http-status-codes";
 
 const createApartment = catchAsync(async (req: Request, res: Response) => {
   const result = req.body;
@@ -62,10 +63,24 @@ const updateApartmentDetails = catchAsync(async (req: Request, res: Response) =>
 });
 
 
+
+// list of locations and property types dynamically
+const getLocationPropertyType = catchAsync(async (req: Request, res: Response) => {
+  const result = await apartmentService.getLocationPropertyTypeSalesCompanyCompletionYearFromDB();
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Successfully retrieved",
+    data: result,
+  });
+});
+
+
 export const apartmentController = {
   createApartment,
   getAllApartment,
   getSingleOne,
   deleteApartment,
-  updateApartmentDetails
+  updateApartmentDetails,
+  getLocationPropertyType
 };

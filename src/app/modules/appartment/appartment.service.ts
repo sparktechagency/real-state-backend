@@ -77,10 +77,35 @@ const updateApartmentDetailsFromDB = async (
   return result;
 };
 
+// list of locations and property types dynamically
+const getLocationPropertyTypeSalesCompanyCompletionYearFromDB = async () => {
+  const result = await Apartment.find();
+  if (!result) {
+    return [];
+  }
+  const locationsSet = new Set<string>();
+  const salesCompanySet = new Set<string>();
+
+  for (const apartment of result) {
+    if (apartment.location) {
+      locationsSet.add(apartment.location);
+    }
+    if (apartment.salesCompany) {
+      salesCompanySet.add(apartment.salesCompany);
+    }
+  }
+
+  return {
+    locations: Array.from(locationsSet),
+    salesCompanies: Array.from(salesCompanySet),
+  };
+};
+
 export const apartmentService = {
   createApartmentIntoDB,
   getAllApartmentFromDB,
   getSingleApartment,
   deleteApartmentFromDB,
   updateApartmentDetailsFromDB,
+  getLocationPropertyTypeSalesCompanyCompletionYearFromDB,
 };
