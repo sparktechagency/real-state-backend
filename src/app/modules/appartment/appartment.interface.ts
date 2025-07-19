@@ -4,7 +4,6 @@ type IContact = {
   companyName: string;
 };
 
-
 export type IApartment = {
   apartmentImage: string[];
   apartmentName: string;
@@ -17,36 +16,37 @@ export type IApartment = {
   longitude: Number;
   propertyType: "Apartment" | "Villa" | "Townhouse";
   location:
-  | "Malaga"
-  | "Estepona"
-  | "Mijas"
-  | "Casares"
-  | "Manilva"
-  | "Sotogrande"
-  | "Marbella"
-  | "Benalmadena"
-  | "Fuengirola"
-  | "Malaga"
-  | "La Alcaidesa"
-  | "Rincon de la Victoria"
-  | "Toree del Mar";
+    | "Malaga"
+    | "Estepona"
+    | "Mijas"
+    | "Casares"
+    | "Manilva"
+    | "Sotogrande"
+    | "Marbella"
+    | "Benalmadena"
+    | "Fuengirola"
+    | "Malaga"
+    | "La Alcaidesa"
+    | "Rincon de la Victoria"
+    | "Toree del Mar"
+    | "Higueron";
 
   salesCompany:
-  | "Magnum"
-  | "Azul"
-  | "OneEden"
-  | "Aedas"
-  | "BromleyEstates"
-  | "MXM"
-  | "PrimeInvest"
-  | "ON3"
-  | "GILMAR"
-  | "RossoInmobilaria"
-  | "Nvoga"
-  | "TaylorWimpey"
-  | "TuscanyGroup"
-  | "RHPriveEstates"
-  | "DreamExclusive";
+    | "Magnum"
+    | "Azul"
+    | "OneEden"
+    | "Aedas"
+    | "BromleyEstates"
+    | "MXM"
+    | "PrimeInvest"
+    | "ON3"
+    | "GILMAR"
+    | "RossoInmobilaria"
+    | "Nvoga"
+    | "TaylorWimpey"
+    | "TuscanyGroup"
+    | "RHPriveEstates"
+    | "DreamExclusive";
   CompletionDate: Date;
   pricePdf: string;
 };
