@@ -10,7 +10,6 @@ export type IApartment = {
   apartmentName: string;
   commission: string;
   paymentPlanPDF: string;
-  price: number;
   qualitySpecificationPDF: string[];
   contact: IContact;
   features: string[];
