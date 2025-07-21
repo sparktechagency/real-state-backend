@@ -285,6 +285,46 @@ const deleteFloorPlanFromDB = async (id: string) => {
   return result;
 };
 
+// get all floor plans with pagination using apartmentId
+const getFloorePlanFromDBUsingApartmentId = async (
+  id: string,
+  query: Record<string, any>
+) => {
+  const floorQueryBuilder = new QueryBuilder(
+    FloorPlan.find({ apartmentId: id }),
+    query
+  );
+
+  floorQueryBuilder.sort().paginate().fields();
+  const floorData = await floorQueryBuilder.modelQuery.lean();
+  const floorMeta = await floorQueryBuilder.getPaginationInfo();
+
+  return {
+    meta: floorMeta,
+    data: floorData,
+  };
+};
+
+// get all phase using apartmentId
+const getPhaseFromDBUsingApartmentId = async (
+  id: string,
+  query: Record<string, any>
+) => {
+  const phaseQueryBuilder = new QueryBuilder(
+    Phase.find({ apartment: id }),
+    query
+  );
+
+  phaseQueryBuilder.sort().paginate().fields();
+  const phaseData = await phaseQueryBuilder.modelQuery.lean();
+  const phaseMeta = await phaseQueryBuilder.getPaginationInfo();
+
+  return {
+    meta: phaseMeta,
+    data: phaseData,
+  };
+};
+
 // * Export function
 export const FloorPlanService = {
   createFloorPlan,
@@ -293,4 +333,6 @@ export const FloorPlanService = {
   getLocationPropertyTypeSalesCompanyCompletionYearFromDB,
   updateFloorPlanFromDB,
   deleteFloorPlanFromDB,
+  getFloorePlanFromDBUsingApartmentId,
+  getPhaseFromDBUsingApartmentId
 };

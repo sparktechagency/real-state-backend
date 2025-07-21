@@ -46,6 +46,20 @@ router.get(
   auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
   FloorePlanController.getLocationPropertyTypeSalesCompanyCompletionYear
 );
+
+router.get(
+  "/plans/:id",
+  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
+  FloorePlanController.getFloorePlanBaseOnApartmentId
+);
+
+
+router.get(
+  "/phases/:id",
+  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
+  FloorePlanController.getPhaseFromApartmentId
+);
+
 /**
  * @route GET /floorePlan
  *  @desc Get all floor plans
@@ -58,7 +72,7 @@ router.get(
   auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
   FloorePlanController.getAllFloorePlan
 );
-// 
+//
 
 // Get floor plans by apartment ID
 router.get(

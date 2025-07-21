@@ -29,7 +29,10 @@ const getAllFloorePlan = catchAsync(async (req, res) => {
 
 const getFloorsByApartmentId = catchAsync(async (req, res) => {
   const { apartmentId } = req.params;
-  const result = await FloorPlanService.getFloorPlansByApartmentId(apartmentId, req.query);
+  const result = await FloorPlanService.getFloorPlansByApartmentId(
+    apartmentId,
+    req.query
+  );
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
@@ -53,21 +56,21 @@ const getLocationPropertyTypeSalesCompanyCompletionYear = catchAsync(
 );
 
 const updateFloorePlan = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params
-  const data = req.body
+  const { id } = req.params;
+  const data = req.body;
   const result = await FloorPlanService.updateFloorPlanFromDB(id, data);
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
     message: "Floore Plan updated successfully",
     data: result,
-  })
-})
+  });
+});
 
 const deleteFloorePlan = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params 
+  const { id } = req.params;
   const result = await FloorPlanService.deleteFloorPlanFromDB(id);
-  sendResponse(res, { 
+  sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,
     message: "Floore Plan deleted successfully",
@@ -75,6 +78,41 @@ const deleteFloorePlan = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// controller for floor plan using apartmentId
+const getFloorePlanBaseOnApartmentId = catchAsync(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await FloorPlanService.getFloorePlanFromDBUsingApartmentId(
+      id,
+      req.query
+    );
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: "Floor Plan retrieved successfully",
+      pagination: result.meta,
+      data: result.data,
+    });
+  }
+);
+
+// get all phase using apartmentId
+const getPhaseFromApartmentId = catchAsync(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await FloorPlanService.getPhaseFromDBUsingApartmentId(
+      id,
+      req.query
+    );
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: "Phase retrieved successfully",
+      pagination: result.meta,
+      data: result.data,
+    });
+  }
+);
 
 export const FloorePlanController = {
   createFloorePlan,
@@ -82,5 +120,7 @@ export const FloorePlanController = {
   getFloorsByApartmentId,
   getLocationPropertyTypeSalesCompanyCompletionYear,
   updateFloorePlan,
-  deleteFloorePlan
+  deleteFloorePlan,
+  getFloorePlanBaseOnApartmentId,
+  getPhaseFromApartmentId
 };
