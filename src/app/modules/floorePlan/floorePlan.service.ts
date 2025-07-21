@@ -28,15 +28,12 @@ const createFloorPlan = async (payload: IFloorPlan): Promise<IFloorPlan> => {
 //     limit = 10,
 //   } = query;
 
-
-
 //   const matchFloorPlan: any = {};
 //   if (priceMin || priceMax) {
 //     matchFloorPlan.price = {};
 //     if (priceMin) matchFloorPlan.price.$gte = Number(priceMin);
 //     if (priceMax) matchFloorPlan.price.$lte = Number(priceMax);
 //   }
-
 
 //   const matchingFloorPlans = await FloorPlan.find(matchFloorPlan).lean();
 
@@ -59,7 +56,6 @@ const createFloorPlan = async (payload: IFloorPlan): Promise<IFloorPlan> => {
 //       apartments: [],
 //     };
 //   }
-
 
 //   const total = await Apartment.countDocuments(apartmentFilter);
 //   const totalPage = Math.ceil(total / Number(limit));
@@ -129,8 +125,8 @@ const getAllFlans = async (query: Record<string, any>) => {
       return { $in: fieldValue };
     }
 
-    if (typeof fieldValue === 'string' && fieldValue.includes(',')) {
-      return { $in: fieldValue.split(',').map((v) => v.trim()) };
+    if (typeof fieldValue === "string" && fieldValue.includes(",")) {
+      return { $in: fieldValue.split(",").map((v) => v.trim()) };
     }
 
     return fieldValue;
@@ -151,7 +147,7 @@ const getAllFlans = async (query: Record<string, any>) => {
   if (apartmentName) {
     apartmentFilter.apartmentName = {
       $regex: apartmentName,
-      $options: 'i',
+      $options: "i",
     };
   }
 
@@ -208,30 +204,47 @@ const getFloorPlansByApartmentId = async (
     throw new ApiError(StatusCodes.NOT_FOUND, "Apartment not found");
   }
 
-  // --- FloorPlan Query ---
-  const floorPlanQueryBuilder = new QueryBuilder(
-    FloorPlan.find({ apartmentId }),
-    query
-  );
-  floorPlanQueryBuilder.sort().paginate().fields();
-  const floorPlans = await floorPlanQueryBuilder.modelQuery.lean();
-  const floorPlanPagination = await floorPlanQueryBuilder.getPaginationInfo();
+  // --- FLOOR PLAN PAGINATION ---
+  const floorPage = parseInt(query.floorPage) || 1;
+  const floorLimit = parseInt(query.floorLimit) || 10;
 
-  // --- Phase Query ---
+  const floorQueryBuilder = new QueryBuilder(FloorPlan.find({ apartmentId }), {
+    ...query,
+    page: floorPage,
+    limit: floorLimit,
+  });
+
+  floorQueryBuilder.sort().paginate().fields();
+  const floorData = await floorQueryBuilder.modelQuery.lean();
+  const floorMeta = await floorQueryBuilder.getPaginationInfo();
+
+  // --- PHASE PAGINATION ---
+  const phasePage = parseInt(query.phasePage) || 1;
+  const phaseLimit = parseInt(query.phaseLimit) || 10;
+
   const phaseQueryBuilder = new QueryBuilder(
     Phase.find({ apartment: apartmentId }),
-    query
+    {
+      ...query,
+      page: phasePage,
+      limit: phaseLimit,
+    }
   );
+
   phaseQueryBuilder.sort().paginate().fields();
-  const phases = await phaseQueryBuilder.modelQuery.lean();
-  const phasePagination = await phaseQueryBuilder.getPaginationInfo();
+  const phaseData = await phaseQueryBuilder.modelQuery.lean();
+  const phaseMeta = await phaseQueryBuilder.getPaginationInfo();
 
   return {
-    ...apartment,
-    phases,
-    phasePagination,
-    floorPlans,
-    floorPlanPagination,
+    apartment,
+    floorPlans: {
+      data: floorData,
+      meta: floorMeta,
+    },
+    phases: {
+      data: phaseData,
+      meta: phaseMeta,
+    },
   };
 };
 
@@ -245,6 +258,7 @@ const getLocationPropertyTypeSalesCompanyCompletionYearFromDB = async () => {
   const apartmentNames = apartments.map((a) => a.apartmentName);
   const locations = apartments.map((a) => a.location);
   const propertyTypes = apartments.map((a) => a.propertyType);
+  // @ts-ignore
   const prices = apartments.map((a) => a.price);
 
   return {
@@ -255,24 +269,21 @@ const getLocationPropertyTypeSalesCompanyCompletionYearFromDB = async () => {
   };
 };
 
-
 const updateFloorPlanFromDB = async (id: string, payload: IFloorPlan) => {
   const result = await FloorPlan.findByIdAndUpdate(id, payload, { new: true });
   if (!result) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, "Failed to update floor plan")
+    throw new ApiError(StatusCodes.BAD_REQUEST, "Failed to update floor plan");
   }
   return result;
-}
-
+};
 
 const deleteFloorPlanFromDB = async (id: string) => {
   const result = await FloorPlan.findByIdAndDelete(id);
   if (!result) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, "Failed to delete floor plan")
-  } 
+    throw new ApiError(StatusCodes.BAD_REQUEST, "Failed to delete floor plan");
+  }
   return result;
-}
-
+};
 
 // * Export function
 export const FloorPlanService = {
@@ -281,5 +292,5 @@ export const FloorPlanService = {
   getFloorPlansByApartmentId,
   getLocationPropertyTypeSalesCompanyCompletionYearFromDB,
   updateFloorPlanFromDB,
-  deleteFloorPlanFromDB
+  deleteFloorPlanFromDB,
 };
