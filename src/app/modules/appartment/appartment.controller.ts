@@ -7,6 +7,7 @@ import { StatusCodes } from "http-status-codes";
 const createApartment = catchAsync(async (req: Request, res: Response) => {
   const result = req.body;
   const data = await apartmentService.createApartmentIntoDB(result);
+  console.log("ALL Data",data);
   sendResponse(res, {
     statusCode: 201,
     success: true,
@@ -78,6 +79,17 @@ const getLocationPropertyType = catchAsync(
   }
 );
 
+const getAllApartmentLocation = catchAsync(async (req: Request, res: Response) => {
+  const result = await apartmentService.getAllApartmentLocationFromDB();
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Successfully retrieved",
+    data: result,
+  });
+});
+
+
 export const apartmentController = {
   createApartment,
   getAllApartment,
@@ -85,4 +97,5 @@ export const apartmentController = {
   deleteApartment,
   updateApartmentDetails,
   getLocationPropertyType,
+  getAllApartmentLocation,
 };

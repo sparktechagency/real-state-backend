@@ -101,6 +101,19 @@ const getLocationPropertyTypeSalesCompanyCompletionYearFromDB = async () => {
   };
 };
 
+
+
+// All Apartment location 
+const getAllApartmentLocationFromDB = async () => {
+  const result = await Apartment.find().select("latitude longitude apartmentName location");
+  if (!result) {
+    return [];
+  }
+  return result;
+}
+
+
+
 export const apartmentService = {
   createApartmentIntoDB,
   getAllApartmentFromDB,
@@ -108,4 +121,5 @@ export const apartmentService = {
   deleteApartmentFromDB,
   updateApartmentDetailsFromDB,
   getLocationPropertyTypeSalesCompanyCompletionYearFromDB,
+  getAllApartmentLocationFromDB,
 };

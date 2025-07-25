@@ -9,6 +9,7 @@ import { USER_ROLES } from "../../../enums/user";
 const router = Router();
 router.post(
   "/create",
+  auth(USER_ROLES.SUPER_ADMIN),
   fileUploadHandler(),
   parseEmbeddedJson(["contact"]),
   handleApartmentPayload,
@@ -17,6 +18,7 @@ router.post(
 
 // get all apartments
 router.get("/", apartmentController.getAllApartment);
+router.get("/location", apartmentController.getAllApartmentLocation);
 router.get("/location-property-type", apartmentController.getLocationPropertyType);
 // get single apartment
 router.get("/:id", apartmentController.getSingleOne);
