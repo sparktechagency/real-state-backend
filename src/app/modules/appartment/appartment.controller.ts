@@ -21,7 +21,7 @@ const getAllApartment = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: 201,
     success: true,
-    message: "Successfully retrieve",
+    message: "Successfully retrieved all apartments",
     pagination: result.meta,
     data: result.data,
   });
@@ -32,7 +32,7 @@ const getSingleOne = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: 201,
     success: true,
-    message: "Successfully retrieved",
+    message: "Successfully retrieved single apartment",
     data: result,
   });
 });
@@ -43,7 +43,7 @@ const deleteApartment = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: 201,
     success: true,
-    message: "Successfully retrieved",
+    message: "Successfully deleted",
     data: result,
   });
 });
@@ -59,7 +59,7 @@ const updateApartmentDetails = catchAsync(
     sendResponse(res, {
       statusCode: 201,
       success: true,
-      message: "Successfully retrieved",
+      message: "Successfully updated",
       data: result,
     });
   }
@@ -73,7 +73,7 @@ const getLocationPropertyType = catchAsync(
     sendResponse(res, {
       statusCode: StatusCodes.OK,
       success: true,
-      message: "Successfully retrieved",
+      message: "Successfully retrieved location and property type",
       data: result,
     });
   }
@@ -84,7 +84,7 @@ const getAllApartmentLocation = catchAsync(async (req: Request, res: Response) =
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: "Successfully retrieved",
+    message: "Successfully retrieved all location and property type",
     data: result,
   });
 });
