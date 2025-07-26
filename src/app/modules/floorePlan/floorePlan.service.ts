@@ -199,7 +199,6 @@ const getAllFlans = async (query: Record<string, any>) => {
 
 // getAllflooreplan base on apartment id without pagination it's for map
 const getAllFloorePlanBaseOnApartmentId = async () => {
-  // Step 1: Get all apartments
   const allApartment = await Apartment.find()
     .select("apartmentName latitude longitude")
     .lean();
@@ -208,41 +207,51 @@ const getAllFloorePlanBaseOnApartmentId = async () => {
     allApartment.map((apt) => [apt._id.toString(), apt])
   );
 
-  // Step 2: Get all floor plans
   const allFloorPlans = await FloorPlan.find()
     .select("apartmentId price")
     .lean();
 
   if (!allFloorPlans || allFloorPlans.length === 0) {
-    return [];
+    return {
+      success: false,
+      message: "No floor plans found.",
+      data: [],
+    };
   }
 
-  // Step 3: Create a map of apartmentId -> min price floorPlan
   const minPriceMap = new Map();
 
   for (const floor of allFloorPlans) {
-    const key = floor.apartmentId.toString();
-    if (!minPriceMap.has(key)) {
+    const key = floor.apartmentId?.toString();
+    const apt = apartmentMap.get(key);
+
+    // ✅ Skip floor plans with missing apartment data
+    if (!key || !apt || !apt.apartmentName || !apt.latitude || !apt.longitude) {
+      continue;
+    }
+
+    if (!minPriceMap.has(key) || floor.price < minPriceMap.get(key).price) {
       minPriceMap.set(key, floor);
-    } else {
-      const existing = minPriceMap.get(key);
-      if (floor.price < existing.price) {
-        minPriceMap.set(key, floor);
-      }
     }
   }
 
-  // Step 4: Merge with apartment data
-  const result = Array.from(minPriceMap.values()).map((floor) => {
-    const apt = apartmentMap.get(floor.apartmentId.toString());
-
+  const result = Array.from(minPriceMap.entries()).map(([key, floor]) => {
+    const apt = apartmentMap.get(key);
     return {
       ...floor,
-      apartmentName: apt?.apartmentName || null,
-      latitude: apt?.latitude || null,
-      longitude: apt?.longitude || null,
+      apartmentName: apt?.apartmentName,
+      latitude: apt?.latitude,
+      longitude: apt?.longitude,
     };
   });
+
+  if (result.length === 0) {
+    return {
+      success: false,
+      message: "No matching apartments found for floor plans.",
+      data: [],
+    };
+  }
 
   return result;
 };
