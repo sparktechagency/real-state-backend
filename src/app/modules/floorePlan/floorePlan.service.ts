@@ -200,7 +200,7 @@ const getAllFlans = async (query: Record<string, any>) => {
 // getAllflooreplan base on apartment id without pagination it's for map
 const getAllFloorePlanBaseOnApartmentId = async () => {
   const allApartment = await Apartment.find()
-    .select("apartmentName latitude longitude")
+    .select("apartmentName latitude longitude apartmentImage location")
     .lean();
 
   const apartmentMap = new Map(
@@ -208,7 +208,7 @@ const getAllFloorePlanBaseOnApartmentId = async () => {
   );
 
   const allFloorPlans = await FloorPlan.find()
-    .select("apartmentId price")
+    .select("apartmentId price apartmentImage")
     .lean();
 
   if (!allFloorPlans || allFloorPlans.length === 0) {
@@ -238,6 +238,8 @@ const getAllFloorePlanBaseOnApartmentId = async () => {
       apartmentName: apt?.apartmentName,
       latitude: apt?.latitude,
       longitude: apt?.longitude,
+      apartmentImage: apt?.apartmentImage,
+      location: apt?.location,
     };
   });
 
