@@ -212,11 +212,7 @@ const getAllFloorePlanBaseOnApartmentId = async () => {
     .lean();
 
   if (!allFloorPlans || allFloorPlans.length === 0) {
-    return {
-      success: false,
-      message: "No floor plans found.",
-      data: [],
-    };
+    return [];
   }
 
   const minPriceMap = new Map();
@@ -246,11 +242,7 @@ const getAllFloorePlanBaseOnApartmentId = async () => {
   });
 
   if (result.length === 0) {
-    return {
-      success: false,
-      message: "No matching apartments found for floor plans.",
-      data: [],
-    };
+    return [];
   }
 
   return result;
