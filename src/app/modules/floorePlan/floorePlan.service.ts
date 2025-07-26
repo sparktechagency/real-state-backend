@@ -199,22 +199,41 @@ const getAllFlans = async (query: Record<string, any>) => {
 
 // getAllflooreplan base on apartment id without pagination it's for map
 const getAllFloorePlanBaseOnApartmentId = async () => {
+  // Step 1: Get all apartments
   const allApartment = await Apartment.find()
     .select("apartmentName latitude longitude")
     .lean();
+
   const apartmentMap = new Map(
     allApartment.map((apt) => [apt._id.toString(), apt])
   );
 
-  const floorPlans = await FloorPlan.find()
-    .select("apartmentId price") 
+  // Step 2: Get all floor plans
+  const allFloorPlans = await FloorPlan.find()
+    .select("apartmentId price")
     .lean();
 
-  if (!floorPlans || floorPlans.length === 0) {
+  if (!allFloorPlans || allFloorPlans.length === 0) {
     return [];
   }
 
-  const result = floorPlans.map((floor) => {
+  // Step 3: Create a map of apartmentId -> min price floorPlan
+  const minPriceMap = new Map();
+
+  for (const floor of allFloorPlans) {
+    const key = floor.apartmentId.toString();
+    if (!minPriceMap.has(key)) {
+      minPriceMap.set(key, floor);
+    } else {
+      const existing = minPriceMap.get(key);
+      if (floor.price < existing.price) {
+        minPriceMap.set(key, floor);
+      }
+    }
+  }
+
+  // Step 4: Merge with apartment data
+  const result = Array.from(minPriceMap.values()).map((floor) => {
     const apt = apartmentMap.get(floor.apartmentId.toString());
 
     return {
