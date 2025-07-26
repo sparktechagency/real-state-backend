@@ -207,19 +207,15 @@ const getFloorPlansByApartmentId = async (
   const {
     floorPage = '1',
     floorLimit = '10',
-    phasePage = '1',
-    phaseLimit = '10',
     ...restQuery
   } = query;
 
   const parsedFloorPage = parseInt(floorPage, 10);
   const parsedFloorLimit = parseInt(floorLimit, 10);
-  const parsedPhasePage = parseInt(phasePage, 10);
-  const parsedPhaseLimit = parseInt(phaseLimit, 10);
 
   // --- FLOOR PLAN PAGINATION ---
   const floorQueryBuilder = new QueryBuilder(
-    FloorPlan.find({ apartmentId: apartmentId }), // 🛠️ make sure field is correct
+    FloorPlan.find({ apartmentId: apartmentId }),
     {
       ...restQuery,
       page: parsedFloorPage,
@@ -237,14 +233,11 @@ const getFloorPlansByApartmentId = async (
     Phase.find({ apartment: apartmentId }),
     {
       ...restQuery,
-      page: parsedPhasePage,
-      limit: parsedPhaseLimit,
     }
   );
 
   phaseQueryBuilder.sort().paginate().fields();
   const phaseData = await phaseQueryBuilder.modelQuery.lean();
-  const phaseMeta = await phaseQueryBuilder.getPaginationInfo();
 
   return {
     apartment,
@@ -254,7 +247,6 @@ const getFloorPlansByApartmentId = async (
     },
     phases: {
       data: phaseData,
-      meta: phaseMeta,
     },
   };
 };
