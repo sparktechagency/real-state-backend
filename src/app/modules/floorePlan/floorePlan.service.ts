@@ -204,30 +204,41 @@ const getFloorPlansByApartmentId = async (
     throw new ApiError(StatusCodes.NOT_FOUND, "Apartment not found");
   }
 
-  // --- FLOOR PLAN PAGINATION ---
-  const floorPage = parseInt(query.floorPage) || 1;
-  const floorLimit = parseInt(query.floorLimit) || 10;
+  const {
+    floorPage = '1',
+    floorLimit = '10',
+    phasePage = '1',
+    phaseLimit = '10',
+    ...restQuery
+  } = query;
 
-  const floorQueryBuilder = new QueryBuilder(FloorPlan.find({ apartmentId }), {
-    ...query,
-    page: floorPage,
-    limit: floorLimit,
-  });
+  const parsedFloorPage = parseInt(floorPage, 10);
+  const parsedFloorLimit = parseInt(floorLimit, 10);
+  const parsedPhasePage = parseInt(phasePage, 10);
+  const parsedPhaseLimit = parseInt(phaseLimit, 10);
+
+  // --- FLOOR PLAN PAGINATION ---
+  const floorQueryBuilder = new QueryBuilder(
+    FloorPlan.find({ apartmentId: apartmentId }), // 🛠️ make sure field is correct
+    {
+      ...restQuery,
+      page: parsedFloorPage,
+      limit: parsedFloorLimit,
+    }
+  );
 
   floorQueryBuilder.sort().paginate().fields();
   const floorData = await floorQueryBuilder.modelQuery.lean();
   const floorMeta = await floorQueryBuilder.getPaginationInfo();
 
-  // --- PHASE PAGINATION ---
-  const phasePage = parseInt(query.phasePage) || 1;
-  const phaseLimit = parseInt(query.phaseLimit) || 10;
 
+  // --- PHASE PAGINATION ---
   const phaseQueryBuilder = new QueryBuilder(
     Phase.find({ apartment: apartmentId }),
     {
-      ...query,
-      page: phasePage,
-      limit: phaseLimit,
+      ...restQuery,
+      page: parsedPhasePage,
+      limit: parsedPhaseLimit,
     }
   );
 
@@ -247,6 +258,8 @@ const getFloorPlansByApartmentId = async (
     },
   };
 };
+
+
 
 // * get all location / property type / sales company/ completion year
 const getLocationPropertyTypeSalesCompanyCompletionYearFromDB = async () => {
@@ -334,5 +347,5 @@ export const FloorPlanService = {
   updateFloorPlanFromDB,
   deleteFloorPlanFromDB,
   getFloorePlanFromDBUsingApartmentId,
-  getPhaseFromDBUsingApartmentId
+  getPhaseFromDBUsingApartmentId,
 };
