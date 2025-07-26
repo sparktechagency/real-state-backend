@@ -175,12 +175,10 @@ const getAllFlans = async (query: Record<string, any>) => {
     const floorPlans = matchingFloorPlans.filter(
       (f) => f.apartmentId?.toString() === apartment._id.toString()
     );
-    const phases = await Phase.find({ apartment: apartment._id }).lean();
 
     apartmentMap.set(apartment._id.toString(), {
       ...apartment,
       floorPlans,
-      phases,
     });
   }
 
@@ -191,7 +189,15 @@ const getAllFlans = async (query: Record<string, any>) => {
       limit: Number(limit),
       totalPage,
     },
-    apartments: Array.from(apartmentMap.values()),
+    apartments: Array.from(apartmentMap.values()).map((apartment: any) => ({
+      _id: apartment._id,
+      apartmentName: apartment.apartmentName,
+      apartmentImage: apartment.apartmentImage,
+      floorPlans: apartment.floorPlans.map((plan: any) => ({
+        floorPlan: plan.floorPlan,
+        price: plan.price,
+      })),
+    })),
   };
 };
 
