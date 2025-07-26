@@ -195,6 +195,40 @@ const getAllFlans = async (query: Record<string, any>) => {
   };
 };
 
+
+
+// getAllflooreplan base on apartment id without pagination it's for map
+const getAllFloorePlanBaseOnApartmentId = async () => {
+  const allApartment = await Apartment.find()
+    .select("apartmentName latitude longitude")
+    .lean();
+  const apartmentMap = new Map(
+    allApartment.map((apt) => [apt._id.toString(), apt])
+  );
+
+  const floorPlans = await FloorPlan.find()
+    .select("apartmentId price") 
+    .lean();
+
+  if (!floorPlans || floorPlans.length === 0) {
+    return [];
+  }
+
+  const result = floorPlans.map((floor) => {
+    const apt = apartmentMap.get(floor.apartmentId.toString());
+
+    return {
+      ...floor,
+      apartmentName: apt?.apartmentName || null,
+      latitude: apt?.latitude || null,
+      longitude: apt?.longitude || null,
+    };
+  });
+
+  return result;
+};
+
+
 const getFloorPlansByApartmentId = async (
   apartmentId: string,
   query: Record<string, any>
@@ -340,4 +374,5 @@ export const FloorPlanService = {
   deleteFloorPlanFromDB,
   getFloorePlanFromDBUsingApartmentId,
   getPhaseFromDBUsingApartmentId,
+  getAllFloorePlanBaseOnApartmentId
 };

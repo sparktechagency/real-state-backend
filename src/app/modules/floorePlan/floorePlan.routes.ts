@@ -35,6 +35,22 @@ router.post(
   FloorePlanController.createFloorePlan
 );
 
+
+router.get(
+  "/",
+  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
+  FloorePlanController.getAllFloorePlan
+);
+
+router.get(
+  "/all",
+  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
+  FloorePlanController.getAllFloorePlanBaseOnApartment
+);
+
+
+
+
 /**
  * @route GET /floorePlan/filter
  * @desc Get all location / property type / sales company / completion year
@@ -67,11 +83,7 @@ router.get(
  * @param {string} apartmentId - Optional query parameter to filter by apartment ID
  */
 
-router.get(
-  "/",
-  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
-  FloorePlanController.getAllFloorePlan
-);
+
 //
 
 // Get floor plans by apartment ID

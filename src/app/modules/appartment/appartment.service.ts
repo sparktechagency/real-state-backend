@@ -105,7 +105,7 @@ const getLocationPropertyTypeSalesCompanyCompletionYearFromDB = async () => {
 
 // All Apartment location 
 const getAllApartmentLocationFromDB = async () => {
-  const result = await Apartment.find().select("latitude longitude apartmentName location");
+  const result = await Apartment.find().select("latitude longitude apartmentName location ");
   if (!result) {
     return [];
   }
