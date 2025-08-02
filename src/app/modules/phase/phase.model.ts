@@ -14,7 +14,11 @@ const phaseSchema = new Schema<IPhase>({
     date: {
         type: String,
         required: true
-    }
+    },
+    isSold: {
+        type: Boolean,
+        default: false,
+    },
 }, {
     timestamps: true
 })

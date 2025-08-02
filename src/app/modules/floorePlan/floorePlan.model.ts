@@ -24,6 +24,7 @@ const floorPlanSchema = new Schema<IFloorPlan>(
       type: String,
       required: true,
     },
+    
   },
   { timestamps: true }
 );
