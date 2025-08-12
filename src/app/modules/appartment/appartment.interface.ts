@@ -30,7 +30,7 @@ export type IApartment = {
   | "Rincon de la Victoria"
   | "Toree del Mar"
   | "Higueron";
-
+  updatedDate?: Date;
   salesCompany:
   | "Magnum"
   | "Azul"
@@ -50,7 +50,10 @@ export type IApartment = {
   | "Insur"
   | "BySales"
   | "InvestHome"
-  | "Real De La Quinta";
+  | "Real De La Quinta"
+  | "TM"
+  | "AssetFolio"
+  ;
   CompletionDate: Date;
   pricePdf: string;
 };

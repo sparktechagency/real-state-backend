@@ -42,6 +42,9 @@ const ApartmentSchema = new Schema<IApartment>(
         "Toree del Mar",
       ],
     },
+    updatedDate: {
+      type: Date,
+    },
     salesCompany: {
       type: String,
       required: true,
@@ -69,6 +72,8 @@ const ApartmentSchema = new Schema<IApartment>(
         "BySales",
         "InvestHome",
         "Real De La Quinta",
+        "TM",
+        "AssetFolio",
       ],
     },
     CompletionDate: {
