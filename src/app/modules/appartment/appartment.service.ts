@@ -13,29 +13,25 @@ const createApartmentIntoDB = async (payload: IApartment) => {
 };
 
 const getAllApartmentFromDB = async (query: Record<string, any>) => {
-  // Create the QueryBuilder instance with both the model query and the query parameters
   const queryBuilder = new QueryBuilder(Apartment.find(), query)
     .filter()
     .sort()
     .paginate()
     .fields();
 
-  // Get the results using the modelQuery from QueryBuilder
-  const result = await queryBuilder.modelQuery;
-
-  // Get pagination information
-  const paginationInfo = await queryBuilder.getPaginationInfo();
-
-  if (!result) {
-    return {
-      data: [],
-      meta: paginationInfo,
-    };
+  if (query.apartmentName) {
+    const regex = new RegExp(query.apartmentName, "i");
+    queryBuilder.modelQuery = queryBuilder.modelQuery.find({
+      // @ts-ignore
+      apartmentName: regex,
+    });
   }
 
-  // Return both data and pagination metadata
+  const result = await queryBuilder.modelQuery;
+  const paginationInfo = await queryBuilder.getPaginationInfo();
+
   return {
-    data: result,
+    data: result || [],
     meta: paginationInfo,
   };
 };
@@ -101,18 +97,16 @@ const getLocationPropertyTypeSalesCompanyCompletionYearFromDB = async () => {
   };
 };
 
-
-
-// All Apartment location 
+// All Apartment location
 const getAllApartmentLocationFromDB = async () => {
-  const result = await Apartment.find().select("latitude longitude apartmentName location ");
+  const result = await Apartment.find().select(
+    "latitude longitude apartmentName location "
+  );
   if (!result) {
     return [];
   }
   return result;
-}
-
-
+};
 
 export const apartmentService = {
   createApartmentIntoDB,
