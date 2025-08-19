@@ -71,12 +71,11 @@ const fileUploadHandler = () => {
 
   //file filter
   const filterFilter = (req: Request, file: any, cb: FileFilterCallback) => {
-    // console.log("file handler",file)
+    console.log("file handler", file);
     if (
       file.fieldname === "image" ||
       file.fieldname === "paymentPlanImage" ||
-      file.fieldname === "apartmentImage" ||
-      file.fieldname === "apartmentImagesPdf"
+      file.fieldname === "apartmentImage"
     ) {
       if (
         file.mimetype === "image/jpeg" ||
@@ -96,7 +95,8 @@ const fileUploadHandler = () => {
       file.fieldname === "qualitySpecificationPDF" ||
       file.fieldname === "floorPlanPDF" ||
       file.fieldname === "paymentPlanPDF" ||
-      file.fieldname === "pricePdf"
+      file.fieldname === "pricePdf" ||
+      file.fieldname === "apartmentImagesPdf"
     ) {
       if (file.mimetype === "application/pdf") {
         cb(null, true);
