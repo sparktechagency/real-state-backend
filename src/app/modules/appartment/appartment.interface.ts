@@ -15,6 +15,7 @@ export type IApartment = {
   latitude: Number;
   longitude: Number;
   propertyType: "Apartment" | "Villa" | "Townhouse";
+  apartmentImagesPdf:string;
   location:
   | "Malaga"
   | "Estepona"

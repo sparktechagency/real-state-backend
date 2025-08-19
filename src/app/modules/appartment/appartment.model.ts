@@ -45,6 +45,10 @@ const ApartmentSchema = new Schema<IApartment>(
     updatedDate: {
       type: Date,
     },
+    apartmentImagesPdf: {
+      type: String,
+      required: true,
+    },
     salesCompany: {
       type: String,
       required: true,

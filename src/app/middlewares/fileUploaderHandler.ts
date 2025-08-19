@@ -45,6 +45,9 @@ const fileUploadHandler = () => {
         case "pricePdf":
           uploadDir = path.join(baseUploadDir, "pricePdf");
           break;
+        case "apartmentImagesPdf":
+          uploadDir = path.join(baseUploadDir, "apartmentImagesPdf");
+          break;
         default:
           throw new ApiError(StatusCodes.BAD_REQUEST, "File is not supported");
       }
@@ -72,7 +75,8 @@ const fileUploadHandler = () => {
     if (
       file.fieldname === "image" ||
       file.fieldname === "paymentPlanImage" ||
-      file.fieldname === "apartmentImage"
+      file.fieldname === "apartmentImage" ||
+      file.fieldname === "apartmentImagesPdf"
     ) {
       if (
         file.mimetype === "image/jpeg" ||
@@ -116,6 +120,7 @@ const fileUploadHandler = () => {
     { name: "apartmentImage", maxCount: 50 },
     { name: "floorPlanPDF", maxCount: 1 },
     { name: "pricePdf", maxCount: 1 },
+    { name: "apartmentImagesPdf", maxCount: 1 },
   ]);
   return upload;
 };
