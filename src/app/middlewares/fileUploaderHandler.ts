@@ -70,8 +70,7 @@ const fileUploadHandler = () => {
   });
 
   //file filter
-  const filterFilter = (req: Request, file: any, cb: FileFilterCallback) => {
-    console.log("file handler", file);
+  const filterFilter = (req: Request, file: any, cb: FileFilterCallback) => { 
     if (
       file.fieldname === "image" ||
       file.fieldname === "paymentPlanImage" ||

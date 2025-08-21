@@ -6,6 +6,7 @@ import QueryBuilder from "../../builder/QueryBuilder";
 
 const createApartmentIntoDB = async (payload: IApartment) => {
   const result = await Apartment.create(payload);
+  console.log("result",result)
   if (!result) {
     throw new ApiError(StatusCodes.BAD_GATEWAY, "Can't create Apartment");
   }
@@ -14,6 +15,7 @@ const createApartmentIntoDB = async (payload: IApartment) => {
 
 const getAllApartmentFromDB = async (query: Record<string, any>) => {
   const queryBuilder = new QueryBuilder(Apartment.find(), query)
+    .search(["apartmentName", "location", "completionDate"])
     .filter()
     .sort()
     .paginate()

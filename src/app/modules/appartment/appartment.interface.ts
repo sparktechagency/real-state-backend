@@ -55,6 +55,6 @@ export type IApartment = {
   | "TM"
   | "AssetFolio"
   ;
-  CompletionDate: Date;
+  CompletionDate: string;
   pricePdf: string;
 };

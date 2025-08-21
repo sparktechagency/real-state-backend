@@ -189,10 +189,13 @@ const getAllFlans = async (query: Record<string, any>) => {
       limit: Number(limit),
       totalPage,
     },
+
     apartments: Array.from(apartmentMap.values()).map((apartment: any) => ({
+      
       _id: apartment._id,
       apartmentName: apartment.apartmentName,
       apartmentImage: apartment.apartmentImage,
+      completionDate: apartment.CompletionDate,
       floorPlans: apartment.floorPlans.map((plan: any) => ({
         floorPlan: plan.floorPlan,
         price: plan.price,
@@ -206,7 +209,7 @@ const getAllFlans = async (query: Record<string, any>) => {
 // getAllflooreplan base on apartment id without pagination it's for map
 const getAllFloorePlanBaseOnApartmentId = async () => {
   const allApartment = await Apartment.find()
-    .select("apartmentName latitude longitude apartmentImage location")
+    .select("apartmentName latitude longitude apartmentImage location completionDate")
     .lean();
 
   const apartmentMap = new Map(
@@ -246,6 +249,7 @@ const getAllFloorePlanBaseOnApartmentId = async () => {
       longitude: apt?.longitude,
       apartmentImage: apt?.apartmentImage,
       location: apt?.location,
+      completionDate: apt?.CompletionDate,
     };
   });
 
