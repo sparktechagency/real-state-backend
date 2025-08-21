@@ -95,7 +95,7 @@ const getAllFlans = async (query: Record<string, any>) => {
     propertyType,
     location,
     salesCompany,
-    completionDate,
+    CompletionDate,
     apartmentName,
     page = 1,
     limit = 10,
@@ -140,8 +140,8 @@ const getAllFlans = async (query: Record<string, any>) => {
   if (locationFilter) apartmentFilter.location = locationFilter;
   if (salesCompanyFilter) apartmentFilter.salesCompany = salesCompanyFilter;
 
-  if (completionDate) {
-    apartmentFilter.completionDate = Number(completionDate);
+  if (CompletionDate) {
+    apartmentFilter.CompletionDate = CompletionDate;
   }
 
   if (apartmentName) {
@@ -191,7 +191,6 @@ const getAllFlans = async (query: Record<string, any>) => {
     },
 
     apartments: Array.from(apartmentMap.values()).map((apartment: any) => ({
-      
       _id: apartment._id,
       apartmentName: apartment.apartmentName,
       apartmentImage: apartment.apartmentImage,
@@ -204,12 +203,12 @@ const getAllFlans = async (query: Record<string, any>) => {
   };
 };
 
-
-
 // getAllflooreplan base on apartment id without pagination it's for map
 const getAllFloorePlanBaseOnApartmentId = async () => {
   const allApartment = await Apartment.find()
-    .select("apartmentName latitude longitude apartmentImage location completionDate")
+    .select(
+      "apartmentName latitude longitude apartmentImage location completionDate"
+    )
     .lean();
 
   const apartmentMap = new Map(
@@ -260,7 +259,6 @@ const getAllFloorePlanBaseOnApartmentId = async () => {
   return result;
 };
 
-
 const getFloorPlansByApartmentId = async (
   apartmentId: string,
   query: Record<string, any>
@@ -270,11 +268,7 @@ const getFloorPlansByApartmentId = async (
     throw new ApiError(StatusCodes.NOT_FOUND, "Apartment not found");
   }
 
-  const {
-    floorPage = '1',
-    floorLimit = '10',
-    ...restQuery
-  } = query;
+  const { floorPage = "1", floorLimit = "10", ...restQuery } = query;
 
   const parsedFloorPage = parseInt(floorPage, 10);
   const parsedFloorLimit = parseInt(floorLimit, 10);
@@ -292,7 +286,6 @@ const getFloorPlansByApartmentId = async (
   floorQueryBuilder.sort().paginate().fields();
   const floorData = await floorQueryBuilder.modelQuery.lean();
   const floorMeta = await floorQueryBuilder.getPaginationInfo();
-
 
   // --- PHASE PAGINATION ---
   const phaseQueryBuilder = new QueryBuilder(
@@ -316,8 +309,6 @@ const getFloorPlansByApartmentId = async (
     },
   };
 };
-
-
 
 // * get all location / property type / sales company/ completion year
 const getLocationPropertyTypeSalesCompanyCompletionYearFromDB = async () => {
@@ -406,5 +397,5 @@ export const FloorPlanService = {
   deleteFloorPlanFromDB,
   getFloorePlanFromDBUsingApartmentId,
   getPhaseFromDBUsingApartmentId,
-  getAllFloorePlanBaseOnApartmentId
+  getAllFloorePlanBaseOnApartmentId,
 };
