@@ -40,6 +40,7 @@ const ApartmentSchema = new Schema<IApartment>(
         "La Alcaidesa",
         "Rincon de la Victoria",
         "Toree del Mar",
+        "Higueron",
       ],
     },
     updatedDate: {
