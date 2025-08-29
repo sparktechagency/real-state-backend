@@ -79,6 +79,7 @@ const ApartmentSchema = new Schema<IApartment>(
         "Real De La Quinta",
         "TM",
         "AssetFolio",
+        "Taylor Wimpey",
       ],
     },
     CompletionDate: {
