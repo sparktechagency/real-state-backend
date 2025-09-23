@@ -24,6 +24,7 @@ const getAllFlans = async (query: Record<string, any>) => {
     salesCompany,
     CompletionDate,
     apartmentName,
+    commission,  // 🟢 ADD THIS
     page = 1,
     limit = 10,
   } = query;
@@ -67,6 +68,13 @@ const getAllFlans = async (query: Record<string, any>) => {
   if (locationFilter) apartmentFilter.location = locationFilter;
   if (salesCompanyFilter) apartmentFilter.salesCompany = salesCompanyFilter;
 
+  if (commission) {
+    apartmentFilter.commission = {
+      $regex: commission, // partial match
+      $options: "i", // case-insensitive
+    };
+  }
+
   if (CompletionDate) {
     apartmentFilter.CompletionDate = CompletionDate;
   }
@@ -96,7 +104,7 @@ const getAllFlans = async (query: Record<string, any>) => {
     .limit(Number(limit))
     .lean();
 
-  // --- Combine with floorPlans & phases ---
+  // --- Combine with floorPlans ---
   const apartmentMap = new Map();
   for (const apartment of apartments) {
     const floorPlans = matchingFloorPlans.filter(
@@ -122,6 +130,7 @@ const getAllFlans = async (query: Record<string, any>) => {
       apartmentName: apartment.apartmentName,
       apartmentImage: apartment.apartmentImage,
       completionDate: apartment.CompletionDate,
+      commission: apartment.commission, // 🟢 Include it in response if needed
       floorPlans: apartment.floorPlans.map((plan: any) => ({
         floorPlan: plan.floorPlan,
         price: plan.price,
@@ -129,6 +138,7 @@ const getAllFlans = async (query: Record<string, any>) => {
     })),
   };
 };
+
 
 // getAllflooreplan base on apartment id without pagination it's for map
 const getAllFloorePlanBaseOnApartmentId = async () => {

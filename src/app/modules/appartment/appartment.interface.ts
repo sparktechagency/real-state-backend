@@ -55,8 +55,10 @@ export type IApartment = {
     | "BySales"
     | "Invest Home"
     | "Real De La Quinta"
+    | "Capre Homes"
+    | "UrbinCasa"
     | "Others";
-    
+
   CompletionDate: string;
   pricePdf: string;
 };
