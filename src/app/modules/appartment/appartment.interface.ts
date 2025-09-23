@@ -35,26 +35,28 @@ export type IApartment = {
   salesCompany:
     | "Magnum"
     | "Azul"
-    | "OneEden"
+    | "TM"
+    | "Asset Folio"
+    | "One Eden"
     | "Aedas"
-    | "BromleyEstates"
+    | "Bromley Estate"
     | "MXM"
-    | "PrimeInvest"
+    | "Prime Invest"
     | "ON3"
     | "GILMAR"
-    | "RossoInmobilaria"
+    | "Rosso Inmobiliaria"
     | "Nvoga"
-    | "TaylorWimpey"
-    | "TuscanyGroup"
-    | "RHPriveEstates"
-    | "DreamExclusive"
+    | "Taylor Wimpey"
+    | "Tuscany Group"
+    | "RH Prive Estates"
+    | "Dream Exclusives"
+    // new items added
     | "Insur"
     | "BySales"
-    | "InvestHome"
+    | "Invest Home"
     | "Real De La Quinta"
-    | "TM"
-    | "AssetFolio"
-    | "Taylor Wimpey";
+    | "Others";
+    
   CompletionDate: string;
   pricePdf: string;
 };

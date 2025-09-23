@@ -35,7 +35,6 @@ router.post(
   FloorePlanController.createFloorePlan
 );
 
-
 router.get(
   "/",
   auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
@@ -47,9 +46,6 @@ router.get(
   auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
   FloorePlanController.getAllFloorePlanBaseOnApartment
 );
-
-
-
 
 /**
  * @route GET /floorePlan/filter
@@ -69,7 +65,6 @@ router.get(
   FloorePlanController.getFloorePlanBaseOnApartmentId
 );
 
-
 router.get(
   "/phases/:id",
   auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
@@ -82,7 +77,6 @@ router.get(
  * @access Private
  * @param {string} apartmentId - Optional query parameter to filter by apartment ID
  */
-
 
 //
 
