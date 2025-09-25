@@ -91,11 +91,24 @@ const getLocationPropertyTypeSalesCompanyCompletionYearFromDB = async () => {
       salesCompanySet.add(apartment.salesCompany);
     }
   }
+
+  // Convert sets to arrays
+  const locationsArray = Array.from(locationsSet);
+  const salesCompaniesArray = Array.from(salesCompanySet);
+
+  // Ensure "Others" is always at the last index
+  const othersIndex = salesCompaniesArray.indexOf("Others");
+  if (othersIndex !== -1) {
+    salesCompaniesArray.splice(othersIndex, 1); // remove
+    salesCompaniesArray.push("Others"); // add at last
+  }
+
   return {
-    locations: Array.from(locationsSet),
-    salesCompanies: Array.from(salesCompanySet),
+    locations: locationsArray,
+    salesCompanies: salesCompaniesArray,
   };
 };
+
 
 // All Apartment location
 const getAllApartmentLocationFromDB = async () => {
