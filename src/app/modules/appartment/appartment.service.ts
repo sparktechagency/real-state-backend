@@ -6,7 +6,6 @@ import QueryBuilder from "../../builder/QueryBuilder";
 
 const createApartmentIntoDB = async (payload: IApartment) => {
   const result = await Apartment.create(payload);
-  console.log("result",result)
   if (!result) {
     throw new ApiError(StatusCodes.BAD_GATEWAY, "Can't create Apartment");
   }
@@ -92,7 +91,6 @@ const getLocationPropertyTypeSalesCompanyCompletionYearFromDB = async () => {
       salesCompanySet.add(apartment.salesCompany);
     }
   }
-
   return {
     locations: Array.from(locationsSet),
     salesCompanies: Array.from(salesCompanySet),
