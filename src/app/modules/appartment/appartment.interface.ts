@@ -59,8 +59,9 @@ export type IApartment = {
   | "Real De La Quinta"
   | "Capre Homes"
   | "UrbinCasa"
-  | "Others";
+  | "Turnkey"
+  | "Others"
 
-  CompletionDate: string;
-  pricePdf: string;
+CompletionDate: string;
+pricePdf: string;
 };

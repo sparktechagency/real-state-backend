@@ -78,6 +78,7 @@ const ApartmentSchema = new Schema<IApartment>(
         "TM",
         "Capre Homes",
         "UrbinCasa",
+        "Turnkey",
         "Others",
       ],
     },
