@@ -1,48 +1,21 @@
-import { Request, Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
-import catchAsync from '../../../shared/catchAsync';
-import sendResponse from '../../../shared/sendResponse';
-import { AdminService } from './admin.service';
+import { Request, Response } from "express";
+import catchAsync from "../../../shared/catchAsync";
+import { adminService } from "./admin.service";
+import sendResponse from "../../../shared/sendResponse";
+import { StatusCodes } from "http-status-codes";
 
-const createAdmin = catchAsync(async (req: Request, res: Response) => {
-    const payload = req.body;
-    const result = await AdminService.createAdminToDB(payload);
-
+const getAllUser = catchAsync(async (req: Request, res: Response) => {
+    const result = await adminService.getAllUsersFromDB(req.query);
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
-        message: 'Admin created Successfully',
-        data: result
+        message: 'Users retrieved successfully',
+        pagination: result.paginationInfo,
+        data: result.data,
     });
 });
 
-const deleteAdmin = catchAsync(async (req: Request, res: Response) => {
-    const payload = req.params.id;
-    const result = await AdminService.deleteAdminFromDB(payload);
 
-    sendResponse(res, {
-        statusCode: StatusCodes.OK,
-        success: true,
-        message: 'Admin Deleted Successfully',
-        data: result
-    });
-
-});
-
-const getAdmin = catchAsync(async (req: Request, res: Response) => {
-
-    const result = await AdminService.getAdminFromDB();
-    sendResponse(res, {
-        statusCode: StatusCodes.OK,
-        success: true,
-        message: 'Admin Retrieved Successfully',
-        data: result
-    });
-
-});
-
-export const AdminController = {
-    deleteAdmin,
-    createAdmin,
-    getAdmin
-};
+export const adminController = {
+    getAllUser
+}

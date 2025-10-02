@@ -1,39 +1,22 @@
-import { StatusCodes } from 'http-status-codes';
-import ApiError from "../../../errors/ApiErrors";
-import { IUser } from '../user/user.interface';
-import { User } from '../user/user.model';
+import QueryBuilder from "../../builder/QueryBuilder"
+import { User } from "../user/user.model"
 
-const createAdminToDB = async (payload: IUser): Promise<IUser> => {
-    const createAdmin: any = await User.create(payload);
-    if (!createAdmin) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create Admin');
+const getAllUsersFromDB = async (query: Record<string, any>) => {
+    const result = new QueryBuilder(User.find({ verified: true }), query)
+        .filter()
+        .sort()
+        .paginate();
+    const data = await result.modelQuery;
+    const paginationInfo = await result.getPaginationInfo();
+    if (!data) {
+        return { data: [], meta: {} };
     }
-    if (createAdmin) {
-        await User.findByIdAndUpdate(
-        { _id: createAdmin?._id },
-        { verified: true },
-        { new: true }
-        );
-    }
-    return createAdmin;
-};
+    return {
+        data,
+        paginationInfo
+    };
+}
+export const adminService = {
+    getAllUsersFromDB
+}
 
-const deleteAdminFromDB = async (id: any): Promise<IUser | undefined> => {
-    const isExistAdmin = await User.findByIdAndDelete(id);
-    if (!isExistAdmin) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to delete Admin');
-    }
-    return;
-};
-
-const getAdminFromDB = async (): Promise<IUser[]> => {
-    const admins = await User.find({ role: 'ADMIN' })
-        .select('name email profile contact location');
-    return admins;
-};
-
-export const AdminService = {
-    createAdminToDB,
-    deleteAdminFromDB,
-    getAdminFromDB
-};
