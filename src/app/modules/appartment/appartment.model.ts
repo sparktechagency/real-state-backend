@@ -16,6 +16,7 @@ const ApartmentSchema = new Schema<IApartment>(
     qualitySpecificationPDF: [{ type: String, required: true }],
     contact: { type: contactSchema, required: true },
     features: { type: [String], required: true },
+    seaView: { type: [String], required: true },
     latitude: { type: Number, required: true },
     longitude: { type: Number, required: true },
     propertyType: {

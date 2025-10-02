@@ -7,7 +7,6 @@ import { StatusCodes } from "http-status-codes";
 const createApartment = catchAsync(async (req: Request, res: Response) => {
   const result = req.body;
   const data = await apartmentService.createApartmentIntoDB(result);
-  console.log("ALL Data",data);
   sendResponse(res, {
     statusCode: 201,
     success: true,
