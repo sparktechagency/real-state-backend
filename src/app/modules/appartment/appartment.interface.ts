@@ -31,7 +31,8 @@ export type IApartment = {
   | "La Alcaidesa"
   | "Rincon de la Victoria"
   | "Toree del Mar"
-  | "Higueron";
+  | "Higueron"
+  | "Benahavis"
   updatedDate?: Date;
   salesCompany:
   | "Magnum"
