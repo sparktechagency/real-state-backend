@@ -22,7 +22,7 @@ const getAllFlans = async (query: Record<string, any>) => {
     propertyType,
     location,
     salesCompany,
-    CompletionDate,
+    completionDate,
     apartmentName,
     commission,
     page = 1,
@@ -76,8 +76,8 @@ const getAllFlans = async (query: Record<string, any>) => {
     apartmentFilter.commission = commissionValue;
   }
 
-  if (CompletionDate) {
-    apartmentFilter.CompletionDate = CompletionDate;
+  if (completionDate) {
+    apartmentFilter.CompletionDate = completionDate;
   }
 
   if (apartmentName) {
