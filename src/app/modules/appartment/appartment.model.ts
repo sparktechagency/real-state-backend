@@ -42,7 +42,7 @@ const ApartmentSchema = new Schema<IApartment>(
         "Rincon de la Victoria",
         "Toree del Mar",
         "Higueron",
-        "Benahavis"
+        "Benahavis",
       ],
     },
     updatedDate: {
@@ -87,6 +87,7 @@ const ApartmentSchema = new Schema<IApartment>(
       required: true,
     },
     pricePdf: { type: String, required: true },
+    relevantLink: { type: String },
   },
   {
     timestamps: true,
