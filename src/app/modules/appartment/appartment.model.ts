@@ -80,6 +80,7 @@ const ApartmentSchema = new Schema<IApartment>(
         "UrbinCasa",
         "Turnkey",
         "Others",
+        "Asset Folio",
       ],
     },
     CompletionDate: {

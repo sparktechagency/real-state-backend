@@ -60,6 +60,7 @@ export type IApartment = {
     | "Capre Homes"
     | "UrbinCasa"
     | "Turnkey"
+    | "Asset Folio"
     | "Others";
 
   CompletionDate: string;
