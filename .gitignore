@@ -1,0 +1,6 @@
+node_modules
+uploads
+/winston
+.env
+dist
+load-tester.js
