@@ -32,10 +32,11 @@ const getAllPrivacyPolicy = catchAsync(
 const updatePrivacyPolicy = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    const { ...privacyPolicyData } = req.body;
+
     const result = await PrivacyPolicyService.updatePrivacyPolicyToDB(
       id,
-      privacyPolicyData
+      // @ts-ignore
+      req.body
     );
     sendResponse(res, {
       statusCode: StatusCodes.OK,

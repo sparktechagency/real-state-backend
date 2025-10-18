@@ -32,6 +32,10 @@ const ApartmentSchema = new Schema<IApartment>(
       required: true,
       enum: Location,
     },
+    locationTwo: {
+      type: String,
+      required: true,
+    },
     updatedDate: {
       type: Date,
     },
@@ -47,6 +51,11 @@ const ApartmentSchema = new Schema<IApartment>(
     CompletionDate: {
       type: String,
       required: true,
+    },
+    seaViewBoolean: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
     pricePdf: { type: String, required: true },
     relevantLink: { type: String },

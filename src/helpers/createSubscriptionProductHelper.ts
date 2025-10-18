@@ -76,6 +76,7 @@ export const createSubscriptionProduct = async (
   return {
     productId: product.id,
     paymentLink: paymentLink.url,
+    // @ts-ignore
     priceId: price?.id,
   };
 };

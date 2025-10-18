@@ -25,6 +25,7 @@ export type IUser = {
   verified: boolean;
   address?: string;
   isSubscribe?: boolean;
+  deviceToken?: string[];
   authentication?: IAuthenticationProps;
   accountInformation?: IStripeAccountInfo;
 };

@@ -28,6 +28,7 @@ const createPackageToDB = async (
     ...payload,
     paymentLink: data.paymentLink,
     stripeProductId: data.productId,
+    // @ts-ignore
     priceId: data?.priceId,
   };
 

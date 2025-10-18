@@ -1,17 +1,16 @@
 import { INotification } from "../app/modules/notification/notification.interface";
-import { Notification } from "../app/modules/notification/notification.model";
+import { NotificationModel } from "../app/modules/notification/notification.model";
 
+export const sendNotifications = async (data: any): Promise<INotification> => {
+  console.log("result =>>>", data);
+  const result = await NotificationModel.create(data);
 
-export const sendNotifications = async (data:any):Promise<INotification> =>{
+  //@ts-ignore
+  const socketIo = global.io;
 
-    const result = await Notification.create(data);
+  if (socketIo) {
+    socketIo.emit(`get-notification::${data?.receiver}`, result);
+  }
 
-    //@ts-ignore
-    const socketIo = global.io;
-
-    if (socketIo) {
-        socketIo.emit(`get-notification::${data?.receiver}`, result);
-    }
-
-    return result;
-}
+  return result;
+};

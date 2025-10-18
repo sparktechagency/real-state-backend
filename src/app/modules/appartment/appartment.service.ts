@@ -85,9 +85,11 @@ const getLocationPropertyTypeSalesCompanyCompletionYearFromDB = async () => {
 
   for (const apartment of result) {
     if (apartment.location) {
+      // @ts-ignore
       locationsSet.add(apartment.location);
     }
     if (apartment.salesCompany) {
+      // @ts-ignore
       salesCompanySet.add(apartment.salesCompany);
     }
   }

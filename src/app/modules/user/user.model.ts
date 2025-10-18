@@ -12,10 +12,6 @@ const userSchema = new Schema<IUser, UserModal>(
       type: String,
       required: false,
     },
-    appId: {
-      type: String,
-      required: false,
-    },
     role: {
       type: String,
       enum: Object.values(USER_ROLES),
@@ -74,10 +70,6 @@ const userSchema = new Schema<IUser, UserModal>(
       type: Boolean,
       default: false,
     },
-    hasAccess: {
-      type: Boolean,
-      default: false,
-    },
     accountInformation: {
       status: {
         type: Boolean,
@@ -127,13 +119,16 @@ userSchema.statics.isMatchPassword = async (
 //check user
 userSchema.pre("save", async function (next) {
   //check user
+  // @ts-ignore
   const isExist = await User.findOne({ email: this.email });
   if (isExist) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "Email already exist!");
   }
 
-  //password hash
+  //password hash.
+  // @ts-ignore
   this.password = await bcrypt.hash(
+    // @ts-ignore
     this.password,
     Number(config.bcrypt_salt_rounds)
   );

@@ -21,9 +21,11 @@ export type IApartment = {
   propertyType: PropertyType;
   apartmentImagesPdf: string;
   location: Location;
+  locationTwo: string;
   updatedDate?: Date;
   salesCompany: SalesCompany;
   CompletionDate: string;
   pricePdf: string;
   relevantLink?: string;
+  seaViewBoolean: boolean;
 };
