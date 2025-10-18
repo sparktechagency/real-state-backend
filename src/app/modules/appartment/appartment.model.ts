@@ -1,5 +1,8 @@
 import { model, Schema } from "mongoose";
 import { IApartment } from "./appartment.interface";
+import { PropertyType } from "../../../enums/propertyType";
+import { Location } from "../../../enums/location";
+import { SalesCompany } from "../../../enums/salesCompany";
 
 const contactSchema = new Schema({
   phone: { type: String, required: true },
@@ -22,28 +25,12 @@ const ApartmentSchema = new Schema<IApartment>(
     propertyType: {
       type: String,
       required: true,
-      enum: ["Apartment", "Villa", "Townhouse"],
+      enum: PropertyType,
     },
     location: {
       type: String,
       required: true,
-      enum: [
-        "Malaga",
-        "Estepona",
-        "Mijas",
-        "Casares",
-        "Manilva",
-        "Sotogrande",
-        "Marbella",
-        "Benalmadena",
-        "Fuengirola",
-        "Malaga",
-        "La Alcaidesa",
-        "Rincon de la Victoria",
-        "Toree del Mar",
-        "Higueron",
-        "Benahavis",
-      ],
+      enum: Location,
     },
     updatedDate: {
       type: Date,
@@ -55,33 +42,7 @@ const ApartmentSchema = new Schema<IApartment>(
     salesCompany: {
       type: String,
       required: true,
-      enum: [
-        "Aedas",
-        "AssetFolio",
-        "Azul",
-        "Bromley Estate",
-        "BySales",
-        "Dream Exclusives",
-        "GILMAR",
-        "Insur",
-        "Invest Home",
-        "Magnum",
-        "MXM",
-        "Nvoga",
-        "OneEden",
-        "Prime Invest",
-        "Real De La Quinta",
-        "RH Prive Estates",
-        "Rosso Inmobiliaria",
-        "Taylor Wimpey",
-        "Tuscany Group",
-        "TM",
-        "Capre Homes",
-        "UrbinCasa",
-        "Turnkey",
-        "Others",
-        "Asset Folio",
-      ],
+      enum: SalesCompany,
     },
     CompletionDate: {
       type: String,

@@ -1,0 +1,16 @@
+export enum Location {
+  Malaga = "Malaga",
+  Estepona = "Estepona",
+  Mijas = "Mijas",
+  Casares = "Casares",
+  Manilva = "Manilva",
+  Sotogrande = "Sotogrande",
+  Marbella = "Marbella",
+  Benalmadena = "Benalmadena",
+  Fuengirola = "Fuengirola",
+  LaAlcaidesa = "LaAlcaidesa",
+  RinconDeLaVictoria = "RinconDeLaVictoria",
+  ToreeDelMar = "ToreeDelMar",
+  Higueron = "Higueron",
+  Benahavis = "Benahavis",
+}

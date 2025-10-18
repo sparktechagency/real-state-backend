@@ -67,17 +67,28 @@ const getAllFlans = async (query: Record<string, any>) => {
   if (propertyTypeFilter) apartmentFilter.propertyType = propertyTypeFilter;
   if (locationFilter) apartmentFilter.location = locationFilter;
   if (salesCompanyFilter) apartmentFilter.salesCompany = salesCompanyFilter;
-
+  // Commission filter (handle single or multiple)
   if (commission) {
-    const commissionValue = isNaN(Number(commission))
-      ? commission
-      : Number(commission);
-
-    apartmentFilter.commission = commissionValue;
+    if (typeof commission === "string" && commission.includes(",")) {
+      apartmentFilter.commission = {
+        $in: commission.split(",").map((v) => Number(v.trim())),
+      };
+    } else {
+      apartmentFilter.commission = isNaN(Number(commission))
+        ? commission
+        : Number(commission);
+    }
   }
 
+  // Completion date filter (handle multiple)
   if (completionDate) {
-    apartmentFilter.CompletionDate = completionDate;
+    if (typeof completionDate === "string" && completionDate.includes(",")) {
+      apartmentFilter.CompletionDate = {
+        $in: completionDate.split(",").map((v) => v.trim()),
+      };
+    } else {
+      apartmentFilter.CompletionDate = completionDate;
+    }
   }
 
   if (apartmentName) {
