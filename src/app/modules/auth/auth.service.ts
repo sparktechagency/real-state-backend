@@ -16,11 +16,11 @@ import cryptoToken from "../../../util/cryptoToken";
 import generateOTP from "../../../util/generateOTP";
 import { ResetToken } from "../resetToken/resetToken.model";
 import { User } from "../user/user.model";
-import { USER_ROLES } from "../../../enums/user";
+import { IUser } from "../user/user.interface";
 
 //login
 const loginUserFromDB = async (payload: ILoginData) => {
-  const { email, password, deviceToken } = payload;
+  const { email, password } = payload;
   const isExistUser: any = await User.findOne({ email }).select("+password");
   if (!isExistUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
@@ -41,35 +41,6 @@ const loginUserFromDB = async (payload: ILoginData) => {
   ) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "Password is incorrect!");
   }
-
-
-  if (isExistUser.role === USER_ROLES.AGENCY) {
-    if (!deviceToken) {
-      throw new ApiError(
-        StatusCodes.BAD_REQUEST,
-        "Device token is required for agency users."
-      );
-    }
-
-    let updatedDeviceTokens = isExistUser.deviceToken || [];
-
-    if (updatedDeviceTokens.length >= 3) {
-      throw new ApiError(
-        StatusCodes.BAD_REQUEST,
-        "Maximum device limit reached. Please remove an existing device to add a new one."
-      );
-    }
-
-    // add new device token (avoid duplicate token)
-    if (!updatedDeviceTokens.includes(deviceToken)) {
-      updatedDeviceTokens.push(deviceToken);
-      await User.findOneAndUpdate(
-        { email },
-        { deviceToken: updatedDeviceTokens }
-      );
-    }
-  }
-
 
   //create token
   const accessToken = jwtHelper.createToken(
