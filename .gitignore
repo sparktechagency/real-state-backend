@@ -4,3 +4,4 @@ uploads
 .env
 dist
 load-tester.js
+/src/firebase.json

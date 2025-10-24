@@ -12,6 +12,7 @@ import { customerSupportRouter } from "../modules/CustomerSupport/CustomerSuppor
 import { PhaseRouter } from "../modules/phase/phase.routes";
 import { SubscriptionRoutes } from "../modules/subscription/subscription.routes";
 import { adminRoutes } from "../modules/admin/admin.route";
+import { PushNotificationRoutes } from "../modules/pustnotification/pushnotification.routes";
 const router = express.Router();
 
 const apiRoutes = [
@@ -27,7 +28,8 @@ const apiRoutes = [
   { path: "/customer-support", route: customerSupportRouter },
   { path: "/phase", route: PhaseRouter },
   { path: "/subscription", route: SubscriptionRoutes },
-  { path: "/admin", route: adminRoutes }
+  { path: "/admin", route: adminRoutes },
+  { path: "/notification", route: PushNotificationRoutes }
 ];
 
 apiRoutes.forEach((route) => router.use(route.path, route.route));

@@ -16,9 +16,13 @@ const pushNotificationSchema = new Schema<IPushNotification>({
     type: String,
     required: true
   },
-  document: {
+  description: {
     type: String,
     required: true
+  },
+  image: {
+    type: String,
+    required: false
   }
 }, {
   timestamps: true
