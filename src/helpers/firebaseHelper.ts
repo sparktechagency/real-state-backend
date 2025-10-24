@@ -1,94 +1,46 @@
 import admin from 'firebase-admin';
-import { logger } from '../shared/logger';
-import config from '../config';
-import dotenv from "dotenv";
-import path from "path";
-dotenv.config({ path: path.join(process.cwd(), ".env") });
-
-// Your device token
-const receiverDeviceToken = "fjHGBY9pSZ2M65xOYVUdt9:APA91bHTPVv9RlOGMwOJ2XLXyxjsCvyhLES7_7yOGJKnNlMVO63FCMIHp48b95iTvBIfqT63VZI2KvtFiZ3WYbBixTmAdlZGUmgouZjDlTSe_jWtmtsvpU4";
-
-// const serviceAccount = {
-//     type: config.firebase.type!,
-//     project_id: config.firebase.project_id!,
-//     private_key_id: config.firebase.private_key_id!,
-//     private_key: config.firebase.private_key!,
-//     client_email: config.firebase.client_email!,
-//     client_id: config.firebase.client_id!,
-//     client_x509_cert_url: config.firebase.client_x509_cert_url!,
-// }
-
-console.log("serviceAccount",
-    config.firebase.type,
-    config.firebase.project_id,
-    config.firebase.private_key_id,
-    config.firebase.private_key,
-    config.firebase.client_email,
-    config.firebase.client_id,
-    config.firebase.client_x509_cert_url
-);
-
-
-
-const serviceAccount = {
-    type: config.firebase.type!,
-    project_id: config.firebase.project_id!,
-    private_key_id: config.firebase.private_key_id!,
-    private_key: config.firebase.private_key!,
-    client_email: config.firebase.client_email!,
-    client_id: config.firebase.client_id!,
-    client_x509_cert_url: config.firebase.client_x509_cert_url!,
-};
+import serviceAccount from "../../src/firebase.json";
 
 // Cast serviceAccount to ServiceAccount type
 const serviceAccountKey: admin.ServiceAccount = serviceAccount as admin.ServiceAccount;
 
+// Initialize Firebase SDK
+export const firebaseAdmin = admin.initializeApp({
+    credential: admin.credential.cert(serviceAccountKey),
+});
 
 
-// Initialize Firebase SDK (do this once)
-if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccountKey),
-    });
-}
+//multiple user
+// const sendPushNotifications = async (
+//     values: admin.messaging.MulticastMessage) => {
+//     const res = await admin.messaging().sendEachForMulticast(values);
+//     logger.info('Notifications sent successfully', res);
+// };
 
+// //single user
+// const sendPushNotification = async (values: admin.messaging.Message) => {
+//     const res = await admin.messaging().send(values);
+//     logger.info('Notification sent successfully', res);
+// };
 
-/**
- * Send Firebase notification to multiple devices
- * @param tokens Array of device tokens
- * @param title Notification title
- * @param body Notification body
- * @param data Optional custom key-value data
- */
+// export const firebaseHelper = {
+//     sendPushNotifications,
+//     sendPushNotification,
+// };
 
-// Message payload
-const messageSend: admin.messaging.Message = {
+/* const message = {
     notification: {
-        title: "Title",
-        body: "This is test notification",
+      title: `${payload.offerTitle}`,
+      body: `A new offer is available for you`,
     },
-    data: {
-        key1: 'value1',
-        key2: 'value2',
-    },
-    android: {
-        priority: 'high',
-    },
-    apns: {
-        payload: {
-            aps: {
-                badge: 42,
-            },
-        },
-    },
-    token: receiverDeviceToken,
-};
+    tokens: users
+      .map(user => user.deviceToken)
+      .filter((token): token is string => !!token),
+  };
 
-// Send notification
-admin.messaging().send(messageSend)
-    .then((res: string) => {
-        logger.info(`Successfully sent message `);
-    })
-    .catch((error) => {
-        logger.error('Error sending message');
-    });
+  //firebase
+  firebaseHelper.sendPushNotifications(message); */
+
+
+// for setup the firebase notification an attribute set on the user model which name will be deviceToken
+// and when login it will be save on the database. then when you need to send the push notification call above function
