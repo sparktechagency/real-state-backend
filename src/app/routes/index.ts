@@ -13,6 +13,7 @@ import { PhaseRouter } from "../modules/phase/phase.routes";
 import { SubscriptionRoutes } from "../modules/subscription/subscription.routes";
 import { adminRoutes } from "../modules/admin/admin.route";
 import { PushNotificationRoutes } from "../modules/pustnotification/pushnotification.routes";
+import { NotificationRoutes } from "../modules/notification/notification.route";
 const router = express.Router();
 
 const apiRoutes = [
@@ -29,9 +30,9 @@ const apiRoutes = [
   { path: "/phase", route: PhaseRouter },
   { path: "/subscription", route: SubscriptionRoutes },
   { path: "/admin", route: adminRoutes },
-  { path: "/notification", route: PushNotificationRoutes }
+  { path: "/push-notification", route: PushNotificationRoutes },
+  { path: "/notification", route: NotificationRoutes },
 ];
 
 apiRoutes.forEach((route) => router.use(route.path, route.route));
 export default router;
-

@@ -4,7 +4,7 @@ import { INotification } from './notification.interface';
 const notificationSchema = new Schema<INotification>(
   {
     sender: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
-    receiver: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+    receiver: { type: [Schema.Types.ObjectId], required: true, ref: 'User' },
     title: { type: String, required: true },
     image: { type: String },
     description: { type: String },

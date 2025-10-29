@@ -16,7 +16,6 @@ import cryptoToken from "../../../util/cryptoToken";
 import generateOTP from "../../../util/generateOTP";
 import { ResetToken } from "../resetToken/resetToken.model";
 import { User } from "../user/user.model";
-import { IUser } from "../user/user.interface";
 
 //login
 const loginUserFromDB = async (payload: ILoginData) => {
@@ -343,6 +342,13 @@ const deleteUserFromDB = async (user: JwtPayload, password: string) => {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
   }
   return;
+};
+
+
+// remove user token
+const removeUserTokenFromDB = async (id: string) => {
+  const result = await User.findByIdAndUpdate(id, { $unset: { deviceToken: "" } });
+  return result;
 };
 
 export const AuthService = {

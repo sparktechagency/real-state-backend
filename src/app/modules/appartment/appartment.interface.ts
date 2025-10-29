@@ -1,3 +1,4 @@
+import { Location } from "../../../enums/location";
 import { PropertyType } from "../../../enums/propertyType";
 import { SalesCompany } from "../../../enums/salesCompany";
 
@@ -20,8 +21,8 @@ export type IApartment = {
   longitude: Number;
   propertyType: PropertyType;
   apartmentImagesPdf: string;
-  location: Location;
-  locationTwo: string;
+  location?: Location;
+  locationTwo?: string;
   updatedDate?: Date;
   salesCompany: SalesCompany;
   CompletionDate: string;

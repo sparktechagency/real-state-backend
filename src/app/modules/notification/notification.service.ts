@@ -1,3 +1,4 @@
+import { JwtPayload } from "jsonwebtoken";
 import QueryBuilder from "../../builder/QueryBuilder";
 import { INotification } from "./notification.interface";
 import { NotificationModel } from "./notification.model";
@@ -8,11 +9,11 @@ const createNotification = async (payload: INotification) => {
 };
 
 const getNotificationsByUserId = async (
-  userId: string,
+  user: JwtPayload,
   query: Record<string, any>
 ) => {
   const queryBuilder = new QueryBuilder(
-    NotificationModel.find({ receiver: userId }).sort({ createdAt: -1 }),
+    NotificationModel.find({ receiver: user.id }).sort({ createdAt: -1 }),
     query
   );
 

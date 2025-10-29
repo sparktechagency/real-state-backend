@@ -27,17 +27,9 @@ const getNotificationsForUser = catchAsync(async (req: Request, res: Response) =
 
 
 const getNotifications = catchAsync(async (req: Request, res: Response) => {
-    // 🔹 Fetch notifications for the logged-in user
-    const userId = req.user.id;
+   
 
-    if (!userId) {
-        return res.status(400).json({
-            success: false,
-            message: "User ID is required!",
-        });
-    }
-
-    const notifications = await NotificationServices.getNotificationsByUserId(userId, req.query);
+    const notifications = await NotificationServices.getNotificationsByUserId(req.user!, req.query);
 
     sendResponse(res, {
         statusCode: StatusCodes.OK,

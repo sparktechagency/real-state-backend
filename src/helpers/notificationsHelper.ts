@@ -8,8 +8,10 @@ export const sendNotifications = async (data: any): Promise<INotification> => {
   //@ts-ignore
   const socketIo = global.io;
 
-  if (socketIo) {
-    socketIo.emit(`get-notification::${data?.receiver}`, result);
+  if (socketIo && Array.isArray(data.receiver)) {
+    for (const receiverId of data.receiver) {
+      socketIo.emit(`get-notification::${receiverId}`, result);
+    }
   }
 
   return result;

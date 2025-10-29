@@ -29,12 +29,12 @@ const ApartmentSchema = new Schema<IApartment>(
     },
     location: {
       type: String,
-      required: true,
+      required: false,
       enum: Location,
     },
     locationTwo: {
       type: String,
-      required: true,
+      required: false,
     },
     updatedDate: {
       type: Date,

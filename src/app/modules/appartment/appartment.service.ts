@@ -66,6 +66,13 @@ const updateApartmentDetailsFromDB = async (
     throw new ApiError(StatusCodes.BAD_REQUEST, "Apartment not found");
   }
 
+  if(!payload.features){
+    payload.features=[]
+  }
+  if(!payload.seaView){
+    payload.seaView=[]
+  }
+
   // Now update the apartment
   const result = await Apartment.findByIdAndUpdate(id, payload, { new: true });
   if (!result) {
