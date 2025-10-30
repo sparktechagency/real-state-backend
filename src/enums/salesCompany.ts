@@ -16,7 +16,7 @@ export enum SalesCompany {
   TuscanyGroup = "TuscanyGroup",
   RHPriveEstates = "RHPriveEstates",
   DreamExclusives = "DreamExclusives",
-  HigueronRealEstate = "HigueronRealEstate",
+  HigueronRealEstate = "Higueron Real Estate",
   Insur = "Insur",
   BySales = "BySales",
   InvestHome = "InvestHome",
