@@ -25,6 +25,7 @@ const getAllFlans = async (query: Record<string, any>) => {
     completionDate,
     apartmentName,
     commission,
+    seaViewBoolean,
     page = 1,
     limit = 10,
   } = query;
@@ -62,6 +63,10 @@ const getAllFlans = async (query: Record<string, any>) => {
   const propertyTypeFilter = normalizeFilter(propertyType);
   const locationFilter = normalizeFilter(location);
   const salesCompanyFilter = normalizeFilter(salesCompany);
+  if (seaViewBoolean !== undefined) {
+    apartmentFilter.seaViewBoolean =
+      seaViewBoolean === "true" || seaViewBoolean === true;
+  }
 
   if (propertyTypeFilter) apartmentFilter.propertyType = propertyTypeFilter;
   if (locationFilter) apartmentFilter.location = locationFilter;
@@ -135,12 +140,13 @@ const getAllFlans = async (query: Record<string, any>) => {
       totalPage,
     },
 
-    apartments: Array.from(apartmentMap.values()).map((apartment: any) => ({
+    apartments: Array.from(apartmentMap.values())?.map((apartment: any) => ({
       _id: apartment._id,
       apartmentName: apartment.apartmentName,
       apartmentImage: apartment.apartmentImage,
       completionDate: apartment.CompletionDate,
       commission: apartment.commission,
+      seaViewBoolean: apartment.seaViewBoolean,
       floorPlans: apartment.floorPlans.map((plan: any) => ({
         floorPlan: plan.floorPlan,
         price: plan.price,
