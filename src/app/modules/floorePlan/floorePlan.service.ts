@@ -159,7 +159,7 @@ const getAllFlans = async (query: Record<string, any>) => {
 const getAllFloorePlanBaseOnApartmentId = async (
   query: Record<string, any>
 ) => {
-  const { apartmentName, location, CompletionDate, ...filters } = query;
+  const { apartmentName, location, CompletionDate, priceMin, priceMax, ...filters } = query;
 
   // Base query
   let mongoQuery: any = {};
@@ -170,11 +170,17 @@ const getAllFloorePlanBaseOnApartmentId = async (
   if (apartmentName) {
     apartmentMatch.apartmentName = { $regex: apartmentName, $options: "i" };
   }
+
   if (location) {
     apartmentMatch.location = { $regex: location, $options: "i" };
   }
   if (CompletionDate) {
     apartmentMatch.CompletionDate = { $regex: CompletionDate, $options: "i" };
+  }
+  if (priceMin || priceMax) {
+    apartmentMatch.price = {};
+    if (priceMin) apartmentMatch.price.$gte = Number(priceMin);
+    if (priceMax) apartmentMatch.price.$lte = Number(priceMax);
   }
 
   // Step 1️⃣: Find all matching apartments
