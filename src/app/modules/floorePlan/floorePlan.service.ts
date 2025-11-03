@@ -156,59 +156,48 @@ const getAllFlans = async (query: Record<string, any>) => {
 };
 
 // getAllflooreplan base on apartment id without pagination it's for map
-const getAllFloorePlanBaseOnApartmentId = async () => {
-  const allApartment = await Apartment.find()
-    .select(
-      "apartmentName latitude longitude apartmentImage location completionDate"
-    )
-    .lean();
+const getAllFloorePlanBaseOnApartmentId = async (
+  query: Record<string, any>
+) => {
+  const { apartmentName, location, CompletionDate, ...filters } = query;
 
-  const apartmentMap = new Map(
-    allApartment.map((apt) => [apt._id.toString(), apt])
-  );
+  // Base query
+  let mongoQuery: any = {};
 
-  const allFloorPlans = await FloorPlan.find()
-    .select("apartmentId price apartmentImage")
-    .lean();
+  // 🔍 Apartment-based filters (inside reference)
+  const apartmentMatch: any = {};
 
-  if (!allFloorPlans || allFloorPlans.length === 0) {
-    return [];
+  if (apartmentName) {
+    apartmentMatch.apartmentName = { $regex: apartmentName, $options: "i" };
+  }
+  if (location) {
+    apartmentMatch.location = { $regex: location, $options: "i" };
+  }
+  if (CompletionDate) {
+    apartmentMatch.CompletionDate = { $regex: CompletionDate, $options: "i" };
   }
 
-  const minPriceMap = new Map();
-
-  for (const floor of allFloorPlans) {
-    const key = floor.apartmentId?.toString();
-    const apt = apartmentMap.get(key);
-
-    // ✅ Skip floor plans with missing apartment data
-    if (!key || !apt || !apt.apartmentName || !apt.latitude || !apt.longitude) {
-      continue;
-    }
-
-    if (!minPriceMap.has(key) || floor.price < minPriceMap.get(key).price) {
-      minPriceMap.set(key, floor);
-    }
+  // Step 1️⃣: Find all matching apartments
+  let apartmentIds: string[] = [];
+  if (Object.keys(apartmentMatch).length > 0) {
+    const apartments = await Apartment.find(apartmentMatch).select("_id");
+    // @ts-ignore
+    apartmentIds = apartments.map((a) => a._id.toString());
+    mongoQuery.apartmentId = { $in: apartmentIds };
   }
 
-  const result = Array.from(minPriceMap.entries()).map(([key, floor]) => {
-    const apt = apartmentMap.get(key);
-    return {
-      ...floor,
-      apartmentName: apt?.apartmentName,
-      latitude: apt?.latitude,
-      longitude: apt?.longitude,
-      apartmentImage: apt?.apartmentImage,
-      location: apt?.location,
-      completionDate: apt?.CompletionDate,
-    };
-  });
+  // Step 2️⃣: Use QueryBuilder for rest filters
+  const qb = new QueryBuilder(FloorPlan.find(mongoQuery), filters)
+    .filter()
+    .sort()
+    .paginate()
+    .fields()
+    .populate(["apartmentId"], {});
 
-  if (result.length === 0) {
-    return [];
-  }
+  const result = await qb.modelQuery.lean();
+  const meta = await qb.getPaginationInfo();
 
-  return result;
+  return { result, meta };
 };
 
 const getFloorPlansByApartmentId = async (

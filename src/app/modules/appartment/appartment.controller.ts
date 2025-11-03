@@ -78,16 +78,17 @@ const getLocationPropertyType = catchAsync(
   }
 );
 
-const getAllApartmentLocation = catchAsync(async (req: Request, res: Response) => {
-  const result = await apartmentService.getAllApartmentLocationFromDB();
-  sendResponse(res, {
-    statusCode: StatusCodes.OK,
-    success: true,
-    message: "Successfully retrieved all location and property type",
-    data: result,
-  });
-});
-
+const getAllApartmentLocation = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await apartmentService.getAllApartmentLocationFromDB();
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Successfully retrieved all location and property type",
+      data: result,
+    });
+  }
+);
 
 export const apartmentController = {
   createApartment,

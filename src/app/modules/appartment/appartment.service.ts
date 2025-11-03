@@ -3,6 +3,7 @@ import ApiError from "../../../errors/ApiErrors";
 import { IApartment } from "./appartment.interface";
 import { Apartment } from "./appartment.model";
 import QueryBuilder from "../../builder/QueryBuilder";
+import { Phase } from "../phase/phase.model";
 
 const createApartmentIntoDB = async (payload: IApartment) => {
   const result = await Apartment.create(payload);
@@ -66,11 +67,11 @@ const updateApartmentDetailsFromDB = async (
     throw new ApiError(StatusCodes.BAD_REQUEST, "Apartment not found");
   }
 
-  if(!payload.features){
-    payload.features=[]
+  if (!payload.features) {
+    payload.features = [];
   }
-  if(!payload.seaView){
-    payload.seaView=[]
+  if (!payload.seaView) {
+    payload.seaView = [];
   }
 
   // Now update the apartment
@@ -83,46 +84,60 @@ const updateApartmentDetailsFromDB = async (
 
 // list of locations and property types dynamically
 const getLocationPropertyTypeSalesCompanyCompletionYearFromDB = async () => {
-  const result = await Apartment.find();
-  if (!result) {
-    return [];
+  // Fetch all apartments
+  const apartments = await Apartment.find().lean();
+  if (!apartments || apartments.length === 0) {
+    return {
+      locations: [],
+      salesCompanies: [],
+      commition: [],
+      completion: [],
+    };
   }
+
+  // Use Sets to avoid duplicates
   const locationsSet = new Set<string>();
   const salesCompanySet = new Set<string>();
   const commissionSet = new Set<number>();
 
-  for (const apartment of result) {
-    if (apartment.location) {
-      // @ts-ignore
-      locationsSet.add(apartment.location);
-    }
-    if (apartment.salesCompany) {
-      // @ts-ignore
-      salesCompanySet.add(apartment.salesCompany);
-    }
-    if (apartment.commission) {
-      const commissionValue = parseFloat(apartment.commission);
-      if (!isNaN(commissionValue)) commissionSet.add(commissionValue);
+  // Extract data from apartments
+  for (const apt of apartments) {
+    if (apt.location) locationsSet.add(apt.location.trim());
+    if (apt.salesCompany) salesCompanySet.add(apt.salesCompany.trim());
+
+    if (apt.commission) {
+      const val = parseFloat(apt.commission);
+      if (!isNaN(val)) commissionSet.add(val);
     }
   }
 
-  // Convert sets to arrays
-  const locationsArray = Array.from(locationsSet);
-  const salesCompaniesArray = Array.from(salesCompanySet);
-  const commitionArray = Array.from(commissionSet)
+  // Fetch phase completion years
+  const phases = await Phase.find({ date: { $ne: null } }).lean();
+  const completionYears = Array.from(
+    new Set(phases.map((phase: any) => String(phase.date)))
+  );
+
+  // Convert sets to sorted arrays
+  const locations = Array.from(locationsSet).sort();
+  const salesCompanies = Array.from(salesCompanySet).sort((a, b) =>
+    a.localeCompare(b)
+  );
+  const commition = Array.from(commissionSet)
     .sort((a, b) => a - b)
     .map(String);
 
-  const othersIndex = salesCompaniesArray.indexOf("Others");
+  // Move "Others" to the end if present
+  const othersIndex = salesCompanies.indexOf("Others");
   if (othersIndex !== -1) {
-    salesCompaniesArray.splice(othersIndex, 1);
-    salesCompaniesArray.push("Others");
+    salesCompanies.splice(othersIndex, 1);
+    salesCompanies.push("Others");
   }
 
   return {
-    locations: locationsArray,
-    salesCompanies: salesCompaniesArray,
-    commition: commitionArray,
+    locations,
+    salesCompanies,
+    commition,
+    completion: completionYears,
   };
 };
 

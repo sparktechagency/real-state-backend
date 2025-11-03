@@ -27,9 +27,6 @@ const getAllFloorePlan = catchAsync(async (req, res) => {
   });
 });
 
-
-
-
 const getFloorsByApartmentId = catchAsync(async (req, res) => {
   const { apartmentId } = req.params;
   const result = await FloorPlanService.getFloorPlansByApartmentId(
@@ -121,16 +118,17 @@ const getPhaseFromApartmentId = catchAsync(
 const getAllFloorePlanBaseOnApartment = catchAsync(
   async (req: Request, res: Response) => {
     const result = await FloorPlanService.getAllFloorePlanBaseOnApartmentId(
+      req.query
     );
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.OK,
       message: "Floor Plan retrieved successfully",
-      data: result,
+      pagination: result.meta,
+      data: result.result,
     });
   }
 );
-
 
 export const FloorePlanController = {
   createFloorePlan,
@@ -141,5 +139,5 @@ export const FloorePlanController = {
   deleteFloorePlan,
   getFloorePlanBaseOnApartmentId,
   getPhaseFromApartmentId,
-  getAllFloorePlanBaseOnApartment
+  getAllFloorePlanBaseOnApartment,
 };
