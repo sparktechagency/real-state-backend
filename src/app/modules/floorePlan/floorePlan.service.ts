@@ -159,7 +159,14 @@ const getAllFlans = async (query: Record<string, any>) => {
 const getAllFloorePlanBaseOnApartmentId = async (
   query: Record<string, any>
 ) => {
-  const { apartmentName, location, CompletionDate, priceMin, priceMax, ...filters } = query;
+  const {
+    apartmentName,
+    location,
+    CompletionDate,
+    priceMin,
+    priceMax,
+    ...filters
+  } = query;
 
   // Base query
   let mongoQuery: any = {};
@@ -198,12 +205,14 @@ const getAllFloorePlanBaseOnApartmentId = async (
     .sort()
     .paginate()
     .fields()
-    .populate(["apartmentId"], {});
+    .populate(["apartmentId"], {
+      apartmentId:
+        "apartmentName latitude longitude apartmentImage location CompletionDate",
+    });
 
   const result = await qb.modelQuery.lean();
-  const meta = await qb.getPaginationInfo();
 
-  return { result, meta };
+  return result;
 };
 
 const getFloorPlansByApartmentId = async (

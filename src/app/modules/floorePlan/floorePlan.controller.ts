@@ -124,8 +124,7 @@ const getAllFloorePlanBaseOnApartment = catchAsync(
       success: true,
       statusCode: StatusCodes.OK,
       message: "Floor Plan retrieved successfully",
-      pagination: result.meta,
-      data: result.result,
+      data: result,
     });
   }
 );
