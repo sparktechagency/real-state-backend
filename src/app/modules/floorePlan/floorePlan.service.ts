@@ -165,6 +165,9 @@ const getAllFloorePlanBaseOnApartmentId = async (
     CompletionDate,
     priceMin,
     priceMax,
+    propertyType,
+    seaViewBoolean,
+    commission,
     ...filters
   } = query;
 
@@ -181,25 +184,38 @@ const getAllFloorePlanBaseOnApartmentId = async (
   if (location) {
     apartmentMatch.location = { $regex: location, $options: "i" };
   }
+
   if (CompletionDate) {
     apartmentMatch.CompletionDate = { $regex: CompletionDate, $options: "i" };
   }
+
+  if (propertyType) {
+    apartmentMatch.propertyType = { $regex: propertyType, $options: "i" };
+  }
+
+  if (seaViewBoolean) {
+    apartmentMatch.seaViewBoolean = seaViewBoolean === "true";
+  }
+
+  if (commission) {
+    apartmentMatch.commission = { $regex: commission, $options: "i" };
+  }
+
   if (priceMin || priceMax) {
     apartmentMatch.price = {};
     if (priceMin) apartmentMatch.price.$gte = Number(priceMin);
     if (priceMax) apartmentMatch.price.$lte = Number(priceMax);
   }
 
-  // Step 1️⃣: Find all matching apartments
+  // Step 1️⃣: Find matching apartments
   let apartmentIds: string[] = [];
   if (Object.keys(apartmentMatch).length > 0) {
     const apartments = await Apartment.find(apartmentMatch).select("_id");
-    // @ts-ignore
     apartmentIds = apartments.map((a) => a._id.toString());
     mongoQuery.apartmentId = { $in: apartmentIds };
   }
 
-  // Step 2️⃣: Use QueryBuilder for rest filters
+  // Step 2️⃣: Use QueryBuilder for FloorPlan
   const qb = new QueryBuilder(FloorPlan.find(mongoQuery), filters)
     .filter()
     .sort()
@@ -212,7 +228,16 @@ const getAllFloorePlanBaseOnApartmentId = async (
 
   const result = await qb.modelQuery.lean();
 
-  return result;
+  const uniqueMap = new Map();
+  result.forEach((floorPlan: any) => {
+    const id = floorPlan?.apartmentId?._id?.toString();
+    if (!uniqueMap.has(id)) {
+      uniqueMap.set(id, floorPlan);
+    }
+  });
+  const uniqueResult = Array.from(uniqueMap.values());
+
+  return uniqueResult;
 };
 
 const getFloorPlansByApartmentId = async (
