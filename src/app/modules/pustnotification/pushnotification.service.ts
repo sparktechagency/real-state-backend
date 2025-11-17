@@ -28,10 +28,10 @@ const createPushNotificationDto = async (
     verified: true,
     _id: { $ne: userId.id },
   }).lean();
-  console.log(
-    "allUserIds",
-    allUser.map((u) => u._id)
-  );
+  // console.log(
+  //   "allUserIds",
+  //   allUser.map((u) => u._id)
+  // );
   // save notification in DB
   const pushNotificationPayload = {
     ...payload,

@@ -49,7 +49,7 @@ const ApartmentSchema = new Schema<IApartment>(
       enum: SalesCompany,
     },
     CompletionDate: {
-      type: String,
+      type: [String],
       required: true,
     },
     seaViewBoolean: {

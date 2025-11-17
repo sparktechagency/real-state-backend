@@ -171,11 +171,13 @@ const getAllFloorePlanBaseOnApartmentId = async (
     ...filters
   } = query;
 
-  // Base query
   let mongoQuery: any = {};
 
-  // 🔍 Apartment-based filters (inside reference)
   const apartmentMatch: any = {};
+
+  // ---------------------------
+  // TEXT BASED FILTERING
+  // ---------------------------
 
   if (apartmentName) {
     apartmentMatch.apartmentName = { $regex: apartmentName, $options: "i" };
@@ -185,15 +187,27 @@ const getAllFloorePlanBaseOnApartmentId = async (
     apartmentMatch.location = { $regex: location, $options: "i" };
   }
 
+  // ---------------------------
+  // CompletionDate ARRAY FILTER
+  // ---------------------------
+
   if (CompletionDate) {
-    apartmentMatch.CompletionDate = { $regex: CompletionDate, $options: "i" };
+    const years = Array.isArray(CompletionDate)
+      ? CompletionDate
+      : [CompletionDate];
+
+    apartmentMatch.CompletionDate = { $in: years };
   }
+
+  // ---------------------------
+  // OTHER FILTERS
+  // ---------------------------
 
   if (propertyType) {
     apartmentMatch.propertyType = { $regex: propertyType, $options: "i" };
   }
 
-  if (seaViewBoolean) {
+  if (seaViewBoolean !== undefined) {
     apartmentMatch.seaViewBoolean = seaViewBoolean === "true";
   }
 
@@ -201,44 +215,83 @@ const getAllFloorePlanBaseOnApartmentId = async (
     apartmentMatch.commission = { $regex: commission, $options: "i" };
   }
 
+  // ---------------------------
+  // PRICE RANGE
+  // ---------------------------
   if (priceMin || priceMax) {
-    apartmentMatch.price = {};
-    if (priceMin) apartmentMatch.price.$gte = Number(priceMin);
-    if (priceMax) apartmentMatch.price.$lte = Number(priceMax);
+    mongoQuery.price = {};
+    if (priceMin) mongoQuery.price.$gte = Number(priceMin);
+    if (priceMax) mongoQuery.price.$lte = Number(priceMax);
   }
 
-  // Step 1️⃣: Find matching apartments
+  // ---------------------------
+  // GET APARTMENT IDs BASED ON FILTERS
+  // ---------------------------
+
   let apartmentIds: string[] = [];
+
   if (Object.keys(apartmentMatch).length > 0) {
     const apartments = await Apartment.find(apartmentMatch).select("_id");
     apartmentIds = apartments.map((a) => a._id.toString());
+
+    // If no matching apartments → return empty result fast
+    if (apartmentIds.length === 0) {
+      return [];
+    }
+
     mongoQuery.apartmentId = { $in: apartmentIds };
   }
 
-  // Step 2️⃣: Use QueryBuilder for FloorPlan
+  // ---------------------------
+  // ALWAYS BLOCK NULL APARTMENTS (Important)
+  // ---------------------------
+
+  if (!mongoQuery.apartmentId) {
+    mongoQuery.apartmentId = { $ne: null };
+  } else {
+    mongoQuery.apartmentId = {
+      ...mongoQuery.apartmentId,
+      $ne: null,
+    };
+  }
+
+  // ---------------------------
+  // FLOOR PLAN MAIN QUERY
+  // ---------------------------
+
   const qb = new QueryBuilder(FloorPlan.find(mongoQuery), filters)
     .filter()
     .sort()
-    // .paginate()
     .fields()
     .populate(["apartmentId"], {
       apartmentId:
         "apartmentName latitude longitude apartmentImage location CompletionDate",
     });
 
-  const result = await qb.modelQuery.lean();
+  let result = await qb.modelQuery.lean();
+
+  // ---------------------------
+  // EXTRA SAFETY: Remove any leftover null population
+  // ---------------------------
+  result = result.filter((fp: any) => fp.apartmentId !== null);
+
+  // ---------------------------
+  // UNIQUE APARTMENT ONLY
+  // ---------------------------
 
   const uniqueMap = new Map();
-  result.forEach((floorPlan: any) => {
-    const id = floorPlan?.apartmentId?._id?.toString();
-    if (!uniqueMap.has(id)) {
-      uniqueMap.set(id, floorPlan);
+
+  result.forEach((fp) => {
+    // @ts-ignore
+    const id = fp.apartmentId?._id?.toString();
+    if (id && !uniqueMap.has(id)) {
+      uniqueMap.set(id, fp);
     }
   });
-  const uniqueResult = Array.from(uniqueMap.values());
 
-  return uniqueResult;
+  return Array.from(uniqueMap.values());
 };
+
 
 const getFloorPlansByApartmentId = async (
   apartmentId: string,

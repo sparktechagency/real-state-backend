@@ -25,7 +25,7 @@ export type IApartment = {
   locationTwo?: string;
   updatedDate?: Date;
   salesCompany: SalesCompany;
-  CompletionDate: string;
+  CompletionDate: string[];
   pricePdf: string;
   relevantLink?: string;
   seaViewBoolean: boolean;
