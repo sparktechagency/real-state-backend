@@ -168,6 +168,7 @@ const getAllFloorePlanBaseOnApartmentId = async (
     propertyType,
     seaViewBoolean,
     commission,
+    salesCompany,
     ...filters
   } = query;
 
@@ -187,6 +188,21 @@ const getAllFloorePlanBaseOnApartmentId = async (
     apartmentMatch.location = { $regex: location, $options: "i" };
   }
 
+  if (salesCompany) {
+    let salesArray: string[] = [];
+    if (Array.isArray(salesCompany)) {
+      salesArray = salesCompany;
+    } else if (typeof salesCompany === "string" && salesCompany.includes(",")) {
+      salesArray = salesCompany.split(",");
+    } else {
+      salesArray = [salesCompany];
+    }
+
+    const cleanedSales = salesArray.map((s) => s.trim()).filter(Boolean);
+    if (cleanedSales.length > 0) {
+      apartmentMatch.salesCompany = { $in: cleanedSales };
+    }
+  }
   // ---------------------------
   // CompletionDate ARRAY FILTER
   // ---------------------------
