@@ -190,13 +190,24 @@ const getAllFloorePlanBaseOnApartmentId = async (
   // ---------------------------
   // CompletionDate ARRAY FILTER
   // ---------------------------
-
   if (CompletionDate) {
-    const years = Array.isArray(CompletionDate)
-      ? CompletionDate
-      : [CompletionDate];
+    let yearsArray: string[] = [];
 
-    apartmentMatch.CompletionDate = { $in: years };
+    if (Array.isArray(CompletionDate)) {
+      yearsArray = CompletionDate;
+    } else if (
+      typeof CompletionDate === "string" &&
+      CompletionDate.includes(",")
+    ) {
+      yearsArray = CompletionDate.split(",");
+    } else {
+      yearsArray = [CompletionDate];
+    }
+
+    const years = yearsArray.map((y) => Number(y)).filter((y) => !isNaN(y));
+    if (years.length > 0) {
+      apartmentMatch.CompletionDate = { $in: years };
+    }
   }
 
   // ---------------------------
@@ -291,7 +302,6 @@ const getAllFloorePlanBaseOnApartmentId = async (
 
   return Array.from(uniqueMap.values());
 };
-
 
 const getFloorPlansByApartmentId = async (
   apartmentId: string,
