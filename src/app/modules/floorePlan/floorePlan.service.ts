@@ -223,7 +223,23 @@ const getAllFloorePlanBaseOnApartmentId = async (
   }
 
   if (commission) {
-    apartmentMatch.commission = { $regex: commission, $options: "i" };
+    let commissionsArray: string[] = [];
+
+    if (Array.isArray(commission)) {
+      commissionsArray = commission;
+    } else if (typeof commission === "string" && commission.includes(",")) {
+      commissionsArray = commission.split(",");
+    } else {
+      commissionsArray = [commission];
+    }
+
+    const commissions = commissionsArray
+      .map((c) => Number(c))
+      .filter((c) => !isNaN(c));
+
+    if (commissions.length > 0) {
+      apartmentMatch.commission = { $in: commissions };
+    }
   }
 
   // ---------------------------
