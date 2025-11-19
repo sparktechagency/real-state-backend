@@ -183,9 +183,24 @@ const getAllFloorePlanBaseOnApartmentId = async (
   if (apartmentName) {
     apartmentMatch.apartmentName = { $regex: apartmentName, $options: "i" };
   }
-
   if (location) {
-    apartmentMatch.location = { $regex: location, $options: "i" };
+    let locArray: string[] = [];
+
+    if (Array.isArray(location)) {
+      locArray = location;
+    } else if (typeof location === "string" && location.includes(",")) {
+      locArray = location.split(",");
+    } else {
+      locArray = [location];
+    }
+
+    const cleanedLocations = locArray.map((l) => l.trim()).filter(Boolean);
+
+    if (cleanedLocations.length > 0) {
+      apartmentMatch.location = {
+        $in: cleanedLocations.map((loc) => new RegExp(loc, "i")),
+      };
+    }
   }
 
   if (salesCompany) {

@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import { FloorePlanController } from "./floorePlan.controller";
 import fileUploadHandler from "../../middlewares/fileUploaderHandler";
 import { getSingleFilePath } from "../../../shared/getFilePath";
@@ -90,7 +90,7 @@ router.patch(
   "/:id",
   auth(USER_ROLES.SUPER_ADMIN),
   fileUploadHandler(),
-  (req, res, next) => {
+  (req: Request, res: Response, next: NextFunction) => {
     try {
       const floorPlanPDF = getSingleFilePath(req.files, "floorPlanPDF");
       req.body.floorPlanPDF = floorPlanPDF;
