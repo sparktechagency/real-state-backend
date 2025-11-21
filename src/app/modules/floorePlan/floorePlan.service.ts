@@ -319,7 +319,7 @@ const getAllFloorePlanBaseOnApartmentId = async (
 
   const qb = new QueryBuilder(FloorPlan.find(mongoQuery), filters)
     .filter()
-    .sort()
+    // .sort()
     .fields()
     .populate(["apartmentId"], {
       apartmentId:
