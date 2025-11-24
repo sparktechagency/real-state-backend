@@ -309,118 +309,101 @@ const getAllFloorePlanBaseOnApartmentId = async (
     ...filters
   } = query;
 
-  let mongoQuery: any = {};
-
   const apartmentMatch: any = {};
+  const floorPlanMatch: any = {};
 
   // ---------------------------
-  // TEXT BASED FILTERING
+  // TEXT FILTERS
   // ---------------------------
 
   if (apartmentName) {
     apartmentMatch.apartmentName = { $regex: apartmentName, $options: "i" };
   }
+
+  // LOCATION (Array or CSV)
   if (location) {
-    let locArray: string[] = [];
+    let loc = Array.isArray(location)
+      ? location
+      : location.includes(",")
+      ? location.split(",")
+      : [location];
 
-    if (Array.isArray(location)) {
-      locArray = location;
-    } else if (typeof location === "string" && location.includes(",")) {
-      locArray = location.split(",");
-    } else {
-      locArray = [location];
-    }
+    loc = loc.map((l: any) => l.trim()).filter(Boolean);
 
-    const cleanedLocations = locArray.map((l) => l.trim()).filter(Boolean);
-
-    if (cleanedLocations.length > 0) {
+    if (loc.length > 0) {
       apartmentMatch.location = {
-        $in: cleanedLocations.map((loc) => new RegExp(loc, "i")),
+        $in: loc.map((loc: any) => new RegExp(loc, "i")),
       };
     }
   }
 
+  // SALES COMPANY
   if (salesCompany) {
-    let salesArray: string[] = [];
-    if (Array.isArray(salesCompany)) {
-      salesArray = salesCompany;
-    } else if (typeof salesCompany === "string" && salesCompany.includes(",")) {
-      salesArray = salesCompany.split(",");
-    } else {
-      salesArray = [salesCompany];
-    }
+    let sales = Array.isArray(salesCompany)
+      ? salesCompany
+      : salesCompany.includes(",")
+      ? salesCompany.split(",")
+      : [salesCompany];
 
-    const cleanedSales = salesArray.map((s) => s.trim()).filter(Boolean);
-    if (cleanedSales.length > 0) {
-      apartmentMatch.salesCompany = { $in: cleanedSales };
+    sales = sales.map((s: any) => s.trim()).filter(Boolean);
+
+    if (sales.length > 0) {
+      apartmentMatch.salesCompany = { $in: sales };
     }
   }
-  // ---------------------------
-  // CompletionDate ARRAY FILTER
-  // ---------------------------
+
+  // COMPLETION YEARS
   if (CompletionDate) {
-    let yearsArray: string[] = [];
+    let years = Array.isArray(CompletionDate)
+      ? CompletionDate
+      : CompletionDate.includes(",")
+      ? CompletionDate.split(",")
+      : [CompletionDate];
 
-    if (Array.isArray(CompletionDate)) {
-      yearsArray = CompletionDate;
-    } else if (
-      typeof CompletionDate === "string" &&
-      CompletionDate.includes(",")
-    ) {
-      yearsArray = CompletionDate.split(",");
-    } else {
-      yearsArray = [CompletionDate];
-    }
+    years = years.map((y: any) => Number(y)).filter((y:any) => !isNaN(y));
 
-    const years = yearsArray.map((y) => Number(y)).filter((y) => !isNaN(y));
     if (years.length > 0) {
       apartmentMatch.CompletionDate = { $in: years };
     }
   }
 
-  // ---------------------------
-  // OTHER FILTERS
-  // ---------------------------
-
+  // PROPERTY TYPE
   if (propertyType) {
     apartmentMatch.propertyType = { $regex: propertyType, $options: "i" };
   }
 
+  // SEA VIEW
   if (seaViewBoolean !== undefined) {
     apartmentMatch.seaViewBoolean = seaViewBoolean === "true";
   }
 
+  // COMMISSION
   if (commission) {
-    let commissionsArray: string[] = [];
+    let com = Array.isArray(commission)
+      ? commission
+      : commission.includes(",")
+      ? commission.split(",")
+      : [commission];
 
-    if (Array.isArray(commission)) {
-      commissionsArray = commission;
-    } else if (typeof commission === "string" && commission.includes(",")) {
-      commissionsArray = commission.split(",");
-    } else {
-      commissionsArray = [commission];
-    }
+    com = com.map((c: any) => Number(c)).filter((c: any) => !isNaN(c));
 
-    const commissions = commissionsArray
-      .map((c) => Number(c))
-      .filter((c) => !isNaN(c));
-
-    if (commissions.length > 0) {
-      apartmentMatch.commission = { $in: commissions };
+    if (com.length > 0) {
+      apartmentMatch.commission = { $in: com };
     }
   }
 
   // ---------------------------
-  // PRICE RANGE
+  // PRICE RANGE (FloorPlan)
   // ---------------------------
+
   if (priceMin || priceMax) {
-    mongoQuery.price = {};
-    if (priceMin) mongoQuery.price.$gte = Number(priceMin);
-    if (priceMax) mongoQuery.price.$lte = Number(priceMax);
+    floorPlanMatch.price = {};
+    if (priceMin) floorPlanMatch.price.$gte = Number(priceMin);
+    if (priceMax) floorPlanMatch.price.$lte = Number(priceMax);
   }
 
   // ---------------------------
-  // GET APARTMENT IDs BASED ON FILTERS
+  // GET APARTMENT IDs FIRST
   // ---------------------------
 
   let apartmentIds: string[] = [];
@@ -429,62 +412,58 @@ const getAllFloorePlanBaseOnApartmentId = async (
     const apartments = await Apartment.find(apartmentMatch).select("_id");
     apartmentIds = apartments.map((a) => a._id.toString());
 
-    // If no matching apartments → return empty result fast
     if (apartmentIds.length === 0) {
-      return [];
+      return []; // No apartment matched
     }
 
-    mongoQuery.apartmentId = { $in: apartmentIds };
+    floorPlanMatch.apartmentId = { $in: apartmentIds };
   }
 
   // ---------------------------
-  // ALWAYS BLOCK NULL APARTMENTS (Important)
+  // BLOCK NULL APARTMENTS ALWAYS
   // ---------------------------
 
-  if (!mongoQuery.apartmentId) {
-    mongoQuery.apartmentId = { $ne: null };
+  if (!floorPlanMatch.apartmentId) {
+    floorPlanMatch.apartmentId = { $ne: null };
   } else {
-    mongoQuery.apartmentId = {
-      ...mongoQuery.apartmentId,
+    floorPlanMatch.apartmentId = {
+      ...floorPlanMatch.apartmentId,
       $ne: null,
     };
   }
 
   // ---------------------------
-  // FLOOR PLAN MAIN QUERY
+  // MAIN FLOOR PLAN QUERY
   // ---------------------------
 
-  const qb = new QueryBuilder(FloorPlan.find(mongoQuery), filters)
+  const qb = new QueryBuilder(FloorPlan.find(floorPlanMatch), filters)
     .filter()
-    // .sort()
     .fields()
     .populate(["apartmentId"], {
       apartmentId:
-        "apartmentName latitude longitude apartmentImage location CompletionDate",
+        "apartmentName latitude longitude apartmentImage location CompletionDate salesCompany",
     });
 
   let result = await qb.modelQuery.lean();
 
-  // ---------------------------
-  // EXTRA SAFETY: Remove any leftover null population
-  // ---------------------------
+  // Remove any leftover null population
   result = result.filter((fp: any) => fp.apartmentId !== null);
 
   // ---------------------------
   // UNIQUE APARTMENT ONLY
   // ---------------------------
 
-  const uniqueMap = new Map();
+  const unique = new Map();
 
-  result.forEach((fp) => {
+  for (const fp of result) {
     // @ts-ignore
     const id = fp.apartmentId?._id?.toString();
-    if (id && !uniqueMap.has(id)) {
-      uniqueMap.set(id, fp);
+    if (id && !unique.has(id)) {
+      unique.set(id, fp);
     }
-  });
+  }
 
-  return Array.from(uniqueMap.values());
+  return Array.from(unique.values());
 };
 
 const getFloorPlansByApartmentId = async (
