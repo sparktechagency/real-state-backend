@@ -15,6 +15,146 @@ const createFloorPlan = async (payload: IFloorPlan): Promise<IFloorPlan> => {
   return result;
 };
 
+// const getAllFlans = async (query: Record<string, any>) => {
+//   const {
+//     priceMin,
+//     priceMax,
+//     propertyType,
+//     location,
+//     salesCompany,
+//     completionDate,
+//     apartmentName,
+//     commission,
+//     seaViewBoolean,
+//     page = 1,
+//     limit = 10,
+//   } = query;
+//   // --- FloorPlan Filter ---
+//   const matchFloorPlan: any = {};
+//   if (priceMin || priceMax) {
+//     matchFloorPlan.price = {};
+//     if (priceMin) matchFloorPlan.price.$gte = Number(priceMin);
+//     if (priceMax) matchFloorPlan.price.$lte = Number(priceMax);
+//   }
+
+//   const matchingFloorPlans = await FloorPlan.find(matchFloorPlan).lean();
+//   const apartmentIdSet = new Set(
+//     matchingFloorPlans.map((f) => f.apartmentId?.toString())
+//   );
+
+//   // --- Apartment Filter ---
+//   const apartmentFilter: any = {};
+
+//   // Helper to normalize comma-separated or array values
+//   const normalizeFilter = (fieldValue: string | string[] | undefined): any => {
+//     if (!fieldValue) return undefined;
+
+//     if (Array.isArray(fieldValue)) {
+//       return { $in: fieldValue };
+//     }
+
+//     if (typeof fieldValue === "string" && fieldValue.includes(",")) {
+//       return { $in: fieldValue.split(",").map((v) => v.trim()) };
+//     }
+
+//     return fieldValue;
+//   };
+
+//   const propertyTypeFilter = normalizeFilter(propertyType);
+//   const locationFilter = normalizeFilter(location);
+//   const salesCompanyFilter = normalizeFilter(salesCompany);
+//   if (seaViewBoolean !== undefined) {
+//     apartmentFilter.seaViewBoolean =
+//       seaViewBoolean === "true" || seaViewBoolean === true;
+//   }
+
+//   if (propertyTypeFilter) apartmentFilter.propertyType = propertyTypeFilter;
+//   if (locationFilter) apartmentFilter.location = locationFilter;
+//   if (salesCompanyFilter) apartmentFilter.salesCompany = salesCompanyFilter;
+
+//   // Commission Filter (fixed)
+//   if (commission) {
+//     if (typeof commission === "string" && commission.includes(",")) {
+//       apartmentFilter.commission = {
+//         $in: commission.split(",").map((v) => v.trim()),
+//       };
+//     } else {
+//       apartmentFilter.commission = commission.trim();
+//     }
+//   }
+
+//   // Completion date filter (handle multiple)
+//   if (completionDate) {
+//     if (typeof completionDate === "string" && completionDate.includes(",")) {
+//       apartmentFilter.CompletionDate = {
+//         $in: completionDate.split(",").map((v) => v.trim()),
+//       };
+//     } else {
+//       apartmentFilter.CompletionDate = completionDate;
+//     }
+//   }
+
+//   if (apartmentName) {
+//     apartmentFilter.apartmentName = {
+//       $regex: apartmentName,
+//       $options: "i",
+//     };
+//   }
+
+//   // Only filter by apartments that have matching floor plans
+//   if (apartmentIdSet.size > 0) {
+//     apartmentFilter._id = { $in: Array.from(apartmentIdSet) };
+//   } else {
+//     return {
+//       pagination: { total: 0, page, limit, totalPage: 0 },
+//       apartments: [],
+//     };
+//   }
+
+//   // --- Pagination ---
+//   const total = await Apartment.countDocuments(apartmentFilter);
+//   const totalPage = Math.ceil(total / Number(limit));
+//   const apartments = await Apartment.find(apartmentFilter)
+//     .skip((Number(page) - 1) * Number(limit))
+//     .limit(Number(limit))
+//     .lean();
+
+//   // --- Combine with floorPlans ---
+//   const apartmentMap = new Map();
+//   for (const apartment of apartments) {
+//     const floorPlans = matchingFloorPlans.filter(
+//       (f) => f.apartmentId?.toString() === apartment._id.toString()
+//     );
+
+//     apartmentMap.set(apartment._id.toString(), {
+//       ...apartment,
+//       floorPlans,
+//     });
+//   }
+
+//   return {
+//     pagination: {
+//       total,
+//       page: Number(page),
+//       limit: Number(limit),
+//       totalPage,
+//     },
+
+//     apartments: Array.from(apartmentMap.values())?.map((apartment: any) => ({
+//       _id: apartment._id,
+//       apartmentName: apartment.apartmentName,
+//       apartmentImage: apartment.apartmentImage,
+//       completionDate: apartment.CompletionDate,
+//       commission: apartment.commission,
+//       seaViewBoolean: apartment.seaViewBoolean,
+//       floorPlans: apartment.floorPlans.map((plan: any) => ({
+//         floorPlan: plan.floorPlan,
+//         price: plan.price,
+//       })),
+//     })),
+//   };
+// };
+
 const getAllFlans = async (query: Record<string, any>) => {
   const {
     priceMin,
@@ -29,6 +169,7 @@ const getAllFlans = async (query: Record<string, any>) => {
     page = 1,
     limit = 10,
   } = query;
+
   // --- FloorPlan Filter ---
   const matchFloorPlan: any = {};
   if (priceMin || priceMax) {
@@ -38,6 +179,7 @@ const getAllFlans = async (query: Record<string, any>) => {
   }
 
   const matchingFloorPlans = await FloorPlan.find(matchFloorPlan).lean();
+
   const apartmentIdSet = new Set(
     matchingFloorPlans.map((f) => f.apartmentId?.toString())
   );
@@ -45,24 +187,19 @@ const getAllFlans = async (query: Record<string, any>) => {
   // --- Apartment Filter ---
   const apartmentFilter: any = {};
 
-  // Helper to normalize comma-separated or array values
   const normalizeFilter = (fieldValue: string | string[] | undefined): any => {
     if (!fieldValue) return undefined;
-
-    if (Array.isArray(fieldValue)) {
-      return { $in: fieldValue };
-    }
-
+    if (Array.isArray(fieldValue)) return { $in: fieldValue };
     if (typeof fieldValue === "string" && fieldValue.includes(",")) {
       return { $in: fieldValue.split(",").map((v) => v.trim()) };
     }
-
     return fieldValue;
   };
 
   const propertyTypeFilter = normalizeFilter(propertyType);
   const locationFilter = normalizeFilter(location);
   const salesCompanyFilter = normalizeFilter(salesCompany);
+
   if (seaViewBoolean !== undefined) {
     apartmentFilter.seaViewBoolean =
       seaViewBoolean === "true" || seaViewBoolean === true;
@@ -72,7 +209,6 @@ const getAllFlans = async (query: Record<string, any>) => {
   if (locationFilter) apartmentFilter.location = locationFilter;
   if (salesCompanyFilter) apartmentFilter.salesCompany = salesCompanyFilter;
 
-  // Commission Filter (fixed)
   if (commission) {
     if (typeof commission === "string" && commission.includes(",")) {
       apartmentFilter.commission = {
@@ -83,7 +219,6 @@ const getAllFlans = async (query: Record<string, any>) => {
     }
   }
 
-  // Completion date filter (handle multiple)
   if (completionDate) {
     if (typeof completionDate === "string" && completionDate.includes(",")) {
       apartmentFilter.CompletionDate = {
@@ -101,7 +236,6 @@ const getAllFlans = async (query: Record<string, any>) => {
     };
   }
 
-  // Only filter by apartments that have matching floor plans
   if (apartmentIdSet.size > 0) {
     apartmentFilter._id = { $in: Array.from(apartmentIdSet) };
   } else {
@@ -119,15 +253,18 @@ const getAllFlans = async (query: Record<string, any>) => {
     .limit(Number(limit))
     .lean();
 
-  // --- Combine with floorPlans ---
+  // --- Combine with floorPlans & add sortPrice ---
   const apartmentMap = new Map();
   for (const apartment of apartments) {
-    const floorPlans = matchingFloorPlans.filter(
-      (f) => f.apartmentId?.toString() === apartment._id.toString()
-    );
+    const floorPlans = matchingFloorPlans
+      .filter((f) => f.apartmentId?.toString() === apartment._id.toString())
+      .sort((a, b) => a.price - b.price); // lowest price first
+
+    const sortPrice = floorPlans.length > 0 ? floorPlans[0].price : null;
 
     apartmentMap.set(apartment._id.toString(), {
       ...apartment,
+      sortPrice,
       floorPlans,
     });
   }
@@ -139,14 +276,14 @@ const getAllFlans = async (query: Record<string, any>) => {
       limit: Number(limit),
       totalPage,
     },
-
-    apartments: Array.from(apartmentMap.values())?.map((apartment: any) => ({
+    apartments: Array.from(apartmentMap.values()).map((apartment: any) => ({
       _id: apartment._id,
       apartmentName: apartment.apartmentName,
       apartmentImage: apartment.apartmentImage,
       completionDate: apartment.CompletionDate,
       commission: apartment.commission,
       seaViewBoolean: apartment.seaViewBoolean,
+      sortPrice: apartment.sortPrice,
       floorPlans: apartment.floorPlans.map((plan: any) => ({
         floorPlan: plan.floorPlan,
         price: plan.price,

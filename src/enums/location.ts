@@ -8,7 +8,7 @@ export enum Location {
   Marbella = "Marbella",
   Benalmadena = "Benalmadena",
   Fuengirola = "Fuengirola",
-  LaAlcaidesa = "LaAlcaidesa",
+  La_Alcaidesa = "La Alcaidesa",
   RinconDeLaVictoria = "RinconDeLaVictoria",
   ToreeDelMar = "ToreeDelMar",
   Higueron = "Higueron",
