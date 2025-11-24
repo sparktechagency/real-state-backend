@@ -310,11 +310,10 @@ const getAllFloorePlanBaseOnApartmentId = async (
   } = query;
 
   let mongoQuery: any = {};
-
   const apartmentMatch: any = {};
 
   // ---------------------------
-  // TEXT BASED FILTERING
+  // TEXT FILTERS
   // ---------------------------
 
   if (apartmentName) {
@@ -322,14 +321,14 @@ const getAllFloorePlanBaseOnApartmentId = async (
   }
 
   if (location) {
-    let locArray: string[] = [];
+    let arr: string[] = [];
 
-    if (Array.isArray(location)) locArray = location;
+    if (Array.isArray(location)) arr = location;
     else if (typeof location === "string" && location.includes(","))
-      locArray = location.split(",");
-    else locArray = [location];
+      arr = location.split(",");
+    else arr = [location];
 
-    const cleaned = locArray.map((l) => l.trim()).filter(Boolean);
+    const cleaned = arr.map((l) => l.trim()).filter(Boolean);
 
     if (cleaned.length > 0) {
       apartmentMatch.location = {
@@ -339,36 +338,54 @@ const getAllFloorePlanBaseOnApartmentId = async (
   }
 
   if (salesCompany) {
-    let salesArray: string[] = [];
+    let arr: string[] = [];
 
-    if (Array.isArray(salesCompany)) salesArray = salesCompany;
+    if (Array.isArray(salesCompany)) arr = salesCompany;
     else if (typeof salesCompany === "string" && salesCompany.includes(","))
-      salesArray = salesCompany.split(",");
-    else salesArray = [salesCompany];
+      arr = salesCompany.split(",");
+    else arr = [salesCompany];
 
-    const cleanedSales = salesArray.map((s) => s.trim()).filter(Boolean);
+    const cleaned = arr.map((s) => s.trim()).filter(Boolean);
 
-    if (cleanedSales.length > 0) {
-      apartmentMatch.salesCompany = { $in: cleanedSales };
+    if (cleaned.length > 0) {
+      apartmentMatch.salesCompany = { $in: cleaned };
     }
   }
 
   // ---------------------------
-  // CompletionDate ARRAY FILTER
+  // COMPLETION DATE
   // ---------------------------
 
   if (CompletionDate) {
-    let yearsArray: string[] = [];
+    let arr: string[] = [];
 
-    if (Array.isArray(CompletionDate)) yearsArray = CompletionDate;
+    if (Array.isArray(CompletionDate)) arr = CompletionDate;
     else if (typeof CompletionDate === "string" && CompletionDate.includes(","))
-      yearsArray = CompletionDate.split(",");
-    else yearsArray = [CompletionDate];
+      arr = CompletionDate.split(",");
+    else arr = [CompletionDate];
 
-    const years = yearsArray.map((y) => Number(y)).filter((y) => !isNaN(y));
-
+    const years = arr.map(Number).filter((y) => !isNaN(y));
     if (years.length > 0) {
       apartmentMatch.CompletionDate = { $in: years };
+    }
+  }
+
+  // ---------------------------
+  // MULTI PROPERTY TYPE
+  // ---------------------------
+
+  if (propertyType) {
+    let arr: string[] = [];
+
+    if (Array.isArray(propertyType)) arr = propertyType;
+    else if (typeof propertyType === "string" && propertyType.includes(","))
+      arr = propertyType.split(",");
+    else arr = [propertyType];
+
+    const cleaned = arr.map((p) => p.trim()).filter(Boolean);
+
+    if (cleaned.length > 0) {
+      apartmentMatch.propertyType = { $in: cleaned };
     }
   }
 
@@ -376,28 +393,22 @@ const getAllFloorePlanBaseOnApartmentId = async (
   // OTHER FILTERS
   // ---------------------------
 
-  if (propertyType) {
-    apartmentMatch.propertyType = { $regex: propertyType, $options: "i" };
-  }
-
   if (seaViewBoolean !== undefined) {
     apartmentMatch.seaViewBoolean = seaViewBoolean === "true";
   }
 
   if (commission) {
-    let commissionsArray: string[] = [];
+    let arr = [];
 
-    if (Array.isArray(commission)) commissionsArray = commission;
+    if (Array.isArray(commission)) arr = commission;
     else if (typeof commission === "string" && commission.includes(","))
-      commissionsArray = commission.split(",");
-    else commissionsArray = [commission];
+      arr = commission.split(",");
+    else arr = [commission];
 
-    const commissions = commissionsArray
-      .map((c) => Number(c))
-      .filter((c) => !isNaN(c));
+    const nums = arr.map(Number).filter((n) => !isNaN(n));
 
-    if (commissions.length > 0) {
-      apartmentMatch.commission = { $in: commissions };
+    if (nums.length > 0) {
+      apartmentMatch.commission = { $in: nums };
     }
   }
 
@@ -412,7 +423,7 @@ const getAllFloorePlanBaseOnApartmentId = async (
   }
 
   // ---------------------------
-  // GET APARTMENT IDs BASED ON FILTERS
+  // MATCH APARTMENTS
   // ---------------------------
 
   let apartmentIds: string[] = [];
@@ -428,15 +439,9 @@ const getAllFloorePlanBaseOnApartmentId = async (
     mongoQuery.apartmentId = { $in: apartmentIds };
   }
 
-  // ALWAYS BLOCK NULL APARTMENTS
-  if (!mongoQuery.apartmentId) {
-    mongoQuery.apartmentId = { $ne: null };
-  } else {
-    mongoQuery.apartmentId = {
-      ...mongoQuery.apartmentId,
-      $ne: null,
-    };
-  }
+  mongoQuery.apartmentId = mongoQuery.apartmentId
+    ? { ...mongoQuery.apartmentId, $ne: null }
+    : { $ne: null };
 
   // ---------------------------
   // MAIN QUERY
@@ -446,13 +451,17 @@ const getAllFloorePlanBaseOnApartmentId = async (
     .filter()
     .fields()
     .populate(["apartmentId"], {
-      apartmentId:
-        "apartmentName apartmentImage location CompletionDate commission seaViewBoolean",
+      apartmentName: 1,
+      apartmentImage: 1,
+      location: 1,
+      CompletionDate: 1,
+      commission: 1,
+      seaViewBoolean: 1,
+      propertyType: 1,
+      // ❌ floorPlans intentionally excluded
     });
 
   let result = await qb.modelQuery.lean();
-
-  // Remove null apartments
   result = result.filter((fp: any) => fp.apartmentId !== null);
 
   // ---------------------------
@@ -462,34 +471,34 @@ const getAllFloorePlanBaseOnApartmentId = async (
   const grouped = new Map();
 
   result.forEach((fp: any) => {
-    const aptId = fp.apartmentId?._id.toString();
+    const aptId = fp.apartmentId._id.toString();
 
     if (!grouped.has(aptId)) {
       grouped.set(aptId, {
         ...fp.apartmentId,
-        floorPlans: [],
+        _prices: [],
       });
     }
 
-    grouped.get(aptId).floorPlans.push({
-      floorPlan: fp.floorPlan,
-      price: fp.price,
-    });
+    grouped.get(aptId)._prices.push(fp.price);
   });
 
   // ---------------------------
-  // ADD sortPrice + SORT floorPlans
+  // REMOVE floorPlans + ADD sortPrice
   // ---------------------------
 
   const finalResult = Array.from(grouped.values()).map((apt: any) => {
-    apt.floorPlans.sort((a: any, b: any) => a.price - b.price); // sort asc
-    apt.sortPrice = apt.floorPlans[0]?.price || null; // lowest price
-    return apt;
+    const sortPrice = Math.min(...apt._prices);
+
+    delete apt._prices; // ❌ delete temp field
+
+    return {
+      ...apt,
+      sortPrice,
+    };
   });
 
-  return {
-    apartments: finalResult,
-  };
+  return { apartments: finalResult };
 };
 
 const getFloorPlansByApartmentId = async (
