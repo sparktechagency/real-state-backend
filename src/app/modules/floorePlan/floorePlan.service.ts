@@ -490,7 +490,7 @@ const getAllFloorePlanBaseOnApartmentId = async (
   const finalResult = Array.from(grouped.values()).map((apt: any) => {
     const sortPrice = Math.min(...apt._prices);
 
-    delete apt._prices; // ❌ delete temp field
+    delete apt._prices;
 
     return {
       ...apt,
@@ -540,8 +540,17 @@ const getFloorPlansByApartmentId = async (
   phaseQueryBuilder.sort().paginate().fields();
   const phaseData = await phaseQueryBuilder.modelQuery.lean();
 
+  // ====== ONLY NEW PART: sortPrice ======
+  let sortPrice = null;
+  if (floorData.length > 0) {
+    sortPrice = Math.min(...floorData.map((fp: any) => fp.price));
+  }
+
   return {
-    apartment,
+    apartment: {
+      ...apartment,
+      sortPrice, // <-- ADDING HERE
+    },
     floorPlans: {
       data: floorData,
       meta: floorMeta,
