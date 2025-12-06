@@ -12,7 +12,6 @@ router.post(
 );
 router.get(
   "/",
-  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
   PrivacyPolicyController.getAllPrivacyPolicy
 );
 

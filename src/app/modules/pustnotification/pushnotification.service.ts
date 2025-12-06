@@ -13,6 +13,7 @@ const createPushNotificationDto = async (
   payload: IPushNotification
 ) => {
   payload.sender = userId.id;
+  console.log("Hit this api...");
 
   // collect all users who have device tokens
   const allUsers = await User.find({
