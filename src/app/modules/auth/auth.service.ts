@@ -42,7 +42,6 @@ const loginUserFromDB = async (payload: ILoginData) => {
   }
   //  first find the device token if have than login if not have than create new device token also if in this array have have more than 3 than device token is reset
 
-  console.log("Before updating deviceToken:", isExistUser.deviceToken);
   if (deviceToken) {
     const tokens = isExistUser.deviceToken;
 
@@ -62,8 +61,6 @@ const loginUserFromDB = async (payload: ILoginData) => {
       });
     }
   }
-
-  console.log("After updating deviceToken:", isExistUser.deviceToken);
 
   //create token
   const accessToken = jwtHelper.createToken(

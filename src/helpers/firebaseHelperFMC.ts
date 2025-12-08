@@ -1,37 +1,37 @@
 import { firebaseAdmin } from "./firebaseHelper";
 
 export type IFirebaseNotification = {
-    token: string;
-    title: string;
-    body: string;
-    data?: any;
+  token: string;
+  title: string;
+  body: string;
+  data?: any;
 };
 
 export const sendNotificationToFCM = async ({
-    token,
-    title,
-    body,
-    data,
+  token,
+  title,
+  body,
+  data,
 }: IFirebaseNotification) => {
-    let stringData: any = {}
-    if (data) {
-        for (let keyData in data) {
-            stringData[keyData] = String(data[keyData])
-        }
+  let stringData: any = {};
+  if (data) {
+    for (let keyData in data) {
+      stringData[keyData] = String(data[keyData]);
     }
-    const message = {
-        notification: {
-            title,
-            body,
-        },
-        token,
-        data: stringData,
-    };
+  }
+  const message = {
+    notification: {
+      title,
+      body,
+    },
+    token,
+    data: stringData,
+  };
 
-    try {
-        const response = await firebaseAdmin.messaging().send(message);
-        console.log("Successfully sent message:", response);
-    } catch (error) {
-        console.error("Error sending message:", error);
-    }
+  try {
+    await firebaseAdmin.messaging().send(message);
+    // console.log("Successfully sent message:", response);
+  } catch (error) {
+    console.error("Error sending message:", error);
+  }
 };
