@@ -90,4 +90,6 @@ router.get(
   }
 );
 
+router.route("/remove-device-token").patch(AuthController.removeUserToken);
+
 export const AuthRoutes = router;

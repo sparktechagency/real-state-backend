@@ -20,9 +20,19 @@ const getNotificationsByUserId = async (
   const data = await queryBuilder.modelQuery;
   const meta = await queryBuilder.getPaginationInfo();
 
+  // also return all unread notification count
+  const unreadCount = await NotificationModel.countDocuments({
+    receiver: user.id,
+    isRead: false,
+  });
+  data.forEach((notification) => {
+    (notification as any)._doc.unreadCount = unreadCount;
+  });
+  const result = { unreadCount, data };
+
   return {
     meta,
-    data,
+    result,
   };
 };
 
@@ -34,7 +44,7 @@ const updateNotification = async (notificationId: string) => {
   );
 };
 
-//  
+//
 
 export const NotificationServices = {
   createNotification,

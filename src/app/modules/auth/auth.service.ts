@@ -19,7 +19,7 @@ import { User } from "../user/user.model";
 
 //login
 const loginUserFromDB = async (payload: ILoginData) => {
-  const { email, password } = payload;
+  const { email, password, deviceToken } = payload;
   const isExistUser: any = await User.findOne({ email }).select("+password");
   if (!isExistUser) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
@@ -40,6 +40,30 @@ const loginUserFromDB = async (payload: ILoginData) => {
   ) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "Password is incorrect!");
   }
+  //  first find the device token if have than login if not have than create new device token also if in this array have have more than 3 than device token is reset
+
+  console.log("Before updating deviceToken:", isExistUser.deviceToken);
+  if (deviceToken) {
+    const tokens = isExistUser.deviceToken;
+
+    // new device and already limit reached
+    if (!tokens.includes(deviceToken) && tokens.length >= 3) {
+      throw new ApiError(
+        StatusCodes.CONFLICT,
+        "Maximum device limit reached (3 devices allowed)."
+      );
+    }
+
+    // add new device token
+    if (!tokens.includes(deviceToken)) {
+      const updatedTokens = [...tokens, deviceToken];
+      await User.findByIdAndUpdate(isExistUser._id, {
+        deviceToken: updatedTokens,
+      });
+    }
+  }
+
+  console.log("After updating deviceToken:", isExistUser.deviceToken);
 
   //create token
   const accessToken = jwtHelper.createToken(
@@ -344,10 +368,19 @@ const deleteUserFromDB = async (user: JwtPayload, password: string) => {
   return;
 };
 
-
 // remove user token
-const removeUserTokenFromDB = async (id: string) => {
-  const result = await User.findByIdAndUpdate(id, { $unset: { deviceToken: "" } });
+const removeUserTokenFromDB = async (email: string) => {
+  // find the user base the email
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "Email doesn't exist!");
+  }
+  const result = await User.findOneAndUpdate(
+    { email },
+    {
+      $unset: { deviceToken: "" },
+    }
+  );
   return result;
 };
 
@@ -360,4 +393,5 @@ export const AuthService = {
   newAccessTokenToUser,
   resendVerificationEmailToDB,
   deleteUserFromDB,
+  removeUserTokenFromDB,
 };

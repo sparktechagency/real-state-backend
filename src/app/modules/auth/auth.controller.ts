@@ -106,6 +106,16 @@ const deleteUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const removeUserToken = catchAsync(async (req: Request, res: Response) => {
+  const email = req.body.email;
+  await AuthService.removeUserTokenFromDB(email);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: "User device token removed successfully",
+  });
+});
+
 export const AuthController = {
   verifyEmail,
   loginUser,
@@ -115,4 +125,5 @@ export const AuthController = {
   newAccessToken,
   resendVerificationEmail,
   deleteUser,
+  removeUserToken,  
 };
