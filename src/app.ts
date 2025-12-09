@@ -20,17 +20,17 @@ app.use(Morgan.successHandler);
 app.use(Morgan.errorHandler);
 
 //body parser
-app.use(cors(
-  {
-    origin:"*",
+app.use(
+  cors({
+    origin: "*",
     // origin:"http://147.93.94.210:4173",
-    methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
-  }
-));
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(ddosProtection)
+app.use(ddosProtection);
 
 //file retrieve
 app.use(express.static("uploads"));
