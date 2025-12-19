@@ -28,7 +28,7 @@ const getNotificationsByUserId = async (
   data.forEach((notification) => {
     (notification as any)._doc.unreadCount = unreadCount;
   });
-  const result = { unreadCount, data };
+  const result = data;
 
   return {
     meta,
