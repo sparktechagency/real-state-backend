@@ -13,7 +13,7 @@ const getNotificationsByUserId = async (
   query: Record<string, any>
 ) => {
   const queryBuilder = new QueryBuilder(
-    NotificationModel.find({ receiver: user.id }).sort({ createdAt: -1 }),
+    NotificationModel.find({ receiver: user.id }).sort({ createdAt: 1 }),
     query
   );
 
