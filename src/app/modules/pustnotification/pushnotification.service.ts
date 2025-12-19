@@ -13,66 +13,59 @@ const createPushNotificationDto = async (
   payload: IPushNotification
 ) => {
   payload.sender = userId.id;
-  // console.log("Hit this api...");
 
-  // collect all users who have device tokens
+  // collect all verified users except sender
   const allUsers = await User.find({
-    deviceToken: { $exists: true, $ne: null },
-  })
-    .select("_id deviceToken")
-    .lean();
-
-  // collect all device tokens
-  const allDeviceTokens = allUsers.flatMap((u) => u.deviceToken);
-  // await sendNotifications(notificationPayload as any); and need to remove send notification user.
-  const allUser = await User.find({
     verified: true,
     _id: { $ne: userId.id },
   }).lean();
-  // console.log(
-  //   "allUserIds",
-  //   allUser.map((u) => u._id)
-  // );
-  // save notification in DB
-  const pushNotificationPayload = {
-    ...payload,
-    sender: userId.id,
-    receiver: allUser.map((u) => u._id),
-  };
 
-  const result = await pushNotificationModel.create(pushNotificationPayload);
-  if (!result) {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      "Can't create Push Notification"
-    );
-  }
+  if (!allUsers.length) return [];
 
-  //  Send socket notification to all connected users at once
-  const notificationPayload: INotification = {
-    sender: userId.id,
-    title: payload.title,
-    receiver: allUser.map((u) => u._id),
-    description: payload.description,
-    image: payload.image,
-    isRead: false,
-    message: payload.title || "You have a new notification",
-  };
+  // save notification for each user individually
+  const notifications = await Promise.all(
+    allUsers.map(async (user) => {
+      const doc = await pushNotificationModel.create({
+        ...payload,
+        sender: userId.id,
+        receiver: user._id, // new: each user gets separate receiver
+      });
 
-  // broadcast to all connected users
-  await sendNotifications(notificationPayload);
+      // new: Send push notification (FCM)
+      if (user.deviceToken) {
+        // new: handle multiple device tokens if array
+        const tokens = Array.isArray(user.deviceToken)
+          ? user.deviceToken
+          : [user.deviceToken];
 
-  // Send push notifications to all device tokens (FCM)
-  for (const deviceToken of allDeviceTokens) {
-    await sendNotificationToFCM({
-      token: deviceToken!,
-      title: payload.title || "You have a new notification",
-      body: payload.description || "",
-      data: result.toObject(),
-    });
-  }
+        await Promise.all(
+          tokens.map((token) =>
+            sendNotificationToFCM({
+              token,
+              title: payload.title || "You have a new notification",
+              body: payload.description || "",
+              data: doc.toObject(), // new: convert to object for FCM
+            })
+          )
+        );
+      }
 
-  return result;
+      // new: Send socket notification to single user
+      await sendNotifications({
+        sender: userId.id,
+        receiver: user._id,
+        title: payload.title,
+        description: payload.description,
+        image: payload.image,
+        isRead: false,
+        message: payload.title || "You have a new notification",
+      });
+
+      return doc;
+    })
+  );
+
+  return notifications; // returns array of saved notifications
 };
 
 export const PushNotificationService = {

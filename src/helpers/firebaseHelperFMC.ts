@@ -19,6 +19,7 @@ export const sendNotificationToFCM = async ({
       stringData[keyData] = String(data[keyData]);
     }
   }
+
   const message = {
     notification: {
       title,
@@ -30,7 +31,6 @@ export const sendNotificationToFCM = async ({
 
   try {
     await firebaseAdmin.messaging().send(message);
-    // console.log("Successfully sent message:", response);
   } catch (error) {
     console.error("Error sending message:", error);
   }
