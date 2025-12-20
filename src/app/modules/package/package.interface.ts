@@ -7,10 +7,8 @@ export type IPackage = {
   price: number;
   duration: "1 month" | "1 year";
   paymentType: "Monthly" | "Yearly";
-  paymentLink?: string;
   status: "Active" | "Delete";
-  stripeProductId?: string;
-  priceId?: string;
+  product_id: string;
 };
 
 export type PackageModel = Model<IPackage, Record<string, unknown>>;

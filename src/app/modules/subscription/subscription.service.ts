@@ -2,148 +2,118 @@ import { Jwt, JwtPayload } from "jsonwebtoken";
 import { Package } from "../package/package.model";
 import { ISubscription } from "./subscription.interface";
 import { Subscription } from "./subscription.model";
-import stripe from "../../../config/stripe";
 import { User } from "../user/user.model";
+import ApiError from "../../../errors/ApiErrors";
+import { StatusCodes } from "http-status-codes";
+import { calculateExpiryDate } from "../../../helpers/calculateExpiryDate";
+import mongoose from "mongoose";
+import QueryBuilder from "../../builder/QueryBuilder";
 
-const subscriptionDetailsFromDB = async (
+const addSubscriberIntoDB = async (
+  payload: ISubscription,
   user: JwtPayload
-): Promise<{ subscription: ISubscription | {} }> => {
-  const subscription = await Subscription.findOne({ user: user.id })
-    .populate("package", "title credit")
-    .lean();
-  if (!subscription) {
-    return { subscription: {} };
-  }
+) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  const subscriptionFromStripe = await stripe.subscriptions.retrieve(
-    subscription.subscriptionId
-  );
-
-  // Check subscription status and update database accordingly
-  if (subscriptionFromStripe?.status !== "active") {
-    await Promise.all([
-      User.findByIdAndUpdate(user.id, { isSubscribed: false }, { new: true }),
-      Subscription.findOneAndUpdate(
-        { user: user.id },
-        { status: "expired" },
-        { new: true }
-      ),
+  try {
+    // Parallel fetch: user + package
+    const [userData, packageData] = await Promise.all([
+      User.findById(user.id).select("_id").session(session),
+      Package.findOne({ product_id: payload.product_id })
+        .select("_id duration")
+        .session(session),
     ]);
-  }
 
-  return { subscription };
-};
+    if (!userData)
+      throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized user");
+    if (!packageData)
+      throw new ApiError(StatusCodes.BAD_REQUEST, "Package not found");
 
-const companySubscriptionDetailsFromDB = async (
-  id: string
-): Promise<{ subscription: ISubscription | {} }> => {
-  const subscription = await Subscription.findOne({ user: id })
-    .populate("package", "title credit")
-    .lean();
-  if (!subscription) {
-    return { subscription: {} };
-  }
+    // Check for active subscription
+    // Use the package _id from DB to avoid mismatch
+    const activeSub = await Subscription.findOne({
+      user: user.id,
+      package: packageData._id,
+      status: "active",
+    })
+      .select("expiry_date")
+      .session(session);
 
-  const subscriptionFromStripe = await stripe.subscriptions.retrieve(
-    subscription.subscriptionId
-  );
-
-  // Check subscription status and update database accordingly
-  if (subscriptionFromStripe?.status !== "active") {
-    await Promise.all([
-      User.findByIdAndUpdate(id, { isSubscribed: false }, { new: true }),
-      Subscription.findOneAndUpdate(
-        { user: id },
-        { status: "expired" },
-        { new: true }
-      ),
-    ]);
-  }
-
-  return { subscription };
-};
-
-const subscriptionsFromDB = async (
-  query: Record<string, unknown>
-): Promise<ISubscription[]> => {
-  const anyConditions: any[] = [];
-
-  const { search, limit, page, paymentType } = query;
-
-  if (search) {
-    const matchingPackageIds = await Package.find({
-      $or: [
-        { title: { $regex: search, $options: "i" } },
-        { paymentType: { $regex: search, $options: "i" } },
-      ],
-    }).distinct("_id");
-
-    if (matchingPackageIds.length) {
-      anyConditions.push({
-        package: { $in: matchingPackageIds },
-      });
+    if (activeSub) {
+      throw new ApiError(
+        StatusCodes.CONFLICT,
+        `You already have an active subscription until ${activeSub.expiry_date!.toLocaleString()}`
+      );
     }
-  }
 
-  if (paymentType) {
-    anyConditions.push({
-      package: {
-        $in: await Package.find({ paymentType: paymentType }).distinct("_id"),
-      },
+    // Calculate expiry date using Date type
+    const expiryDate = calculateExpiryDate(
+      payload.transaction_date,
+      packageData.duration
+    );
+
+    // Build subscription object (immutable)
+    const subscriptionData: ISubscription = {
+      ...payload,
+      user: user.id,
+      package: packageData._id,
+      expiry_date: expiryDate, // Date type
+      status: "active",
+      transaction_date: payload.transaction_date, // convert to Date
+    };
+
+    // Create subscription in transaction (atomic)
+    const subscription = await Subscription.create([subscriptionData], {
+      session,
     });
+
+    // Commit transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    return subscription[0];
+  } catch (error: any) {
+    await session.abortTransaction();
+    session.endSession();
+
+    // Duplicate key safe
+    if (error.code === 11000) {
+      throw new ApiError(
+        StatusCodes.CONFLICT,
+        "Active subscription already exists or payment already processed"
+      );
+    }
+
+    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message);
   }
-
-  const whereConditions =
-    anyConditions.length > 0 ? { $and: anyConditions } : {};
-  const pages = parseInt(page as string) || 1;
-  const size = parseInt(limit as string) || 10;
-  const skip = (pages - 1) * size;
-
-  const result = await Subscription.find(whereConditions)
-    .populate([
-      {
-        path: "package",
-        select: "title paymentType credit description",
-      },
-      {
-        path: "user",
-        select: "email name linkedIn contact company website ",
-      },
-    ])
-    .select(
-      "user package price trxId currentPeriodStart currentPeriodEnd status"
-    )
-    .skip(skip)
-    .limit(size);
-
-  const count = await Subscription.countDocuments(whereConditions);
-
-  const data: any = {
-    data: result,
-    meta: {
-      page: pages,
-      total: count,
-    },
-  };
-
-  return data;
 };
 
-const mySubscriptionDetailsFromDB = async (user: JwtPayload) => {
-  const subscription = await Subscription.findOne({ user: user.id })
-    .populate("package", "title credit duration")
-    .lean();
+const getAllSubscriptionsFromDB = async (
+  user: JwtPayload,
+  query: Record<string, any>
+) => {
+  const userData = await User.findById(user.id).select("_id");
+  if (!userData)
+    throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized user");
+  const subscriptions = new QueryBuilder(Subscription.find(), query)
+    .filter()
+    .sort();
+  const data = await subscriptions.modelQuery;
+  const meta = await subscriptions.getPaginationInfo();
+  return { data, meta };
+};
+
+const specipicSubscriberFromDB = async (user: JwtPayload) => {
+  const subscription = await Subscription.findById({ user: user.id });
   if (!subscription) {
-    return { subscription: {} };
+    throw new ApiError(StatusCodes.NOT_FOUND, "Subscription not found");
   }
-  return { subscription };
-
-}
-
+  return subscription;
+};
 
 export const SubscriptionService = {
-  subscriptionDetailsFromDB,
-  subscriptionsFromDB,
-  companySubscriptionDetailsFromDB,
-  mySubscriptionDetailsFromDB
+  addSubscriberIntoDB,
+  getAllSubscriptionsFromDB,
+  specipicSubscriberFromDB,
 };

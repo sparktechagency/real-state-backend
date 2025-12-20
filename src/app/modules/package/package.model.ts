@@ -1,5 +1,5 @@
-import { model, Schema } from "mongoose"; 
-import { IPackage, PackageModel } from "./package.interface"; 
+import { model, Schema } from "mongoose";
+import { IPackage, PackageModel } from "./package.interface";
 
 const packageSchema = new Schema<IPackage, PackageModel>(
   {
@@ -25,27 +25,21 @@ const packageSchema = new Schema<IPackage, PackageModel>(
       enum: ["Monthly", "Yearly"],
       required: true,
     },
-    paymentLink: {
-      type: String,
-      required: true,
-    },
+
     status: {
       type: String,
       enum: ["Active", "Delete"],
       default: "Active",
     },
-    stripeProductId: {
+
+    product_id: {
       type: String,
-      required: false,
-    },
-    priceId: {
-      type: String,
-      required: false,
+      required: true,
     },
   },
   {
     timestamps: true,
   }
-); 
+);
 
 export const Package = model<IPackage, PackageModel>("Package", packageSchema);

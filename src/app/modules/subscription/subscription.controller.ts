@@ -4,58 +4,47 @@ import { SubscriptionService } from "./subscription.service";
 import sendResponse from "../../../shared/sendResponse";
 import { StatusCodes } from "http-status-codes";
 
-
 const subscriptions = catchAsync(async (req: Request, res: Response) => {
-    const result = await SubscriptionService.subscriptionsFromDB(req.query);
+  const result = await SubscriptionService.addSubscriberIntoDB(
+    req.body,
+    req.user!
+  );
 
-    sendResponse(res, {
-        statusCode: StatusCodes.OK,
-        success: true,
-        message: "Subscription List Retrieved Successfully",
-        data: result
-    })
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Subscription added successfully",
+    data: result,
+  });
 });
 
-const subscriptionDetails = catchAsync(async (req: Request, res: Response) => {
-    const result = await SubscriptionService.subscriptionDetailsFromDB(
-        req.user!
-    );
-
-    sendResponse(res, {
-        statusCode: StatusCodes.OK,
-        success: true,
-        message: "Subscription Details Retrieved Successfully",
-        data: result.subscription
-    })
+const getAllSubscriptions = catchAsync(async (req: Request, res: Response) => {
+  const result = await SubscriptionService.getAllSubscriptionsFromDB(
+    req.user!,
+    req.query
+  );
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Subscriptions retrieved successfully",
+    pagination: result.meta,
+    data: result.data,
+  });
 });
 
-const companySubscriptionDetails = catchAsync(async (req: Request, res: Response) => {
-    const result = await SubscriptionService.companySubscriptionDetailsFromDB(req.params.id);
-
-    sendResponse(res, {
-        statusCode: StatusCodes.OK,
-        success: true,
-        message: "Company Subscription Details Retrieved Successfully",
-        data: result.subscription
-    })
+const getSpecificSubscriber = catchAsync(async (req: Request, res: Response) => {
+  const result = await SubscriptionService.specipicSubscriberFromDB(req.user!);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Subscription retrieved successfully",
+    data: result,
+  });
 });
-
-
-
-const mySubscriptionDetails = catchAsync(async (req: Request, res: Response) => {
-    const result = await SubscriptionService.mySubscriptionDetailsFromDB(req.user!);
-    sendResponse(res, {
-        statusCode: StatusCodes.OK,
-        success: true,
-        message: "My Subscription Details Retrieved Successfully",
-        data: result.subscription
-    })
-})
 
 
 export const SubscriptionController = {
-    subscriptions,
-    subscriptionDetails,
-    companySubscriptionDetails,
-    mySubscriptionDetails
-}
+  subscriptions,
+    getAllSubscriptions,
+    getSpecificSubscriber,
+};

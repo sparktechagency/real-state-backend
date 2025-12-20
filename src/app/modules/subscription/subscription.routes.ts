@@ -4,24 +4,18 @@ import { USER_ROLES } from "../../../enums/user";
 import { SubscriptionController } from "./subscription.controller";
 const router = express.Router();
 
-router.get(
-  "/",
-  auth(USER_ROLES.SUPER_ADMIN),
-  SubscriptionController.subscriptions
-);
+router
+  .route("/user")
+  .post(auth(USER_ROLES.AGENCY), SubscriptionController.subscriptions)
+  .get(
+    auth(USER_ROLES.SUPER_ADMIN),
+    SubscriptionController.getAllSubscriptions
+  );
 
-router.get("/details", auth(USER_ROLES.AGENCY), SubscriptionController.mySubscriptionDetails);
-
-router.get(
-  "/details",
-  auth(USER_ROLES.AGENCY),
-  SubscriptionController.subscriptionDetails
-);
-
-router.get(
-  "/:id",
-  auth(USER_ROLES.AGENCY),
-  SubscriptionController.companySubscriptionDetails
-);
-
+router
+  .route("/subscribe/data")
+  .get(
+    auth(USER_ROLES.SUPER_ADMIN),
+    SubscriptionController.getSpecificSubscriber
+  );
 export const SubscriptionRoutes = router;

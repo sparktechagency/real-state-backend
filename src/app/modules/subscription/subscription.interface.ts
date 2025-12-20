@@ -1,16 +1,16 @@
-import { Model, Types } from 'mongoose';
+import { Model, Types } from "mongoose";
 
 export type ISubscription = {
-    customerId: string;
-    price: number;
-    user: Types.ObjectId;
-    package: Types.ObjectId;
-    trxId: string;
-    remaining: number;
-    subscriptionId: string;
-    status: 'expired' | 'active' | 'cancel';
-    currentPeriodStart: string;
-    currentPeriodEnd: string;
+  product_id: string;
+  purchase_id: string;
+  transaction_date: string;
+  expiry_date?: string;
+  platform: "ios" | "android";
+  receipt: string;
+  source: "apple" | "google";
+  status: "active" | "cancelled";
+  package: Types.ObjectId;
+  user: Types.ObjectId;
 };
 
 export type SubscriptionModel = Model<ISubscription, Record<string, unknown>>;
