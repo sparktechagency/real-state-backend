@@ -32,19 +32,22 @@ const getAllSubscriptions = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const getSpecificSubscriber = catchAsync(async (req: Request, res: Response) => {
-  const result = await SubscriptionService.specipicSubscriberFromDB(req.user!);
-  sendResponse(res, {
-    statusCode: StatusCodes.OK,
-    success: true,
-    message: "Subscription retrieved successfully",
-    data: result,
-  });
-});
-
+const getSpecificSubscriber = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await SubscriptionService.specipicSubscriberFromDB(
+      req.user!
+    );
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Subscription retrieved successfully",
+      data: result,
+    });
+  }
+);
 
 export const SubscriptionController = {
   subscriptions,
-    getAllSubscriptions,
-    getSpecificSubscriber,
+  getAllSubscriptions,
+  getSpecificSubscriber,
 };

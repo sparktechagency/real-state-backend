@@ -6,7 +6,7 @@ const router = express.Router();
 
 router
   .route("/user")
-  .post(auth(USER_ROLES.AGENCY), SubscriptionController.subscriptions)
+  .post(auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN), SubscriptionController.subscriptions)
   .get(
     auth(USER_ROLES.SUPER_ADMIN),
     SubscriptionController.getAllSubscriptions
@@ -15,7 +15,7 @@ router
 router
   .route("/subscribe/data")
   .get(
-    auth(USER_ROLES.SUPER_ADMIN),
+    auth(USER_ROLES.AGENCY),
     SubscriptionController.getSpecificSubscriber
   );
 export const SubscriptionRoutes = router;

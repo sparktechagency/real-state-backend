@@ -16,23 +16,23 @@ const createPackage = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getPackage = catchAsync(async (req: Request, res: Response) => {
-  const result = await PackageService.getAllPackage();
+  const result = await PackageService.getAllPackage(req.query);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
     message: "Package Retrieved Successfully",
-    data: result,
+    pagination: result.meta,
+    data: result.result,
   });
 });
 
 const editPackage = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const result = await PackageService.editPackageFromDB(id, req.body);
-
+  const id = req.params.id;
+  const result = await PackageService.editPackageIntoDB(id, req.body);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: "Package updated successfully",
+    message: "Package Updated Successfully",
     data: result,
   });
 });
