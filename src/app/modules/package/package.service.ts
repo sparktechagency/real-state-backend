@@ -14,7 +14,10 @@ const createPackageToDB = async (payload: IPackage) => {
 };
 
 const getAllPackage = async (query: Record<string, any>) => {
-  const qb = new QueryBuilder(Package.find({ status: "Active" }).lean(), query)
+  const qb = new QueryBuilder(
+    Package.find({ status: "Active", disable: false }).lean(),
+    query
+  )
     .sort()
     .paginate();
   const result = await qb.modelQuery;

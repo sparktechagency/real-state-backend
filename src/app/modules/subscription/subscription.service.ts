@@ -39,8 +39,6 @@ const addSubscriberIntoDB = async (
         .select("expiry_date")
         .session(session);
 
-      console.log("Active Subscription:", activeSub);
-
       if (activeSub) {
         const expiry = activeSub.expiry_date
           ? new Date(activeSub.expiry_date).toLocaleString()

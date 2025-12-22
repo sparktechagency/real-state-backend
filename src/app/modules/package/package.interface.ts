@@ -9,6 +9,7 @@ export type IPackage = {
   paymentType: "Monthly" | "Yearly";
   status: "Active" | "Delete";
   product_id: string;
+  disable: boolean;
 };
 
 export type PackageModel = Model<IPackage, Record<string, unknown>>;
