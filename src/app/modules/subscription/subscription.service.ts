@@ -38,20 +38,18 @@ const addSubscriberIntoDB = async (
 
         verifiedExpiryDate = result.expiryDate;
       } else if (payload.platform === "ios") {
-        const result = await verifyIosSubscription(
-          payload.receipt,
-          payload.product_id
-        );
-        console.log("IOS VERIFICATION RESULT:", result);
-
-        if (!result.valid || !result.expiryDate) {
-          throw new ApiError(
-            StatusCodes.BAD_REQUEST,
-            "Invalid iOS subscription"
-          );
-        }
-
-        verifiedExpiryDate = result.expiryDate;
+        // const result = await verifyIosSubscription(
+        //   payload.receipt,
+        //   payload.product_id
+        // );
+        // console.log("IOS VERIFICATION RESULT:", result);
+        // if (!result.valid || !result.expiryDate) {
+        //   throw new ApiError(
+        //     StatusCodes.BAD_REQUEST,
+        //     "Invalid iOS subscription"
+        //   );
+        // }
+        // verifiedExpiryDate = result.expiryDate;
       } else {
         throw new ApiError(StatusCodes.BAD_REQUEST, "Unsupported platform");
       }
@@ -89,7 +87,7 @@ const addSubscriberIntoDB = async (
         ...payload,
         user: user.id,
         package: packageData._id,
-        expiry_date: verifiedExpiryDate.toISOString(),
+        expiry_date: "3000-01-01T00:00:00.000Z", //calculateExpiryDate(packageData.durationInDays),
         status: "active",
         source: payload.platform === "android" ? "google" : "apple",
       }).save({ session });

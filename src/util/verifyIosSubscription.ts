@@ -20,14 +20,14 @@ const verifyIosSubscription = async (
     "exclude-old-transactions": true,
   };
 
-  // 🔹 SANDBOX FIRST (LOCAL TESTING)
+  //  SANDBOX FIRST (LOCAL TESTING)
   let response = await axios.post(
     "https://sandbox.itunes.apple.com/verifyReceipt",
     payload,
     { timeout: 10000 }
   );
 
-  // 🔹 PRODUCTION FALLBACK
+  //  PRODUCTION FALLBACK
   if (response.data.status === 21007) {
     response = await axios.post(
       "https://buy.itunes.apple.com/verifyReceipt",
@@ -50,7 +50,7 @@ const parseAppleResponse = (data: any, productId: string): IOSVerifyResult => {
     return { valid: false };
   }
 
-  // 🔍 FILTER BY PRODUCT
+  //  FILTER BY PRODUCT
   const productReceipts = receipts.filter(
     (r: any) => r.product_id === productId
   );
@@ -59,7 +59,7 @@ const parseAppleResponse = (data: any, productId: string): IOSVerifyResult => {
     return { valid: false };
   }
 
-  // 🕒 GET LATEST EXPIRY
+  //  GET LATEST EXPIRY
   const latest = productReceipts.reduce((a: any, b: any) =>
     Number(a.expires_date_ms) > Number(b.expires_date_ms) ? a : b
   );
