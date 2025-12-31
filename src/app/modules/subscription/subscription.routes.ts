@@ -6,16 +6,23 @@ const router = express.Router();
 
 router
   .route("/user")
-  .post(auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN), SubscriptionController.subscriptions)
+  .post(
+    auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
+    SubscriptionController.subscriptions
+  )
   .get(
     auth(USER_ROLES.SUPER_ADMIN),
     SubscriptionController.getAllSubscriptions
   );
 
 router
-  .route("/subscribe/data")
-  .get(
-    auth(USER_ROLES.AGENCY),
-    SubscriptionController.getSpecificSubscriber
+  .route("/details")
+  .post(
+    auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
+    SubscriptionController.subscriptions
   );
+
+router
+  .route("/subscribe/data")
+  .get(auth(USER_ROLES.AGENCY), SubscriptionController.getSpecificSubscriber);
 export const SubscriptionRoutes = router;

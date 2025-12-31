@@ -46,8 +46,23 @@ const getSpecificSubscriber = catchAsync(
   }
 );
 
+const mySubscriptionPackage = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await SubscriptionService.mySubscriptionPackageIntoDB(
+      req.user!
+    );
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Subscription package retrieved successfully",
+      data: result,
+    });
+  }
+);
+
 export const SubscriptionController = {
   subscriptions,
   getAllSubscriptions,
   getSpecificSubscriber,
+  mySubscriptionPackage,
 };

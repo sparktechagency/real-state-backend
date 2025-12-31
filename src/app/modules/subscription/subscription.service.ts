@@ -127,8 +127,19 @@ const specipicSubscriberFromDB = async (user: JwtPayload) => {
   return subscription;
 };
 
+const mySubscriptionPackageIntoDB = async (user: JwtPayload) => {
+  const subscription = await Subscription.findOne({ user: user.id }).populate(
+    "package"
+  );
+  if (!subscription) {
+    throw new ApiError(StatusCodes.NOT_FOUND, "Subscription not found");
+  }
+  return subscription;
+};
+
 export const SubscriptionService = {
   addSubscriberIntoDB,
   getAllSubscriptionsFromDB,
   specipicSubscriberFromDB,
+  mySubscriptionPackageIntoDB
 };
