@@ -19,7 +19,7 @@ router
   .route("/details")
   .get(
     auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
-    SubscriptionController.subscriptions
+    SubscriptionController.mySubscriptionPackage
   );
 
 router

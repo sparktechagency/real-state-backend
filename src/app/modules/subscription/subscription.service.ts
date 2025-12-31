@@ -141,5 +141,5 @@ export const SubscriptionService = {
   addSubscriberIntoDB,
   getAllSubscriptionsFromDB,
   specipicSubscriberFromDB,
-  mySubscriptionPackageIntoDB
+  mySubscriptionPackageIntoDB,
 };
