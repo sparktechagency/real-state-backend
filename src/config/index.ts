@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 import path from "path";
-dotenv.config({ path: path.join(process.cwd(), '.env') });
-
+dotenv.config({ path: path.join(process.cwd(), ".env") });
 
 export default {
   ip_address: process.env.IP,
@@ -45,5 +44,14 @@ export default {
     client_email: process.env.client_email!,
     client_id: process.env.client_id!,
     client_x509_cert_url: process.env.client_x509_cert_url!,
-  }
+  },
+  subscription: {
+    authScopes: process.env.authScopes!,
+    FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID!,
+    FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL!,
+    FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY!,
+  },
+  appleSubscription: {
+    appleSharedSecret: process.env.APPLE_SHARED_SECRET!,
+  },
 };

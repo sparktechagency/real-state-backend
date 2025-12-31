@@ -8,7 +8,7 @@ export type ISubscription = {
   platform: "ios" | "android";
   receipt: string;
   source: "apple" | "google";
-  status: "active" | "cancelled";
+  status: "active" | "cancelled" | "expired";
   package: Types.ObjectId;
   user: Types.ObjectId;
 };

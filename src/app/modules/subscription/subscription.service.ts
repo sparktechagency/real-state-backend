@@ -8,6 +8,8 @@ import { StatusCodes } from "http-status-codes";
 import { calculateExpiryDate } from "../../../helpers/calculateExpiryDate";
 import mongoose from "mongoose";
 import QueryBuilder from "../../builder/QueryBuilder";
+import verifyAndroidSubscription from "../../../util/androidPublisher.utils";
+import verifyIosSubscription from "../../../util/verifyIosSubscription";
 
 const addSubscriberIntoDB = async (
   payload: ISubscription,
@@ -18,72 +20,85 @@ const addSubscriberIntoDB = async (
 
   try {
     await session.withTransaction(async () => {
-      // Fetch user and package
+      let verifiedExpiryDate: Date | null = null;
+
+      // VERIFY SUBSCRIPTION
+      if (payload.platform === "android") {
+        const result = await verifyAndroidSubscription(
+          payload.product_id,
+          payload.receipt
+        );
+
+        if (!result.valid || !result.expiryDate) {
+          throw new ApiError(
+            StatusCodes.BAD_REQUEST,
+            "Invalid Android subscription"
+          );
+        }
+
+        verifiedExpiryDate = result.expiryDate;
+      } else if (payload.platform === "ios") {
+        const result = await verifyIosSubscription(
+          payload.receipt,
+          payload.product_id
+        );
+        console.log("IOS VERIFICATION RESULT:", result);
+
+        if (!result.valid || !result.expiryDate) {
+          throw new ApiError(
+            StatusCodes.BAD_REQUEST,
+            "Invalid iOS subscription"
+          );
+        }
+
+        verifiedExpiryDate = result.expiryDate;
+      } else {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Unsupported platform");
+      }
+
+      // FETCH USER & PACKAGE
       const [userData, packageData] = await Promise.all([
         User.findById(user.id).select("_id").session(session),
         Package.findOne({ product_id: payload.product_id })
-          .select("_id duration")
+          .select("_id")
           .session(session),
       ]);
 
       if (!userData)
         throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized user");
+
       if (!packageData)
         throw new ApiError(StatusCodes.BAD_REQUEST, "Package not found");
 
+      // CHECK ACTIVE SUBSCRIPTION
       const activeSub = await Subscription.findOne({
-        user: userData?._id,
+        user: userData._id,
         package: packageData._id,
         status: "active",
-      })
-        .select("expiry_date")
-        .session(session);
+      }).session(session);
 
       if (activeSub) {
-        const expiry = activeSub.expiry_date
-          ? new Date(activeSub.expiry_date).toLocaleString()
-          : "unknown";
         throw new ApiError(
           StatusCodes.CONFLICT,
-          `You already have an active subscription until ${expiry}`
+          "You already have an active subscription"
         );
       }
 
-      //  Calculate expiry date
-      const expiryDate = calculateExpiryDate(
-        payload.transaction_date,
-        packageData.duration
-      );
-
-      const subscriptionData: ISubscription = {
+      // SAVE SUBSCRIPTION (STORE VERIFIED EXPIRY)
+      subscription = await new Subscription({
         ...payload,
         user: user.id,
         package: packageData._id,
-        expiry_date: expiryDate,
+        expiry_date: verifiedExpiryDate.toISOString(),
         status: "active",
-        transaction_date: payload.transaction_date,
-      };
+        source: payload.platform === "android" ? "google" : "apple",
+      }).save({ session });
 
-      // Create subscription safely
-      subscription = await new Subscription(subscriptionData).save({ session });
-
-      // Update user
-      await User.findByIdAndUpdate(
-        user.id,
-        { $set: { isSubscribe: true } },
-        { session }
-      );
+      // UPDATE USER
+      await User.findByIdAndUpdate(user.id, { isSubscribe: true }, { session });
     });
 
     return subscription;
-  } catch (err: any) {
-    if (err.code === 11000) {
-      throw new ApiError(
-        StatusCodes.CONFLICT,
-        "Active subscription already exists or payment already processed"
-      );
-    }
-    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, err.message);
   } finally {
     session.endSession();
   }

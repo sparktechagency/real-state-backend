@@ -33,6 +33,11 @@ const subscriptionSchema = new Schema<ISubscription, SubscriptionModel>(
       enum: ["apple", "google"],
       required: true,
     },
+    status: {
+      type: String,
+      enum: ["active", "cancelled", "expired"],
+      required: true,
+    },
     package: {
       type: Schema.Types.ObjectId,
       ref: "Package",
