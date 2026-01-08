@@ -36,9 +36,25 @@ const editPackage = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const getAllPackageForAdmin = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await PackageService.getAllPackageFromDBForAdmin(
+      req.user!,
+      req.query
+    );
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: "Package Retrieved Successfully",
+      pagination: result.meta,
+      data: result.result,
+    });
+  }
+);
 
 export const PackageController = {
   createPackage,
   getPackage,
   editPackage,
+  getAllPackageForAdmin,
 };

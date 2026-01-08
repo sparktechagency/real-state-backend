@@ -12,9 +12,13 @@ router
     PackageController.getPackage
   );
 
+router
+  .route("/admin")
+  .get(auth(USER_ROLES.SUPER_ADMIN), PackageController.getAllPackageForAdmin);
+
 // edit package
 router
   .route("/:id")
   .patch(auth(USER_ROLES.SUPER_ADMIN), PackageController.editPackage);
 
-  export const PackageRoutes = router;
+export const PackageRoutes = router;
