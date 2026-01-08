@@ -8,11 +8,9 @@ interface IOSVerifyResult {
 
 const verifyIosSubscription = async (
   receipt: string,
-  productId: string
+  password: string
 ): Promise<IOSVerifyResult> => {
-  if (!receipt || receipt.length < 500) {
-    return { valid: false };
-  }
+  if (!receipt) return { valid: false };
 
   const payload = {
     "receipt-data": receipt,
@@ -20,55 +18,43 @@ const verifyIosSubscription = async (
     "exclude-old-transactions": true,
   };
 
-  //  SANDBOX FIRST (LOCAL TESTING)
-  let response = await axios.post(
-    "https://sandbox.itunes.apple.com/verifyReceipt",
-    payload,
-    { timeout: 10000 }
-  );
+  let response = await axios.post(config.APPLE_LINK.APPLE_PROD_URL, payload, {
+    timeout: 10000,
+  });
 
-  //  PRODUCTION FALLBACK
+  // Sandbox receipt sent to prod
   if (response.data.status === 21007) {
-    response = await axios.post(
-      "https://buy.itunes.apple.com/verifyReceipt",
-      payload,
-      { timeout: 10000 }
-    );
+    response = await axios.post(config.APPLE_LINK.APPLE_SANDBOX_URL, payload, {
+      timeout: 10000,
+    });
   }
 
-  return parseAppleResponse(response.data, productId);
-};
-
-const parseAppleResponse = (data: any, productId: string): IOSVerifyResult => {
-  if (data.status !== 0) {
-    return { valid: false };
+  // Edge case: Prod receipt sent to sandbox
+  if (response.data.status === 21008) {
+    response = await axios.post(config.APPLE_LINK.APPLE_PROD_URL, payload, {
+      timeout: 10000,
+    });
   }
 
-  const receipts = data.latest_receipt_info || data.receipt?.in_app;
+  const data = response.data;
 
-  if (!Array.isArray(receipts) || receipts.length === 0) {
-    return { valid: false };
-  }
+  if (data.status !== 0) return { valid: false };
 
-  //  FILTER BY PRODUCT
+  const receipts = data.latest_receipt_info ?? data.receipt?.in_app ?? [];
   const productReceipts = receipts.filter(
-    (r: any) => r.product_id === productId
+    (r: any) => r.product_id === password
   );
 
-  if (!productReceipts.length) {
-    return { valid: false };
-  }
+  if (!productReceipts.length) return { valid: false };
 
-  //  GET LATEST EXPIRY
-  const latest = productReceipts.reduce((a: any, b: any) =>
-    Number(a.expires_date_ms) > Number(b.expires_date_ms) ? a : b
+  // Pick the latest receipt
+  const latestReceipt = productReceipts.reduce((prev: any, curr: any) =>
+    Number(prev.expires_date_ms) > Number(curr.expires_date_ms) ? prev : curr
   );
 
-  const expiryMs = Number(latest.expires_date_ms);
+  const expiryMs = Number(latestReceipt.expires_date_ms);
 
-  if (!expiryMs || expiryMs <= Date.now()) {
-    return { valid: false };
-  }
+  if (!expiryMs || expiryMs <= Date.now()) return { valid: false };
 
   return {
     valid: true,

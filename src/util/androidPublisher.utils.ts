@@ -4,7 +4,7 @@ import config from "../config";
 const auth = new google.auth.GoogleAuth({
   credentials: {
     client_email: config.subscription.FIREBASE_CLIENT_EMAIL,
-    private_key: config.subscription.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+    private_key: config.subscription.FIREBASE_PRIVATE_KEY,
   },
   scopes: ["https://www.googleapis.com/auth/androidpublisher"],
 });

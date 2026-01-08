@@ -5,11 +5,11 @@ import { Subscription } from "./subscription.model";
 import { User } from "../user/user.model";
 import ApiError from "../../../errors/ApiErrors";
 import { StatusCodes } from "http-status-codes";
-import { calculateExpiryDate } from "../../../helpers/calculateExpiryDate";
 import mongoose from "mongoose";
 import QueryBuilder from "../../builder/QueryBuilder";
 import verifyAndroidSubscription from "../../../util/androidPublisher.utils";
 import verifyIosSubscription from "../../../util/verifyIosSubscription";
+import config from "../../../config";
 
 const addSubscriberIntoDB = async (
   payload: ISubscription,
@@ -38,20 +38,10 @@ const addSubscriberIntoDB = async (
 
         verifiedExpiryDate = result.expiryDate;
       } else if (payload.platform === "ios") {
-        const result = await verifyIosSubscription(
+        await verifyIosSubscription(
           payload.receipt,
-          payload.product_id
+          config.appleSubscription.appleSharedSecret
         );
-        console.log("IOS VERIFICATION RESULT:", result);
-
-        if (!result.valid || !result.expiryDate) {
-          throw new ApiError(
-            StatusCodes.BAD_REQUEST,
-            "Invalid iOS subscription"
-          );
-        }
-
-        verifiedExpiryDate = result.expiryDate;
       } else {
         throw new ApiError(StatusCodes.BAD_REQUEST, "Unsupported platform");
       }
@@ -89,7 +79,7 @@ const addSubscriberIntoDB = async (
         ...payload,
         user: user.id,
         package: packageData._id,
-        expiry_date: verifiedExpiryDate.toISOString(),
+        expiry_date: verifiedExpiryDate?.toISOString(),
         status: "active",
         source: payload.platform === "android" ? "google" : "apple",
       }).save({ session });

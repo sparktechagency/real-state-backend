@@ -52,6 +52,10 @@ export default {
     FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY!,
   },
   appleSubscription: {
-    appleSharedSecret: process.env.APPLE_SHARED_SECRET!,
+    appleSharedSecret: process.env.IOS_PRIVATE_KEY!,
+  },
+  APPLE_LINK: {
+    APPLE_PROD_URL: process.env.APPLE_PROD_URL!,
+    APPLE_SANDBOX_URL: process.env.APPLE_SANDBOX_URL!,
   },
 };
