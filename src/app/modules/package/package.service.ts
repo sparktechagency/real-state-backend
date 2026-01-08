@@ -16,10 +16,7 @@ const createPackageToDB = async (payload: IPackage) => {
 };
 
 const getAllPackage = async (query: Record<string, any>) => {
-  const qb = new QueryBuilder(
-    Package.find({ status: "Active", disable: false }).lean(),
-    query
-  )
+  const qb = new QueryBuilder(Package.find({ disable: false }).lean(), query)
     .sort()
     .paginate();
   const result = await qb.modelQuery;
@@ -57,5 +54,5 @@ export const PackageService = {
   createPackageToDB,
   getAllPackage,
   editPackageIntoDB,
-  getAllPackageFromDBForAdmin
+  getAllPackageFromDBForAdmin,
 };
