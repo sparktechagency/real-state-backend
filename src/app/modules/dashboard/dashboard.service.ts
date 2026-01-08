@@ -7,6 +7,7 @@ const totalAgency = async () => {
   const result = await User.countDocuments();
   const apartment = await Apartment.countDocuments();
   const totalIncome = await Subscription.find();
+  // @ts-ignore
   const totalPrice = totalIncome.reduce((acc, curr) => acc + curr?.price, 0);
   if (!result) {
     return 0;

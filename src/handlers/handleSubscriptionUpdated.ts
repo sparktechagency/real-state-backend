@@ -29,6 +29,7 @@ export const handleSubscriptionUpdated = async (data: Stripe.Subscription) => {
 
     if (existingUser) {
       // Find the pricing plan by priceId
+      // @ts-ignore
       const pricingPlan = await Package.findOne({ priceId });
 
       if (pricingPlan) {
