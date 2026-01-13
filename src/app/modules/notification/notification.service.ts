@@ -12,23 +12,39 @@ const getNotificationsByUserId = async (
   user: JwtPayload,
   query: Record<string, any>
 ) => {
+  // Set default sort to show recent notifications first if not provided
+  if (!query.sort) {
+    query.sort = "-createdAt";
+  }
+
   const queryBuilder = new QueryBuilder(
-    NotificationModel.find({ receiver: user.id }).sort({ createdAt: -1 }),
+    NotificationModel.find({ receiver: user.id }),
     query
   );
 
+  // Apply all query builder methods in order
+  queryBuilder.filter().sort().paginate().fields();
+
+  // Execute the query
   const data = await queryBuilder.modelQuery;
+
+  // Get pagination info with filtered results
   const meta = await queryBuilder.getPaginationInfo();
 
-  // also return all unread notification count
+  // Get unread notification count
   const unreadCount = await NotificationModel.countDocuments({
     receiver: user.id,
     isRead: false,
   });
-  data.forEach((notification) => {
-    (notification as any)._doc.unreadCount = unreadCount;
+
+  // Map data and add unreadCount to each notification
+  const result = data.map((notification) => {
+    const notificationObj = notification.toObject();
+    return {
+      ...notificationObj,
+      unreadCount,
+    };
   });
-  const result = data;
 
   return {
     meta,
