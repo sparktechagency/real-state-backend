@@ -42,6 +42,8 @@ const loginUserFromDB = async (payload: ILoginData) => {
   }
   //  first find the device token if have than login if not have than create new device token also if in this array have have more than 3 than device token is reset
 
+  console.log("Device Token::::::::::::::::::::::::::>>>>\n", deviceToken);
+
   if (deviceToken) {
     const tokens = isExistUser.deviceToken;
 
