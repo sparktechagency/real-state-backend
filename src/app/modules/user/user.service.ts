@@ -4,10 +4,10 @@ import { JwtPayload } from "jsonwebtoken";
 import { User } from "./user.model";
 import { StatusCodes } from "http-status-codes";
 import ApiError from "../../../errors/ApiErrors";
-import generateOTP from "../../../util/generateOTP";
 import { emailTemplate } from "../../../shared/emailTemplate";
 import { emailHelper } from "../../../helpers/emailHelper";
 import unlinkFile from "../../../shared/unlinkFile";
+import { generateOTP6 } from "../../../util/generateOTP";
 
 const createAdminToDB = async (payload: any): Promise<IUser> => {
   // check admin is exist or not;
@@ -38,20 +38,19 @@ const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
   }
 
   //send email
-  const otp = generateOTP();
-  const values = {
-    name: createUser.name,
-    otp: otp,
-    email: createUser.email!,
-  };
+  const otp = generateOTP6();
 
-  const createAccountTemplate = emailTemplate.createAccount(values);
+  const createAccountTemplate = emailTemplate.createAccount({
+    name: createUser.name,
+    otp: Number(otp),
+    email: createUser.email!,
+  });
   emailHelper.sendEmail(createAccountTemplate);
 
   //save to DB
   const authentication = {
     oneTimeCode: otp,
-    expireAt: new Date(Date.now() + 3 * 60000),
+    expireAt: new Date(Date.now() + 3 * 60 * 1000),
   };
 
   await User.findOneAndUpdate(

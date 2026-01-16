@@ -1,5 +1,4 @@
-const generateOTP = () => {
-  return Math.floor(Math.random() * (999999 - 100000 + 1) + 1000);
+export const generateOTP6 = (): string => {
+  // 000000 - 999999 (always 6 chars, leading zero allowed)
+  return Math.floor(Math.random() * 1000000).toString().padStart(6, "0");
 };
-
-export default generateOTP;
