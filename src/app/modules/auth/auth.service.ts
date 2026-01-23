@@ -423,9 +423,10 @@ const adminApprovalIntoDB = async (
   if (typeof isAdminVerified !== "boolean") {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
-      "isAdminVerified must be boolean",
+      "is admin verified must be boolean",
     );
   }
+
   const result = await User.findOneAndUpdate(
     { _id: id },
     { isAdminVerified },
