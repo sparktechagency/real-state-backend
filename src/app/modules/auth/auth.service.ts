@@ -16,6 +16,7 @@ import cryptoToken from "../../../util/cryptoToken";
 import { ResetToken } from "../resetToken/resetToken.model";
 import { User } from "../user/user.model";
 import { generateOTP } from "../../../util/generateOTP";
+import { USER_ROLES } from "../../../enums/user";
 
 //login
 const loginUserFromDB = async (payload: ILoginData) => {
@@ -35,7 +36,10 @@ const loginUserFromDB = async (payload: ILoginData) => {
       "Please verify your account, then try to login again",
     );
   }
-  if (isExistUser.isAdminVerified !== true) {
+  if (
+    isExistUser.isAdminVerified !== true &&
+    isExistUser.role === USER_ROLES.AGENCY
+  ) {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
       "Your account is not verified by admin yet, please wait for approval",
@@ -51,7 +55,7 @@ const loginUserFromDB = async (payload: ILoginData) => {
   }
 
   const updateData: Record<string, any> = {};
-  if (!deviceId) {
+  if (!deviceId && isExistUser.role === USER_ROLES.AGENCY) {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
       "deviceId is required to login",
@@ -71,7 +75,7 @@ const loginUserFromDB = async (payload: ILoginData) => {
     updateData.deviceId = incomingDeviceId;
   }
 
-  if (deviceToken) {
+  if (deviceToken && isExistUser.role === USER_ROLES.AGENCY) {
     updateData.deviceToken = deviceToken.trim();
   }
   if (Object.keys(updateData).length > 0) {
@@ -396,6 +400,40 @@ const removeUserTokenFromDB = async (email: string) => {
   return result;
 };
 
+const adminApprovalIntoDB = async (
+  user: JwtPayload,
+  id: string,
+  payload: any,
+) => {
+  if (user.role !== USER_ROLES.SUPER_ADMIN) {
+    throw new ApiError(
+      StatusCodes.UNAUTHORIZED,
+      "You are not authorized to approve the agency",
+    );
+  }
+  const isExistUser = await User.findById({
+    _id: id,
+  });
+  if (!isExistUser) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "User doesn't exist!");
+  }
+  const isAdminVerified =
+    typeof payload === "boolean" ? payload : payload?.isAdminVerified;
+
+  if (typeof isAdminVerified !== "boolean") {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      "isAdminVerified must be boolean",
+    );
+  }
+  const result = await User.findOneAndUpdate(
+    { _id: id },
+    { isAdminVerified },
+    { new: true },
+  );
+  return result;
+};
+
 export const AuthService = {
   verifyEmailToDB,
   loginUserFromDB,
@@ -406,4 +444,5 @@ export const AuthService = {
   resendVerificationEmailToDB,
   deleteUserFromDB,
   removeUserTokenFromDB,
+  adminApprovalIntoDB,
 };

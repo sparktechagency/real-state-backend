@@ -10,13 +10,13 @@ const router = express.Router();
 router.post(
   "/login",
   validateRequest(AuthValidation.createLoginZodSchema),
-  AuthController.loginUser
+  AuthController.loginUser,
 );
 
 router.post(
   "/forgot-password",
   validateRequest(AuthValidation.createForgetPasswordZodSchema),
-  AuthController.forgetPassword
+  AuthController.forgetPassword,
 );
 
 router.post("/refresh-token", AuthController.newAccessToken);
@@ -38,20 +38,20 @@ router.post(
     }
   },
   validateRequest(AuthValidation.createVerifyEmailZodSchema),
-  AuthController.verifyEmail
+  AuthController.verifyEmail,
 );
 
 router.post(
   "/reset-password",
   // validateRequest(AuthValidation.createResetPasswordZodSchema),
-  AuthController.resetPassword
+  AuthController.resetPassword,
 );
 
 router.post(
   "/change-password",
   auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
   validateRequest(AuthValidation.createChangePasswordZodSchema),
-  AuthController.changePassword
+  AuthController.changePassword,
 );
 
 router.post("/resend-otp", AuthController.resendVerificationEmail);
@@ -59,13 +59,13 @@ router.post("/resend-otp", AuthController.resendVerificationEmail);
 router.delete(
   "/delete-account",
   auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY),
-  AuthController.deleteUser
+  AuthController.deleteUser,
 );
 
 // Google Auth Routes
 router.get(
   "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google", { scope: ["profile", "email"] }),
 );
 
 router.get(
@@ -73,13 +73,17 @@ router.get(
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
     res.redirect("/"); // Redirect after successful login
-  }
+  },
 );
+
+router
+  .route("/admin-approval/:id")
+  .patch(auth(USER_ROLES.SUPER_ADMIN), AuthController.adminApproval);
 
 // Facebook Auth Routes
 router.get(
   "/facebook",
-  passport.authenticate("facebook", { scope: ["email"] })
+  passport.authenticate("facebook", { scope: ["email"] }),
 );
 
 router.get(
@@ -87,7 +91,7 @@ router.get(
   passport.authenticate("facebook", { failureRedirect: "/" }),
   (req, res) => {
     res.redirect("/dashboard"); // Redirect after successful login
-  }
+  },
 );
 
 router.route("/remove-device-token").patch(AuthController.removeUserToken);

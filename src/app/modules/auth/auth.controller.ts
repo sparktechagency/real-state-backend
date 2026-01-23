@@ -88,14 +88,14 @@ const resendVerificationEmail = catchAsync(
       message: "Generate OTP and send successfully",
       data: result,
     });
-  }
+  },
 );
 
 // delete user
 const deleteUser = catchAsync(async (req: Request, res: Response) => {
   const result = await AuthService.deleteUserFromDB(
     req.user!,
-    req.body.password
+    req.body.password,
   );
 
   sendResponse(res, {
@@ -116,6 +116,20 @@ const removeUserToken = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const adminApproval = catchAsync(async (req: Request, res: Response) => {
+  const result = await AuthService.adminApprovalIntoDB(
+    req.user!,
+    req.params.id,
+    req.body!,
+  );
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: "User approval status updated successfully",
+    data: result,
+  });
+});
+
 export const AuthController = {
   verifyEmail,
   loginUser,
@@ -125,5 +139,6 @@ export const AuthController = {
   newAccessToken,
   resendVerificationEmail,
   deleteUser,
-  removeUserToken,  
+  removeUserToken,
+  adminApproval,
 };
