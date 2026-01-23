@@ -30,7 +30,7 @@ const userSchema = new Schema<IUser, UserModal>(
     password: {
       type: String,
       required: false,
-      select: 0,
+      select: false,
       minlength: 8,
     },
     location: {
@@ -50,8 +50,18 @@ const userSchema = new Schema<IUser, UserModal>(
       type: String,
     },
     deviceToken: {
-      type: [String],
-      default: [],
+      type: String,
+      select: false,
+      default: "",
+    },
+    deviceId: {
+      type: String,
+      select: false,
+      default: "",
+    },
+    isAdminVerified: {
+      type: Boolean,
+      default: false,
     },
     authentication: {
       type: {
@@ -68,7 +78,7 @@ const userSchema = new Schema<IUser, UserModal>(
           default: null,
         },
       },
-      select: 0,
+      select: false,
     },
     isSubscribe: {
       type: Boolean,
@@ -92,7 +102,7 @@ const userSchema = new Schema<IUser, UserModal>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 //exist user check
@@ -115,7 +125,7 @@ userSchema.statics.isAccountCreated = async (id: string) => {
 //is match password
 userSchema.statics.isMatchPassword = async (
   password: string,
-  hashPassword: string
+  hashPassword: string,
 ): Promise<boolean> => {
   return await bcrypt.compare(password, hashPassword);
 };
@@ -134,7 +144,7 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(
     // @ts-ignore
     this.password,
-    Number(config.bcrypt_salt_rounds)
+    Number(config.bcrypt_salt_rounds),
   );
   next();
 });

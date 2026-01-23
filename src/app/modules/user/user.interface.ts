@@ -24,8 +24,10 @@ export type IUser = {
   profile: string;
   verified: boolean;
   address?: string;
+  isAdminVerified?: boolean;
   isSubscribe?: boolean;
-  deviceToken?: string[];
+  deviceToken?: string;
+  deviceId?: string;
   authentication?: IAuthenticationProps;
   accountInformation?: IStripeAccountInfo;
 };

@@ -7,7 +7,7 @@ import ApiError from "../../../errors/ApiErrors";
 import { emailTemplate } from "../../../shared/emailTemplate";
 import { emailHelper } from "../../../helpers/emailHelper";
 import unlinkFile from "../../../shared/unlinkFile";
-import { generateOTP6 } from "../../../util/generateOTP";
+import { generateOTP } from "../../../util/generateOTP";
 
 const createAdminToDB = async (payload: any): Promise<IUser> => {
   // check admin is exist or not;
@@ -24,7 +24,7 @@ const createAdminToDB = async (payload: any): Promise<IUser> => {
     await User.findByIdAndUpdate(
       { _id: createAdmin?._id },
       { verified: true },
-      { new: true }
+      { new: true },
     );
   }
 
@@ -38,7 +38,7 @@ const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
   }
 
   //send email
-  const otp = generateOTP6();
+  const otp = generateOTP();
 
   const createAccountTemplate = emailTemplate.createAccount({
     name: createUser.name,
@@ -55,14 +55,14 @@ const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
 
   await User.findOneAndUpdate(
     { _id: createUser._id },
-    { $set: { authentication } }
+    { $set: { authentication } },
   );
 
   return createUser;
 };
 
 const getUserProfileFromDB = async (
-  user: JwtPayload
+  user: JwtPayload,
 ): Promise<Partial<IUser>> => {
   const { id } = user;
   const isExistUser: any = await User.isExistUserById(id);
@@ -74,7 +74,7 @@ const getUserProfileFromDB = async (
 
 const updateProfileToDB = async (
   user: JwtPayload,
-  payload: Partial<IUser>
+  payload: Partial<IUser>,
 ): Promise<Partial<IUser | null>> => {
   const { id } = user;
   const isExistUser = await User.isExistUserById(id);
