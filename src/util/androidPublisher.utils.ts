@@ -19,7 +19,7 @@ const verifyAndroidSubscription = async (productId: string, token: string) => {
   });
 
   const data = response.data;
-
+  console.log("Android Subscription Data:", data);
   if (data.paymentState === 1) {
     return { valid: true, expiryDate: new Date(Number(data.expiryTimeMillis)) };
   }

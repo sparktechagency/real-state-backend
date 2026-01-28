@@ -13,7 +13,7 @@ import config from "../../../config";
 
 const addSubscriberIntoDB = async (
   payload: ISubscription,
-  user: JwtPayload
+  user: JwtPayload,
 ) => {
   const session = await mongoose.startSession();
   let subscription: any;
@@ -26,13 +26,12 @@ const addSubscriberIntoDB = async (
       if (payload.platform === "android") {
         const result = await verifyAndroidSubscription(
           payload.product_id,
-          payload.receipt
+          payload.receipt,
         );
-
         if (!result.valid || !result.expiryDate) {
           throw new ApiError(
             StatusCodes.BAD_REQUEST,
-            "Invalid Android subscription"
+            "Invalid Android subscription",
           );
         }
 
@@ -40,7 +39,7 @@ const addSubscriberIntoDB = async (
       } else if (payload.platform === "ios") {
         await verifyIosSubscription(
           payload.receipt,
-          config.appleSubscription.appleSharedSecret
+          config.appleSubscription.appleSharedSecret,
         );
       } else {
         throw new ApiError(StatusCodes.BAD_REQUEST, "Unsupported platform");
@@ -70,7 +69,7 @@ const addSubscriberIntoDB = async (
       if (activeSub) {
         throw new ApiError(
           StatusCodes.CONFLICT,
-          "You already have an active subscription"
+          "You already have an active subscription",
         );
       }
 
@@ -96,7 +95,7 @@ const addSubscriberIntoDB = async (
 
 const getAllSubscriptionsFromDB = async (
   user: JwtPayload,
-  query: Record<string, any>
+  query: Record<string, any>,
 ) => {
   const userData = await User.findById(user.id).select("_id");
   if (!userData)
@@ -119,7 +118,7 @@ const specipicSubscriberFromDB = async (user: JwtPayload) => {
 
 const mySubscriptionPackageIntoDB = async (user: JwtPayload) => {
   const subscription = await Subscription.findOne({ user: user.id }).populate(
-    "package"
+    "package",
   );
   if (!subscription) {
     throw new ApiError(StatusCodes.NOT_FOUND, "Subscription not found");
