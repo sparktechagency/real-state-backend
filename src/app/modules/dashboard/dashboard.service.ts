@@ -4,14 +4,18 @@ import { Subscription } from "../subscription/subscription.model";
 import { User } from "../user/user.model";
 
 const totalAgency = async () => {
-  const result = await User.countDocuments();
-  const apartment = await Apartment.countDocuments();
-  const totalIncome = await Subscription.find();
-  // @ts-ignore
-  const totalPrice = totalIncome.reduce((acc, curr) => acc + curr?.price, 0);
-  if (!result) {
-    return 0;
-  }
+  const [result, apartment, totalIncome] = await Promise.all([
+    User.countDocuments(),
+    Apartment.countDocuments(),
+    Subscription.find().populate("package", "price").lean(),
+  ]);
+  // console.log(totalIncome);
+
+  const totalPrice = totalIncome.reduce((sum, item: any) => {
+    const price = Number(item?.package?.price ?? 0);
+    return sum + (Number.isFinite(price) ? price : 0);
+  }, 0);
+
   return { result, apartment, totalPrice };
 };
 
