@@ -43,6 +43,10 @@ const subscriptionSchema = new Schema<ISubscription, SubscriptionModel>(
       ref: "Package",
       required: true,
     },
+    will_renew: {
+      type: Boolean,
+      required: false,
+    },
     user: {
       type: Schema.Types.ObjectId,
       ref: "User",
@@ -51,10 +55,10 @@ const subscriptionSchema = new Schema<ISubscription, SubscriptionModel>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export const Subscription = model<ISubscription, SubscriptionModel>(
   "Subscription",
-  subscriptionSchema
+  subscriptionSchema,
 );

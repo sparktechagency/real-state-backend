@@ -10,6 +10,7 @@ export type ISubscription = {
   source: "apple" | "google";
   status: "active" | "cancelled" | "expired";
   package: Types.ObjectId;
+  will_renew: boolean;
   user: Types.ObjectId;
 };
 

@@ -21,13 +21,14 @@ const addSubscriberIntoDB = async (
   try {
     await session.withTransaction(async () => {
       let verifiedExpiryDate: Date | null = null;
-
+      let willRenew = false;
       // VERIFY SUBSCRIPTION
       if (payload.platform === "android") {
         const result = await verifyAndroidSubscription(
           payload.product_id,
           payload.receipt,
         );
+
         if (!result.valid || !result.expiryDate) {
           throw new ApiError(
             StatusCodes.BAD_REQUEST,
@@ -36,11 +37,13 @@ const addSubscriberIntoDB = async (
         }
 
         verifiedExpiryDate = result.expiryDate;
+        willRenew = result.willRenew ?? false;
       } else if (payload.platform === "ios") {
-        await verifyIosSubscription(
+        const res = await verifyIosSubscription(
           payload.receipt,
           config.appleSubscription.appleSharedSecret,
         );
+        willRenew = res.willRenew ?? false;
       } else {
         throw new ApiError(StatusCodes.BAD_REQUEST, "Unsupported platform");
       }
@@ -80,11 +83,16 @@ const addSubscriberIntoDB = async (
         package: packageData._id,
         expiry_date: verifiedExpiryDate?.toISOString(),
         status: "active",
+        will_renew: willRenew,
         source: payload.platform === "android" ? "google" : "apple",
       }).save({ session });
 
       // UPDATE USER
-      await User.findByIdAndUpdate(user.id, { isSubscribe: true }, { session });
+      await User.findByIdAndUpdate(
+        user.id,
+        { isSubscribe: true },
+        { new: true, session },
+      );
     });
 
     return subscription;

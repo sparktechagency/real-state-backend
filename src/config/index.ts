@@ -51,6 +51,10 @@ export default {
     FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL!,
     FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY!,
   },
+  googleSubscription: {
+    GOOGLE_Private_Key: process.env.GOOGLE_Private_Key!,
+    GOOGLE_Client_Email: process.env.client_email!,
+  },
   appleSubscription: {
     appleSharedSecret: process.env.IOS_PRIVATE_KEY!,
   },
