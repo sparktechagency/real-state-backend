@@ -1,27 +1,30 @@
-import colors from 'colors';
-import { User } from '../app/modules/user/user.model';
-import config from '../config';
-import { USER_ROLES } from '../enums/user';
-import { logger } from '../shared/logger';
+import colors from "colors";
+import { User } from "../app/modules/user/user.model";
+import config from "../config";
+import { USER_ROLES } from "../enums/user";
+import { logger } from "../shared/logger";
 
 const superUser = {
-    firstName: 'Super', // put client first name
-    lastName: 'Admin', // put client last name
-    role: USER_ROLES.SUPER_ADMIN,
-    email: config.admin.email,
-    password: config.admin.password,
-    verified: true,
+  firstName: "Super", // put client first name
+  lastName: "Admin", // put client last name
+  role: USER_ROLES.SUPER_ADMIN,
+  email: config.admin.email,
+  password: config.admin.password,
+  verified: true,
+  isAdminVerified: true,
+  deviceToken: "",
+  deviceId: "",
 };
 
 const seedSuperAdmin = async () => {
-    const isExistSuperAdmin = await User.findOne({
-        role: USER_ROLES.SUPER_ADMIN,
-    });
+  const isExistSuperAdmin = await User.findOne({
+    role: USER_ROLES.SUPER_ADMIN,
+  });
 
-    if (!isExistSuperAdmin) {
-        await User.create(superUser);
-        logger.info(colors.green('✔ Super admin created successfully!'));
-    }
+  if (!isExistSuperAdmin) {
+    await User.create(superUser);
+    logger.info(colors.green("✔ Super admin created successfully!"));
+  }
 };
 
 export default seedSuperAdmin;
