@@ -14,6 +14,7 @@ const superUser = {
   isAdminVerified: true,
   deviceToken: "",
   deviceId: "",
+  isSubscribe: true,
 };
 
 const seedSuperAdmin = async () => {
