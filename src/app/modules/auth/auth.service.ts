@@ -55,31 +55,38 @@ const loginUserFromDB = async (payload: ILoginData) => {
   }
 
   const updateData: Record<string, any> = {};
-  if (!deviceId && isExistUser.role === USER_ROLES.AGENCY) {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      "deviceId is required to login",
-    );
-  }
-  const dbDeviceId = (isExistUser?.deviceId || "").trim();
-  const incomingDeviceId = (deviceId || "").trim();
 
-  if (dbDeviceId) {
-    if (dbDeviceId !== incomingDeviceId) {
+  if (isExistUser.role !== USER_ROLES.SUPER_ADMIN) {
+    if (!deviceId) {
       throw new ApiError(
         StatusCodes.BAD_REQUEST,
-        "Please login with same device",
+        "deviceId is required to login",
       );
     }
-  } else {
-    updateData.deviceId = incomingDeviceId;
+
+    const dbDeviceId = (isExistUser?.deviceId || "").trim();
+    const incomingDeviceId = (deviceId || "").trim();
+
+    if (dbDeviceId) {
+      if (dbDeviceId !== incomingDeviceId) {
+        throw new ApiError(
+          StatusCodes.BAD_REQUEST,
+          "Please login with same device",
+        );
+      }
+    } else {
+      updateData.deviceId = incomingDeviceId;
+    }
+
+    // deviceToken also for non-super-admin users
+    if (deviceToken) {
+      updateData.deviceToken = deviceToken.trim();
+    }
   }
 
-  if (deviceToken && isExistUser.role === USER_ROLES.AGENCY) {
-    updateData.deviceToken = deviceToken.trim();
-  }
+  // save updates
   if (Object.keys(updateData).length > 0) {
-    await User.findOneAndUpdate({ _id: isExistUser._id }, { $set: updateData });
+    await User.findByIdAndUpdate(isExistUser._id, { $set: updateData });
   }
   //create token
   const accessToken = jwtHelper.createToken(
