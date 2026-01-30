@@ -10,7 +10,7 @@ import { sendNotificationToFCM } from "../../../helpers/firebaseHelperFMC";
 
 const createPushNotificationDto = async (
   userId: JwtPayload,
-  payload: IPushNotification
+  payload: IPushNotification,
 ) => {
   payload.sender = userId.id;
 
@@ -18,7 +18,9 @@ const createPushNotificationDto = async (
   const allUsers = await User.find({
     verified: true,
     _id: { $ne: userId.id },
-  }).lean();
+  })
+    .select("+deviceToken +deviceId")
+    .lean();
 
   if (!allUsers.length) return [];
 
@@ -30,24 +32,19 @@ const createPushNotificationDto = async (
         sender: userId.id,
         receiver: user._id, // new: each user gets separate receiver
       });
-
       // new: Send push notification (FCM)
-      if (user.deviceToken) {
-        // new: handle multiple device tokens if array
-        const tokens = Array.isArray(user.deviceToken)
-          ? user.deviceToken
-          : [user.deviceToken];
 
-        await Promise.all(
-          tokens.map((token) =>
-            sendNotificationToFCM({
-              token,
-              title: payload.title || "You have a new notification",
-              body: payload.description || "",
-              data: doc.toObject(), // new: convert to object for FCM
-            })
-          )
-        );
+      try {
+        if (user.deviceToken) {
+          await sendNotificationToFCM({
+            token: user.deviceToken,
+            title: payload.title || "You have a new notification",
+            body: payload.description || "",
+            data: doc.toObject(),
+          });
+        }
+      } catch (err) {
+        console.error("FCM failed for user:", user._id, err);
       }
 
       // new: Send socket notification to single user
@@ -62,7 +59,7 @@ const createPushNotificationDto = async (
       });
 
       return doc;
-    })
+    }),
   );
 
   return notifications; // returns array of saved notifications

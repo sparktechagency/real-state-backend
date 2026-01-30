@@ -20,10 +20,10 @@ import { USER_ROLES } from "../../../enums/user";
 
 //login
 const loginUserFromDB = async (payload: ILoginData) => {
-  console.log("email:", payload.email );
-  console.log("password:", payload.password );
-  console.log("deviceId:", payload.deviceId );
-  console.log("deviceToken:", payload.deviceToken );
+  console.log("email:", payload.email);
+  console.log("password:", payload.password);
+  console.log("deviceId:", payload.deviceId);
+  console.log("deviceToken:", payload.deviceToken);
   const { email, password, deviceId, deviceToken } = payload;
 
   const isExistUser: any = await User.findOne({ email })
