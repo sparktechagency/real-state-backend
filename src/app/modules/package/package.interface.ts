@@ -5,8 +5,8 @@ export type IPackage = {
   title: string;
   description: string[];
   price: number;
-  duration: "1 month" | "1 year";
-  paymentType: "Monthly" | "Yearly";
+  duration: "1 week" | "1 month" | "1 year";
+  paymentType: "Weekly" | "Monthly" | "Yearly";
   status: "Active" | "Delete";
   product_id: string;
   disable: boolean;

@@ -11,7 +11,6 @@ const createPackageToDB = async (payload: IPackage) => {
   if (!result) {
     throw new ApiError(StatusCodes.BAD_REQUEST, "Failed to created Package");
   }
-
   return result;
 };
 
@@ -26,12 +25,12 @@ const getAllPackage = async (query: Record<string, any>) => {
 
 const getAllPackageFromDBForAdmin = async (
   user: JwtPayload,
-  query: Record<string, any>
+  query: Record<string, any>,
 ) => {
   if (user.role != USER_ROLES.SUPER_ADMIN) {
     throw new ApiError(
       StatusCodes.FORBIDDEN,
-      "You are not authorized to access this resource"
+      "You are not authorized to access this resource",
     );
   }
   const qb = new QueryBuilder(Package.find().lean(), query);

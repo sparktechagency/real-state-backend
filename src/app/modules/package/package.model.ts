@@ -17,12 +17,12 @@ const packageSchema = new Schema<IPackage, PackageModel>(
     },
     duration: {
       type: String,
-      enum: ["1 month", "1 year"],
+      enum: ["1 week", "1 month", "1 year"],
       required: true,
     },
     paymentType: {
       type: String,
-      enum: ["Monthly", "Yearly"],
+      enum: ["Weekly", "Monthly", "Yearly"],
       required: true,
     },
 
@@ -43,7 +43,7 @@ const packageSchema = new Schema<IPackage, PackageModel>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export const Package = model<IPackage, PackageModel>("Package", packageSchema);
