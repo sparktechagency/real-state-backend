@@ -9,7 +9,7 @@ import { USER_ROLES } from "../../../enums/user";
 const router = Router();
 router.post(
   "/create",
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN),
   fileUploadHandler(),
   parseEmbeddedJson(["contact"]),
   handleApartmentPayload,
@@ -26,7 +26,7 @@ router.get("/:id", apartmentController.getSingleOne);
 // update apartment
 router.patch(
   "/:id",
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN),
   fileUploadHandler(),
   handleApartmentPayload,
   parseEmbeddedJson(["contact"]),
@@ -39,7 +39,7 @@ router.patch(
 // delete apartment
 router.delete(
   "/:id",
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN),
   apartmentController.deleteApartment
 );
 

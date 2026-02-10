@@ -14,7 +14,7 @@ const router = Router();
 router
   .route("/")
   .post(
-    auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY),
+    auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY, USER_ROLES.SUB_ADMIN),
     customerSupportController.createCustomerSupport
   )
   .get(customerSupportController.getAllSupportInfo);

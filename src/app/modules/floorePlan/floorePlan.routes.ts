@@ -13,7 +13,7 @@ const router = Router();
  */
 router.post(
   "/create",
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN),
   fileUploadHandler(),
   (req, res, next) => {
     try {
@@ -37,13 +37,13 @@ router.post(
 
 router.get(
   "/",
-  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN),
   FloorePlanController.getAllFloorePlan
 );
 
 router.get(
   "/all",
-  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN),
   FloorePlanController.getAllFloorePlanBaseOnApartment
 );
 
@@ -55,19 +55,19 @@ router.get(
 
 router.get(
   "/filter",
-  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN),
   FloorePlanController.getLocationPropertyTypeSalesCompanyCompletionYear
 );
 
 router.get(
   "/plans/:id",
-  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN),
   FloorePlanController.getFloorePlanBaseOnApartmentId
 );
 
 router.get(
   "/phases/:id",
-  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN),
   FloorePlanController.getPhaseFromApartmentId
 );
 
@@ -88,7 +88,7 @@ router.get(
 
 router.patch(
   "/:id",
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN),
   fileUploadHandler(),
   (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -106,7 +106,7 @@ router.patch(
 
 router.delete(
   "/:id",
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN),
   FloorePlanController.deleteFloorePlan
 );
 

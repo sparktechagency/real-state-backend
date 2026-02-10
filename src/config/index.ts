@@ -58,6 +58,10 @@ export default {
   appleSubscription: {
     appleSharedSecret: process.env.IOS_PRIVATE_KEY!,
   },
+  subAdmin: {
+    email: process.env.SUB_ADMIN_EMAIL,
+    password: process.env.SUB_ADMIN_PASSWORD,
+  },
   APPLE_LINK: {
     APPLE_PROD_URL: process.env.APPLE_PROD_URL!,
     APPLE_SANDBOX_URL: process.env.APPLE_SANDBOX_URL!,

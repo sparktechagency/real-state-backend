@@ -8,7 +8,7 @@ const router = Router();
 
 router.post(
   "/create",
-  auth(USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN),
   PushNotificationController.createPushNotification,
 );
 

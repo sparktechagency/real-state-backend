@@ -49,7 +49,7 @@ router.post(
 
 router.post(
   "/change-password",
-  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN),
+  auth(USER_ROLES.AGENCY, USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN),
   validateRequest(AuthValidation.createChangePasswordZodSchema),
   AuthController.changePassword,
 );
@@ -58,7 +58,7 @@ router.post("/resend-otp", AuthController.resendVerificationEmail);
 
 router.delete(
   "/delete-account",
-  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY),
+  auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY, USER_ROLES.SUB_ADMIN),
   AuthController.deleteUser,
 );
 
@@ -78,7 +78,7 @@ router.get(
 
 router
   .route("/admin-approval/:id")
-  .patch(auth(USER_ROLES.SUPER_ADMIN), AuthController.adminApproval);
+  .patch(auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN), AuthController.adminApproval);
 
 // Facebook Auth Routes
 router.get(

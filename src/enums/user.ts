@@ -1,4 +1,5 @@
 export enum USER_ROLES {
   AGENCY = "AGENCY",
   SUPER_ADMIN = "SUPER_ADMIN",
+  SUB_ADMIN = "SUB_ADMIN",
 }

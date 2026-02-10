@@ -6,6 +6,6 @@ import { USER_ROLES } from "../../../enums/user";
 const router = Router();
 
 
-router.get("/all-user-list", auth(USER_ROLES.SUPER_ADMIN), adminController.getAllUser);
+router.get("/all-user-list", auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN), adminController.getAllUser);
 
 export const adminRoutes = router;

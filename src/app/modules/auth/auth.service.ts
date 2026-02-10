@@ -56,7 +56,7 @@ const loginUserFromDB = async (payload: ILoginData) => {
 
   const updateData: Record<string, any> = {};
 
-  if (isExistUser.role !== USER_ROLES.SUPER_ADMIN) {
+  if (isExistUser.role !== USER_ROLES.SUPER_ADMIN && isExistUser.role !== USER_ROLES.SUB_ADMIN) {
     if (!deviceId) {
       throw new ApiError(
         StatusCodes.BAD_REQUEST,

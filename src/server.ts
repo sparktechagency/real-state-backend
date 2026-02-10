@@ -5,7 +5,7 @@ import { errorLogger, logger } from "./shared/logger";
 import colors from "colors";
 import { socketHelper } from "./helpers/socketHelper";
 import { Server } from "socket.io";
-import seedSuperAdmin from "./DB";
+import seedSuperAdmin, { seedSubAdmin } from "./DB";
 import deleteNotification from "./util/deleteNotification";
 
 //uncaught exception
@@ -20,6 +20,9 @@ async function main() {
   try {
     // create super admin
     seedSuperAdmin();
+
+    // sub admin 
+    seedSubAdmin();
 
     mongoose.connect(config.database_url as string);
     logger.info(colors.green("🚀 Database connected successfully"));

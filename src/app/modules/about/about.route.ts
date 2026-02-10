@@ -10,22 +10,22 @@ router
   .route("/")
   .post(
     validateRequest(FaqValidation.createFaqZodSchema),
-    auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY),
+    auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY, USER_ROLES.SUB_ADMIN),
     AboutController.createFaq
   )
   .get(
-    auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY),
+    auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY, USER_ROLES.SUB_ADMIN),
     AboutController.getFaqs
   );
 
 router
   .route("/:id")
   .delete(
-    auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY),
+    auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY, USER_ROLES.SUB_ADMIN),
     AboutController.deleteFaq
   )
   .patch(
-    auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY),
+    auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.AGENCY, USER_ROLES.SUB_ADMIN),
     AboutController.updateFaq
   );
 

@@ -17,6 +17,21 @@ const superUser = {
   isSubscribe: true,
 };
 
+
+
+const subAdmin = {
+  firstName: "irin",
+  lastName: "Admin ",
+  role: USER_ROLES.SUB_ADMIN,
+  email: config?.subAdmin.email,
+  password: config?.subAdmin.password,
+  verified: true,
+  isAdminVerified: true,
+  deviceToken: "",
+  deviceId: "",
+  isSubscribe: true,
+}
+
 const seedSuperAdmin = async () => {
   const isExistSuperAdmin = await User.findOne({
     role: USER_ROLES.SUPER_ADMIN,
@@ -28,4 +43,22 @@ const seedSuperAdmin = async () => {
   }
 };
 
+
+const seedSubAdmin = async () => {
+  const isExistSubAdmin = await User.findOne({
+    role: USER_ROLES.SUB_ADMIN,
+  });
+
+  if (!isExistSubAdmin) {
+    await User.create(subAdmin);
+    logger.info(colors.green("✔ Sub admin created successfully!"));
+  }
+}
+
+
+
+
+
+
 export default seedSuperAdmin;
+export { seedSubAdmin }
