@@ -14,7 +14,7 @@ router
 
 router
   .route("/admin")
-  .get(auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN), PackageController.getAllPackageForAdmin);
+  .get(auth(USER_ROLES.SUB_ADMIN, USER_ROLES.SUPER_ADMIN), PackageController.getAllPackageForAdmin);
 
 // edit packagef
 router
