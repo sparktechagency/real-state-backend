@@ -16,7 +16,7 @@ router
   .route("/admin")
   .get(auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN), PackageController.getAllPackageForAdmin);
 
-// edit package
+// edit packagef
 router
   .route("/:id")
   .patch(auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.SUB_ADMIN), PackageController.editPackage);
