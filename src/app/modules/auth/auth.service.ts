@@ -439,6 +439,15 @@ const adminApprovalIntoDB = async (
     { isAdminVerified },
     { new: true },
   );
+
+  // need to send email to user for approval or disapproval
+  const accountApprovalTemplate = emailTemplate.accountApproval({
+    name: isExistUser.name,
+    isAdminVerified: isAdminVerified,
+    email: isExistUser.email!,
+  });
+  emailHelper.sendEmail(accountApprovalTemplate);
+
   return result;
 };
 
