@@ -42,7 +42,7 @@ const createUserToDB = async (payload: Partial<IUser>): Promise<IUser> => {
 
   const createAccountTemplate = emailTemplate.createAccount({
     name: createUser.name,
-    otp: Number(otp),
+    otp,
     email: createUser.email!,
   });
   emailHelper.sendEmail(createAccountTemplate);

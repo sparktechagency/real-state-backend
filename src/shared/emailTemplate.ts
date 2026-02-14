@@ -7,7 +7,6 @@ const createAccount = (values: ICreateAccount) => {
         html: `
             <body style="font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 50px; padding: 20px; color: #555;">
                 <div style="width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
-    
                     <!-- Logo -->
                     <img src="https://res.cloudinary.com/dabd4udau/image/upload/v1749729492/sjb7az2kprkvdllrfofi.png" alt="Project Finder Logo" style="display: block; margin: 0 auto 20px; width:150px" />
 
@@ -26,7 +25,12 @@ const createAccount = (values: ICreateAccount) => {
 
                     <!-- Footer -->
                     <p style="color: #999; font-size: 12px; text-align: center; margin-top: 30px;">If you did not sign up for Project Finder, please ignore this email.</p>
-                    <p style="color: #999; font-size: 12px; text-align: center;">&copy; 2024 Project Finder. All rights reserved.</p>
+                    <tr>
+<td style="background:#f8f8f8; padding:20px; text-align:center; font-size:13px; color:#888;">
+© ${new Date().getFullYear()} Project Finder <br/>
+Need help? Contact info@projectfinder.es or +995501002446
+</td>
+</tr>
 
                 </div>
             </body>
@@ -50,6 +54,12 @@ const resetPassword = (values: IResetPassword) => {
                         <p style="color: #555; font-size: 16px; line-height: 1.5; margin-bottom: 20px;">This code is valid for 3 minutes.</p>
                     </div>
                 </div>
+                <tr>
+<td style="background:#f8f8f8; padding:20px; text-align:center; font-size:13px; color:#888;">
+© ${new Date().getFullYear()} Project Finder <br/>
+Need help? Contact info@projectfinder.es or +995501002446
+</td>
+</tr>
             </body>
         `,
     };
@@ -63,7 +73,7 @@ const accountApproval = (values: IAdminApproval) => {
     const statusText = isApproved ? "approved" : "rejected";
     const statusColor = isApproved ? "#28a745" : "#dc3545";
     const message = isApproved
-        ? "Your account has been successfully approved by our admin team. You can now log in and start using your dashboard."
+        ? "Your account has been successfully approved by our admin team. You can now log in and start use the platform."
         : "Unfortunately, your account request has been rejected by our admin team. If you believe this is a mistake, please contact support.";
 
     const data = {
