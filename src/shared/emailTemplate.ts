@@ -73,7 +73,8 @@ const accountApproval = (values: IAdminApproval) => {
     const statusText = isApproved ? "approved" : "rejected";
     const statusColor = isApproved ? "#28a745" : "#dc3545";
     const message = isApproved
-        ? "Your account has been successfully approved by our admin team. You can now log in and start use the platform."
+
+        ? "Your account has been successfully approved by our admin team.You can now log in and start using the platform."
         : "Unfortunately, your account request has been rejected by our admin team. If you believe this is a mistake, please contact support.";
 
     const data = {
