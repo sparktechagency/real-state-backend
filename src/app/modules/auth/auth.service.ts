@@ -42,7 +42,7 @@ const loginUserFromDB = async (payload: ILoginData) => {
   ) {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
-      "Your account is not verified by admin yet, please wait for approval",
+      "Your account is being verified , we will update you shortly. ",
     );
   }
 
